@@ -243,7 +243,7 @@ ${header}
 <main id="MainContent" class="content-for-layout" role="main">
 ${main}
 </main>
-<div class="shopify-section shopify-section-group-footer-group"><footer class="footer" style="padding:60px 20px 90px;background:#2b2320;color:#fff;font:14px sans-serif">Sense footer (unchanged)</footer></div>
+<div class="shopify-section shopify-section-group-footer-group"><footer class="footer" style="padding-top:60px;padding-inline:20px;background:#2b2320;color:#fff;font:14px sans-serif">Sense footer (unchanged)</footer></div>
 </body>
 </html>
 `,
