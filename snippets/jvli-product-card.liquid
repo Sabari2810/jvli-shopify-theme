@@ -5,8 +5,7 @@
   Sizes: if the product has an option named "Size", each size is a radio
   button whose value is the variant id, so the form posts the chosen variant
   to /cart/add even without JavaScript. Otherwise the first available variant
-  is added. The heart carries the product GID for the global favorites
-  script (not wired up yet).
+  is added. The heart is saved by jvli-favorites.js.
 {%- endcomment -%}
 {%- liquid
   assign jvli_size_index = -1
@@ -38,16 +37,7 @@
         -%}
       {%- endif -%}
     </a>
-    <button
-      type="button"
-      class="jvli-card__fav"
-      data-jvli-favorite
-      data-product-id="gid://shopify/Product/{{ product.id }}"
-      aria-pressed="false"
-      aria-label="Save {{ product.title | escape }} to favorites"
-    >
-      {%- render 'jvli-icon', icon: 'heart' -%}
-    </button>
+    {%- render 'jvli-favorite-button', product: product, class: 'jvli-card__fav' -%}
     {%- unless product.available -%}
       <span class="jvli-card__badge">Sold out</span>
     {%- endunless -%}

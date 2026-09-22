@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "favorites": {
+      "type": "jvli-favorites",
+      "settings": {}
+    }
+  },
+  "order": ["favorites"]
+}

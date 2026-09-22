@@ -6,6 +6,8 @@
 //   SENSE_BASE_CSS  path to Sense's assets/base.css (optional, for realism)
 //   STANDINS_DIR    folder of stand-in photos named <section>.<setting>.jpg,
 //                   <section>.<block>.jpg or product-<n>.jpg (optional)
+//   TEMPLATE        template to render, e.g. page.favorites (default: index)
+//   LOGGED_IN       set to render as a signed-in customer
 import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -55,10 +57,12 @@ const sampleProducts = [
     options: [size],
     available: !(i === 3 && size === "XS"),
   }));
+  const handle = title.toLowerCase().replace(/ /g, "-");
   return {
     id: 9000 + i,
     title,
-    url: `/products/${title.toLowerCase().replace(/ /g, "-")}`,
+    handle,
+    url: `/products/${handle}`,
     price,
     compare_at_price: null,
     available: true,
@@ -176,27 +180,30 @@ const globals = {
     root_url: "/",
     search_url: "/search",
     account_url: "/account",
+    account_login_url: "/account/login",
     cart_url: "/cart",
     cart_add_url: "/cart/add",
     all_products_collection_url: "/collections/all",
     collections_url: "/collections",
   },
   shop: { name: "JVLI", customer_accounts_enabled: true },
+  customer: process.env.LOGGED_IN ? { id: 1, first_name: "Test" } : null,
   cart: { item_count: 0 },
-  request: { page_type: "index" },
+  request: { page_type: (process.env.TEMPLATE || "index").split(".")[0] },
 };
 
 async function renderSection(id, config, groupClass = "") {
   if (config.disabled) return "";
   const { type, wrapperClass, section } = buildSection(id, config);
-  const html = await engine.renderFile(type, { ...globals, section });
+  // Shopify's global objects are visible inside rendered snippets too.
+  const html = await engine.renderFile(type, { section }, { globals });
   return `<div id="shopify-section-${id}" class="shopify-section ${groupClass} ${wrapperClass}">${html}</div>`;
 }
 
 /* ---------- Page ---------- */
 
 const headerGroup = readJson("sections/header-group.json");
-const index = readJson("templates/index.json");
+const index = readJson(`templates/${process.env.TEMPLATE || "index"}.json`);
 
 let header = "";
 for (const id of headerGroup.order) {
@@ -205,6 +212,12 @@ for (const id of headerGroup.order) {
 let main = "";
 for (const id of index.order) {
   main += await renderSection(id, index.sections[id]);
+}
+
+// Product card views, as /products/<handle>?view=jvli-card returns them.
+mkdirSync(join(out, "products"), { recursive: true });
+for (const product of sampleProducts) {
+  writeFileSync(join(out, "products", product.handle), await engine.renderFile("jvli-product-card", { ...globals, product }));
 }
 
 for (const file of readdirSync(join(theme, "assets"))) {

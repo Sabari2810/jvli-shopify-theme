@@ -4,7 +4,7 @@
   if request.page_type == 'index' and section.settings.transparent_on_home
     assign jvli_overlay = true
   endif
-  assign jvli_fav_url = section.settings.favorites_link | default: routes.account_url
+  assign jvli_fav_url = section.settings.favorites_link | default: '/pages/favorites'
 -%}
 {%- capture jvli_logo -%}
   {%- if section.settings.logo_style == 'image' and section.settings.logo != blank -%}
@@ -49,6 +49,7 @@
       {%- if section.settings.show_favorites -%}
         <a href="{{ jvli_fav_url }}" class="jvli-header__icon jvli-header__icon--favorites" aria-label="Favorites">
           {%- render 'jvli-icon', icon: 'heart' -%}
+          <span class="jvli-header__count jvli-header__count--favorites" data-jvli-favorites-count hidden>0</span>
         </a>
       {%- endif -%}
       <a href="{{ routes.cart_url }}" class="jvli-header__icon jvli-header__icon--bag" aria-label="Bag, {{ cart.item_count }} items">
@@ -101,7 +102,7 @@
     { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" },
     { "type": "checkbox", "id": "transparent_on_home", "label": "Transparent over the home page hero", "default": true },
     { "type": "checkbox", "id": "show_favorites", "label": "Show favorites icon", "default": true },
-    { "type": "url", "id": "favorites_link", "label": "Favorites link", "info": "Defaults to the customer account page until a favorites page exists." }
+    { "type": "url", "id": "favorites_link", "label": "Favorites link", "info": "Defaults to /pages/favorites." }
   ],
   "enabled_on": { "groups": ["header"] }
 }

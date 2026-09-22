@@ -707,9 +707,70 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   height: 19px;
 }
 
-.jvli-card__fav[aria-pressed="true"] .jvli-icon {
+/* ---------- Favorite hearts (jvli-favorites.js) ---------- */
+
+.jvli-fav {
+  cursor: pointer;
+}
+
+.jvli-fav .jvli-icon {
+  transition: fill 0.2s ease, stroke 0.2s ease, transform 0.2s ease;
+}
+
+.jvli-fav:active .jvli-icon {
+  transform: scale(0.88);
+}
+
+.jvli-fav[aria-pressed="true"] .jvli-icon {
   fill: var(--jvli-maroon);
   stroke: var(--jvli-maroon);
+}
+
+.jvli-fav.is-error .jvli-icon {
+  animation: jvli-fav-shake 0.4s ease;
+}
+
+@keyframes jvli-fav-shake {
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+/* On Sense's product cards: top-right of the image, above the card link. */
+.jvli-fav--sense {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 3;
+  display: inline-flex;
+  padding: 7px;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  color: #221c18;
+}
+
+.jvli-fav--sense .jvli-icon {
+  width: 18px;
+  height: 18px;
+}
+
+/* On the product page (a Custom Liquid block): icon plus label. */
+.jvli-fav--text {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 1.4rem;
+  letter-spacing: 0.06em;
+}
+
+.jvli-fav--text .jvli-icon {
+  width: 22px;
+  height: 22px;
 }
 
 .jvli-card__badge {
@@ -1212,6 +1273,68 @@ a.jvli-gallery__item:hover .jvli-cover {
 }
 
 /* ==========================================================================
+   Favorites page
+   ========================================================================== */
+
+.jvli-favorites {
+  padding-block: clamp(36px, 4vw, 64px) clamp(48px, 5vw, 80px);
+}
+
+.jvli-favorites__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px 24px;
+  margin-bottom: clamp(20px, 2.4vw, 36px);
+}
+
+.jvli-favorites__text,
+.jvli-favorites__note,
+.jvli-favorites__status {
+  color: var(--jvli-ink-soft);
+  font-size: 15px;
+}
+
+.jvli-favorites__note {
+  margin: 0 0 24px;
+  padding: 12px 16px;
+  background: var(--jvli-cream-deep);
+}
+
+.jvli-favorites__note a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.jvli-favorites__status {
+  display: none;
+  margin: 0;
+}
+
+.jvli-favorites[data-state="loading"] .jvli-favorites__status--loading,
+.jvli-favorites[data-state="error"] .jvli-favorites__status--error {
+  display: block;
+}
+
+.jvli-favorites[data-state="empty"] .jvli-favorites__status--empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.jvli-favorites__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(28px, 3vw, 44px) clamp(14px, 1.6vw, 24px);
+}
+
+.jvli-favorites__grid:empty {
+  display: none;
+}
+
+/* ==========================================================================
    Tablet
    ========================================================================== */
 
@@ -1226,6 +1349,10 @@ a.jvli-gallery__item:hover .jvli-cover {
 
   .jvli-new-in__grid > :nth-child(n + 4) {
     display: none;
+  }
+
+  .jvli-favorites__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
@@ -1277,6 +1404,10 @@ a.jvli-gallery__item:hover .jvli-cover {
 
   .jvli-menu {
     display: block;
+  }
+
+  .jvli-favorites__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .jvli-hero {
