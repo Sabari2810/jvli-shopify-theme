@@ -88,8 +88,11 @@
         "photo_5": { "type": "photo", "settings": {} }
       },
       "block_order": ["photo_1", "photo_2", "photo_3", "photo_4", "photo_5"],
-      "settings": { "heading": "JVLI in real life", "follow_text": "Follow us @jvli.store",
-      "settings": { "heading": "JVLI in real life", "follow_link": "https://www.instagram.com/jvli.store/" }
+      "settings": {
+        "heading": "JVLI in real life",
+        "follow_text": "Follow us @jvli.store",
+        "follow_link": "https://www.instagram.com/jvli.store/"
+      }
     },
     "featured-collection": {
       "type": "featured-collection",
