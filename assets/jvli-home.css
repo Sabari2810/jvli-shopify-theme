@@ -304,7 +304,15 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
 
 .jvli-section-header.jvli-header-overlays,
 .shopify-section:has(> .jvli-header--overlay) {
+  height: var(--jvli-header-height);
   margin-bottom: calc(-1 * var(--jvli-header-height));
+  pointer-events: none;
+}
+
+/* The overlay wrapper keeps a fixed height (so the page never shifts) and
+   lets clicks through to the hero; only the header bar itself is clickable. */
+.jvli-header {
+  pointer-events: auto;
 }
 
 .jvli-header {
@@ -332,11 +340,13 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   gap: clamp(24px, 4vw, 64px);
   height: var(--jvli-header-height);
   padding-inline: var(--jvli-gutter);
+  transition: height 0.3s ease;
 }
 
-/* Inner pages use a slimmer header. The home page overlay keeps one height so
-   the hero underneath never shifts when the header turns solid. */
-.jvli-header:not(.jvli-header--overlay) .jvli-header__inner {
+/* Inner pages use a slimmer header, and the home page header slims to match
+   once it turns solid on scroll. */
+.jvli-header:not(.jvli-header--overlay) .jvli-header__inner,
+.jvli-header--overlay.is-solid .jvli-header__inner {
   height: 76px;
 }
 
@@ -356,7 +366,8 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   object-position: left center;
 }
 
-.jvli-header:not(.jvli-header--overlay) .jvli-header__logo-image {
+.jvli-header:not(.jvli-header--overlay) .jvli-header__logo-image,
+.jvli-header--overlay.is-solid .jvli-header__logo-image {
   max-height: 56px;
 }
 
@@ -1203,7 +1214,8 @@ a.jvli-gallery__item:hover .jvli-cover {
   }
 
   .jvli-header__inner,
-  .jvli-header:not(.jvli-header--overlay) .jvli-header__inner {
+  .jvli-header:not(.jvli-header--overlay) .jvli-header__inner,
+  .jvli-header--overlay.is-solid .jvli-header__inner {
     height: var(--jvli-header-height);
     gap: 12px;
   }
@@ -1214,7 +1226,8 @@ a.jvli-gallery__item:hover .jvli-cover {
   }
 
   .jvli-header__logo-image,
-  .jvli-header:not(.jvli-header--overlay) .jvli-header__logo-image {
+  .jvli-header:not(.jvli-header--overlay) .jvli-header__logo-image,
+  .jvli-header--overlay.is-solid .jvli-header__logo-image {
     width: min(var(--jvli-logo-width, 110px), 84px);
     max-height: 46px;
   }
