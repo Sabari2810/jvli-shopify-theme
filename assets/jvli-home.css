@@ -1432,14 +1432,18 @@ a.jvli-gallery__item:hover .jvli-cover {
 /* ==========================================================================
    Footer sunflowers
    A gold line drawing of sunflowers across the bottom of Sense's footer,
-   behind the footer content. Opacity keeps the footer text readable; extra
-   bottom padding leaves the lowest leaves and buds clear of the text.
+   behind the footer content. Opacity keeps the footer text readable; the
+   footer's bottom padding sets how high the flowers rise behind the content.
    ========================================================================== */
 
 .shopify-section-group-footer-group .footer {
   position: relative;
   isolation: isolate;
-  padding-bottom: clamp(90px, 11vw, 170px);
+  padding-bottom: clamp(30px, 4vw, 64px);
+}
+
+.shopify-section-group-footer-group .footer__content-bottom {
+  border-top: 0;
 }
 
 .shopify-section-group-footer-group .footer::before {
