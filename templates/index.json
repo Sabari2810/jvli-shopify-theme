@@ -35,6 +35,7 @@
       "type": "jvli-story",
       "settings": {
         "image": "shopify://shop_images/jvli-story-fabric.webp",
+        "polaroid_image": "shopify://shop_images/jvli-story-banana-leaves.webp",
         "eyebrow": "The JVLI way",
         "heading": "Clothes that\nfeel like you.",
         "text": "<p>We take inspiration from the colours, textures and everyday life of Tamil Nadu and create contemporary clothing made for your everyday moments.</p>",
