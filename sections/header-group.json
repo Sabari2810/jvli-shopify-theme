@@ -45,7 +45,7 @@
       "type": "jvli-header",
       "name": "JVLI Header",
       "settings": {
-        "logo_style": "text",
+        "logo_style": "image",
         "logo_text": "JVLI",
         "logo": "shopify://shop_images/Logo_-_PNG.png",
         "logo_width": 110,

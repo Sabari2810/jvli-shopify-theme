@@ -6,6 +6,21 @@
   endif
   assign jvli_fav_url = section.settings.favorites_link | default: routes.account_url
 -%}
+{%- capture jvli_logo -%}
+  {%- if section.settings.logo_style == 'image' and section.settings.logo != blank -%}
+    <img
+      class="jvli-header__logo-image"
+      src="{{ section.settings.logo | image_url: width: 600 }}"
+      alt="{{ shop.name | escape }}"
+      width="{{ section.settings.logo_width }}"
+      height="{{ section.settings.logo_width | divided_by: section.settings.logo.aspect_ratio | round }}"
+      style="--jvli-logo-width: {{ section.settings.logo_width }}px;"
+    >
+  {%- else -%}
+    <span class="jvli-header__wordmark">{{ section.settings.logo_text | default: shop.name }}</span>
+  {%- endif -%}
+{%- endcapture -%}
+
 <header
   class="jvli jvli-header{% if jvli_overlay %} jvli-header--overlay{% endif %}"
   data-jvli-header
@@ -13,17 +28,7 @@
 >
   <div class="jvli-header__inner">
     <a href="{{ routes.root_url }}" class="jvli-header__logo" aria-label="{{ shop.name | escape }}">
-      {%- if section.settings.logo_style == 'image' and section.settings.logo != blank -%}
-        <img
-          src="{{ section.settings.logo | image_url: width: 600 }}"
-          alt="{{ shop.name | escape }}"
-          width="{{ section.settings.logo_width }}"
-          height="{{ section.settings.logo_width | divided_by: section.settings.logo.aspect_ratio | round }}"
-          style="width: {{ section.settings.logo_width }}px;"
-        >
-      {%- else -%}
-        <span class="jvli-header__wordmark">{{ section.settings.logo_text | default: shop.name }}</span>
-      {%- endif -%}
+      {{- jvli_logo -}}
     </a>
 
     <nav class="jvli-header__nav" aria-label="Main">
@@ -57,7 +62,7 @@
         </summary>
         <div class="jvli-menu__panel">
           <div class="jvli-menu__top">
-            <span class="jvli-header__wordmark">{{ section.settings.logo_text | default: shop.name }}</span>
+            {{- jvli_logo -}}
             <button type="button" class="jvli-header__icon" data-jvli-menu-close aria-label="Close menu">
               {%- render 'jvli-icon', icon: 'close' -%}
             </button>

@@ -346,6 +346,20 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   flex: none;
 }
 
+.jvli-header__logo-image {
+  display: block;
+  width: var(--jvli-logo-width, 110px);
+  max-width: none;
+  height: auto;
+  max-height: 72px;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.jvli-header:not(.jvli-header--overlay) .jvli-header__logo-image {
+  max-height: 56px;
+}
+
 .jvli-header__wordmark {
   font-family: var(--jvli-serif);
   font-size: clamp(34px, 3.9vw, 60px);
@@ -1197,6 +1211,12 @@ a.jvli-gallery__item:hover .jvli-cover {
   .jvli-header__wordmark,
   .jvli-header:not(.jvli-header--overlay) .jvli-header__wordmark {
     font-size: 28px;
+  }
+
+  .jvli-header__logo-image,
+  .jvli-header:not(.jvli-header--overlay) .jvli-header__logo-image {
+    width: min(var(--jvli-logo-width, 110px), 84px);
+    max-height: 46px;
   }
 
   .jvli-header__nav,
