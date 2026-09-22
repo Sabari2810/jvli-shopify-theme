@@ -113,6 +113,87 @@
     });
   }
 
+  /* ---------- Instagram reels ---------- */
+
+  var PLAY_ICON =
+    '<svg class="jvli-gallery__play" viewBox="0 0 24 24" aria-hidden="true" focusable="false">' +
+    '<circle cx="12" cy="12" r="11" fill="rgba(0,0,0,.35)"/><path d="M10 8.2v7.6l6-3.8z" fill="#fff"/></svg>';
+
+  function reelItem(reel) {
+    var link = document.createElement('a');
+    link.className = 'jvli-gallery__item jvli-gallery__item--reel';
+    link.href = reel.permalink;
+    link.target = '_blank';
+    link.rel = 'noopener';
+    link.setAttribute('aria-label', 'Watch on Instagram' + (reel.caption ? ': ' + reel.caption : ''));
+
+    var img = document.createElement('img');
+    img.className = 'jvli-cover';
+    img.src = reel.thumbnail;
+    img.alt = reel.caption || '';
+    img.loading = 'lazy';
+    img.decoding = 'async';
+    link.appendChild(img);
+
+    // Desktop only: play a muted preview on hover. The video loads on first hover.
+    var canPreview =
+      reel.video &&
+      window.matchMedia('(hover: hover)').matches &&
+      !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (canPreview) {
+      var video = document.createElement('video');
+      video.className = 'jvli-cover jvli-gallery__video';
+      video.muted = true;
+      video.loop = true;
+      video.playsInline = true;
+      video.preload = 'none';
+      video.setAttribute('aria-hidden', 'true');
+      link.appendChild(video);
+      link.addEventListener('mouseenter', function () {
+        if (!video.src) video.src = reel.video;
+        var playing = video.play();
+        if (playing && playing.catch) playing.catch(function () {});
+        link.classList.add('is-playing');
+      });
+      link.addEventListener('mouseleave', function () {
+        video.pause();
+        link.classList.remove('is-playing');
+      });
+    }
+
+    link.insertAdjacentHTML('beforeend', PLAY_ICON);
+    return link;
+  }
+
+  function initReels(scope) {
+    scope.querySelectorAll('[data-jvli-reels]').forEach(function (row) {
+      if (row.dataset.jvliReady) return;
+      row.dataset.jvliReady = 'true';
+
+      var count = parseInt(row.dataset.jvliReelsCount, 10) || 4;
+      var url = row.dataset.jvliReels;
+      url += (url.indexOf('?') === -1 ? '?' : '&') + 'limit=' + count;
+
+      fetch(url, { headers: { Accept: 'application/json' } })
+        .then(function (response) {
+          return response.ok ? response.json() : { reels: [] };
+        })
+        .then(function (data) {
+          var reels = (data && data.reels) || [];
+          if (!reels.length) return;
+          // Reels first; any remaining slots keep the fallback photos.
+          var photos = Array.prototype.slice.call(row.children);
+          var items = reels.slice(0, count).map(reelItem);
+          photos.slice(0, count - items.length).forEach(function (photo) {
+            items.push(photo);
+          });
+          row.replaceChildren.apply(row, items);
+          row.classList.add('jvli-gallery__row--reels');
+        })
+        .catch(function () {});
+    });
+  }
+
   /* ---------- Add to bag ---------- */
 
   function updateCartCount() {
@@ -179,6 +260,7 @@
   function init(scope) {
     initHeader(scope);
     initHero(scope);
+    initReels(scope);
   }
 
   document.addEventListener('submit', onAddSubmit);

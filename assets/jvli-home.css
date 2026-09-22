@@ -1177,6 +1177,40 @@ a.jvli-gallery__item:hover .jvli-cover {
   transform: scale(1.03);
 }
 
+/* Instagram reels (swapped in by jvli-home.js). Reels are portrait, so the
+   tiles are taller than the square photos. */
+.jvli-gallery__row--reels .jvli-gallery__item {
+  aspect-ratio: 4 / 5;
+}
+
+.jvli-gallery__item--reel {
+  position: relative;
+}
+
+.jvli-gallery__video {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.jvli-gallery__item--reel.is-playing .jvli-gallery__video {
+  opacity: 1;
+}
+
+.jvli-gallery__play {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 28px;
+  height: 28px;
+  transition: opacity 0.3s ease;
+}
+
+.jvli-gallery__item--reel.is-playing .jvli-gallery__play {
+  opacity: 0;
+}
+
 /* ==========================================================================
    Tablet
    ========================================================================== */

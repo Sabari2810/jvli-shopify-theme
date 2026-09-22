@@ -12,8 +12,18 @@
         {%- endif -%}
       {%- endif -%}
     </div>
-    <div class="jvli-gallery__row">
-      {%- for block in section.blocks -%}
+    {%- comment -%}
+      The photo blocks render first and stay as the fallback. When an
+      Instagram feed URL is set, jvli-home.js swaps in the latest reels.
+    {%- endcomment -%}
+    <div
+      class="jvli-gallery__row"
+      {% if section.settings.instagram_feed_url != blank %}
+        data-jvli-reels="{{ section.settings.instagram_feed_url | escape }}"
+        data-jvli-reels-count="{{ section.settings.reels_count }}"
+      {% endif %}
+    >
+      {%- for block in section.blocks limit: section.settings.reels_count -%}
         {%- capture jvli_gallery_image -%}
           {%- render 'jvli-media',
             image: block.settings.image,
@@ -41,7 +51,16 @@
   "settings": [
     { "type": "text", "id": "heading", "label": "Heading", "default": "JVLI in real life" },
     { "type": "text", "id": "follow_text", "label": "Follow text", "default": "Follow us @jvli" },
-    { "type": "url", "id": "follow_link", "label": "Follow link", "info": "e.g. your Instagram profile" }
+    { "type": "url", "id": "follow_link", "label": "Follow link", "info": "e.g. your Instagram profile" },
+    { "type": "header", "content": "Instagram reels" },
+    {
+      "type": "text",
+      "id": "instagram_feed_url",
+      "label": "Reels feed URL",
+      "default": "https://jvli-shopify-instagram.thejvlistore.workers.dev/reels",
+      "info": "Shows your latest Instagram reels. Leave empty to show only the photos below; they are also shown if the feed can't be reached."
+    },
+    { "type": "range", "id": "reels_count", "label": "Number of items", "min": 3, "max": 8, "step": 1, "default": 4 }
   ],
   "blocks": [
     {
@@ -56,7 +75,7 @@
   ],
   "presets": [{
     "name": "JVLI Gallery",
-    "blocks": [{ "type": "photo" }, { "type": "photo" }, { "type": "photo" }, { "type": "photo" }, { "type": "photo" }]
+    "blocks": [{ "type": "photo" }, { "type": "photo" }, { "type": "photo" }, { "type": "photo" }]
   }]
 }
 {% endschema %}
