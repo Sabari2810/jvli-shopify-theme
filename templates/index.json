@@ -71,6 +71,7 @@
     "jvli_fabric": {
       "type": "jvli-fabric",
       "settings": {
+        "image": "shopify://shop_images/jvli-fabric-block-print.webp",
         "heading": "It starts\nwith the fabric.",
         "text": "<p>Every piece begins with the fabric. The colours, textures and prints influence what the garment becomes.</p>",
         "button_label": "Our Fabrics",
