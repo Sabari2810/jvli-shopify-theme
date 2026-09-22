@@ -1430,33 +1430,31 @@ a.jvli-gallery__item:hover .jvli-cover {
 }
 
 /* ==========================================================================
-   Footer sunflower garden
-   A gold line-sketch row of sunflowers along the bottom of Sense's footer,
-   in its own strip below the footer content (so it never sits behind text).
-   Drawn by scripts/draw-sunflower-garden.py.
+   Footer sunflowers
+   A gold line drawing of sunflowers across the bottom of Sense's footer,
+   behind the footer content. Opacity keeps the footer text readable; extra
+   bottom padding leaves the lowest leaves and buds clear of the text.
    ========================================================================== */
 
 .shopify-section-group-footer-group .footer {
-  --jvli-garden-height: clamp(150px, 14vw, 210px);
   position: relative;
   isolation: isolate;
-  padding-bottom: calc(var(--jvli-garden-height) + 12px);
+  padding-bottom: clamp(90px, 11vw, 170px);
 }
 
 .shopify-section-group-footer-group .footer::before {
   content: "";
   position: absolute;
-  inset: auto 0 0;
+  inset: 0;
   z-index: -1;
-  height: var(--jvli-garden-height);
-  background: url("jvli-sunflower-garden.svg") repeat-x center bottom / auto 100%;
-  opacity: 0.6;
+  background: url("jvli-footer-sunflowers.webp") no-repeat center bottom / max(100%, 820px) auto;
+  opacity: 0.45;
   pointer-events: none;
 }
 
 @media (max-width: 749px) {
-  .shopify-section-group-footer-group .footer {
-    --jvli-garden-height: 120px;
+  .shopify-section-group-footer-group .footer::before {
+    opacity: 0.35;
   }
 }
 
