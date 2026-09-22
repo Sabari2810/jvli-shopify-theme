@@ -59,12 +59,13 @@
     "jvli_banner": {
       "type": "jvli-banner",
       "settings": {
+        "image": "shopify://shop_images/jvli-banner-temple.webp",
         "heading": "Rooted\nin Tamil Nadu.",
         "text": "From its streets, homes, fabrics and people — Tamil Nadu is at the heart of everything we do.",
         "link_label": "Our Story",
         "link": "/pages/our-story",
         "image_position": "center center",
-        "overlay_opacity": 45
+        "overlay_opacity": 55
       }
     },
     "jvli_fabric": {
