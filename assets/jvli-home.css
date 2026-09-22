@@ -1429,6 +1429,37 @@ a.jvli-gallery__item:hover .jvli-cover {
   }
 }
 
+/* ==========================================================================
+   Footer sunflower
+   A line sketch growing from the bottom-right corner of Sense's footer. It
+   sits behind the footer content and ignores clicks.
+   ========================================================================== */
+
+.shopify-section-group-footer-group .footer {
+  position: relative;
+  isolation: isolate;
+}
+
+.shopify-section-group-footer-group .footer::before {
+  content: "";
+  position: absolute;
+  right: clamp(12px, 2.2vw, 40px);
+  bottom: 0;
+  z-index: -1;
+  height: min(clamp(190px, 18vw, 300px), calc(100% - 24px));
+  aspect-ratio: 300 / 560;
+  background: url("jvli-sunflower.svg") no-repeat center bottom / contain;
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+@media (max-width: 749px) {
+  .shopify-section-group-footer-group .footer::before {
+    height: min(150px, calc(100% - 24px));
+    opacity: 0.5;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .jvli *,
   .jvli *::before,
