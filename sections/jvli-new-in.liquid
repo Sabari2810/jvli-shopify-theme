@@ -1,0 +1,59 @@
+{%- render 'jvli-assets' -%}
+{%- assign jvli_collection = section.settings.collection -%}
+<section class="jvli jvli-new-in jvli-section" style="--jvli-pad-top: {{ section.settings.padding_top }}px; --jvli-pad-bottom: {{ section.settings.padding_bottom }}px; --jvli-pad-top-mobile: {{ section.settings.mobile_padding_top }}px; --jvli-pad-bottom-mobile: {{ section.settings.mobile_padding_bottom }}px;">
+  <div class="jvli-container">
+    <div class="jvli-section-head">
+      <h2 class="jvli-h2">{{ section.settings.heading }}</h2>
+      {%- if jvli_collection != blank and section.settings.view_all_text != blank -%}
+        <a href="{{ jvli_collection.url }}" class="jvli-link-caps">
+          {{- section.settings.view_all_text -}}
+          {%- render 'jvli-icon', icon: 'arrow' -%}
+        </a>
+      {%- endif -%}
+    </div>
+
+    <div class="jvli-new-in__grid" style="--jvli-cols: {{ section.settings.products_to_show }};">
+      {%- if jvli_collection != blank and jvli_collection.products_count > 0 -%}
+        {%- for product in jvli_collection.products limit: section.settings.products_to_show -%}
+          {%- render 'jvli-product-card',
+            product: product,
+            add_text: section.settings.add_to_bag_text,
+            sizes: '(max-width: 749px) 70vw, (max-width: 1100px) 33vw, 20vw'
+          -%}
+        {%- endfor -%}
+      {%- else -%}
+        {%- for i in (1..section.settings.products_to_show) -%}
+          <article class="jvli-card jvli-card--placeholder">
+            <div class="jvli-card__media">{%- render 'jvli-media', placeholder: 'product-apparel-1', class: 'jvli-card__image' -%}</div>
+            <div class="jvli-card__info">
+              <span class="jvli-card__title">Product name</span>
+              <div class="jvli-card__price">₹799</div>
+              <div class="jvli-card__sizes jvli-card__sizes--static"><span>XS</span><span>S</span><span>M</span><span>L</span><span>XL</span></div>
+              <span class="jvli-card__add">{{ section.settings.add_to_bag_text }}</span>
+            </div>
+          </article>
+        {%- endfor -%}
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "JVLI New In",
+  "class": "jvli-section-new-in",
+  "settings": [
+    { "type": "collection", "id": "collection", "label": "Collection" },
+    { "type": "range", "id": "products_to_show", "label": "Products to show", "min": 3, "max": 6, "step": 1, "default": 5 },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "New In" },
+    { "type": "text", "id": "view_all_text", "label": "View all text", "default": "View all" },
+    { "type": "text", "id": "add_to_bag_text", "label": "Add to bag text", "default": "Add to bag" },
+    { "type": "header", "content": "Spacing" },
+    { "type": "range", "id": "padding_top", "label": "Top (desktop)", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 56 },
+    { "type": "range", "id": "padding_bottom", "label": "Bottom (desktop)", "min": 0, "max": 120, "step": 4, "unit": "px", "default": 36 },
+    { "type": "range", "id": "mobile_padding_top", "label": "Top (mobile)", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 40 },
+    { "type": "range", "id": "mobile_padding_bottom", "label": "Bottom (mobile)", "min": 0, "max": 80, "step": 4, "unit": "px", "default": 36 }
+  ],
+  "presets": [{ "name": "JVLI New In" }]
+}
+{% endschema %}

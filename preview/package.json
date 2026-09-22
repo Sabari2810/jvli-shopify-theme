@@ -1,0 +1,13 @@
+{
+  "name": "jvli-theme-preview",
+  "private": true,
+  "type": "module",
+  "description": "Renders the JVLI theme sections locally with sample data and screenshots them.",
+  "scripts": {
+    "render": "node render.mjs",
+    "shots": "node render.mjs && node screenshot.mjs"
+  },
+  "dependencies": {
+    "liquidjs": "^10.21.0"
+  }
+}

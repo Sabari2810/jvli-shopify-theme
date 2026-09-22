@@ -1,0 +1,58 @@
+{%- render 'jvli-assets' -%}
+<section class="jvli jvli-story jvli-paper">
+  <div class="jvli-story__media">
+    {%- render 'jvli-media',
+      image: section.settings.image,
+      alt: section.settings.image_alt,
+      sizes: '(max-width: 749px) 100vw, 50vw',
+      class: 'jvli-cover',
+      placeholder: 'lifestyle-2'
+    -%}
+  </div>
+  <div class="jvli-story__body">
+    <div class="jvli-story__text">
+      {%- if section.settings.eyebrow != blank -%}<p class="jvli-eyebrow">{{ section.settings.eyebrow }}</p>{%- endif -%}
+      <h2 class="jvli-h2">{{ section.settings.heading | newline_to_br }}</h2>
+      {%- if section.settings.text != blank -%}<div class="jvli-body">{{ section.settings.text }}</div>{%- endif -%}
+      {%- if section.settings.button_label != blank -%}
+        <a href="{{ section.settings.button_link | default: '#' }}" class="jvli-button jvli-button--dark">
+          {{- section.settings.button_label -}}
+          {%- render 'jvli-icon', icon: 'arrow' -%}
+        </a>
+      {%- endif -%}
+    </div>
+    {%- if section.settings.show_polaroid -%}
+      <figure class="jvli-polaroid jvli-story__polaroid">
+        <span class="jvli-polaroid__tape" aria-hidden="true"></span>
+        <div class="jvli-polaroid__photo">
+          {%- render 'jvli-media', image: section.settings.polaroid_image, sizes: '240px', class: 'jvli-cover', placeholder: 'image' -%}
+        </div>
+        {%- if section.settings.polaroid_caption != blank -%}
+          <figcaption class="jvli-handwriting">{{ section.settings.polaroid_caption | newline_to_br }}</figcaption>
+        {%- endif -%}
+      </figure>
+      {%- render 'jvli-sprig', class: 'jvli-story__sprig' -%}
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "JVLI Story",
+  "class": "jvli-section-story",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Image", "info": "1600 × 1150" },
+    { "type": "text", "id": "image_alt", "label": "Image description", "default": "Printed cotton fabric with jasmine flowers" },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "The JVLI way" },
+    { "type": "textarea", "id": "heading", "label": "Heading", "default": "Clothes that\nfeel like you." },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>We take inspiration from the colours, textures and everyday life of Tamil Nadu and create contemporary clothing made for your everyday moments.</p>" },
+    { "type": "text", "id": "button_label", "label": "Button", "default": "Our Story" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "header", "content": "Polaroid" },
+    { "type": "checkbox", "id": "show_polaroid", "label": "Show polaroid", "default": true },
+    { "type": "image_picker", "id": "polaroid_image", "label": "Polaroid photo", "info": "800 × 800" },
+    { "type": "textarea", "id": "polaroid_caption", "label": "Handwritten caption", "default": "Everyday\nis a story" }
+  ],
+  "presets": [{ "name": "JVLI Story" }]
+}
+{% endschema %}

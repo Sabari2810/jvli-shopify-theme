@@ -1,0 +1,10 @@
+{%- comment -%}
+  Fonts, styles and script shared by every JVLI section. Each section renders
+  this snippet so it works wherever it's placed; the browser fetches each file
+  once, and jvli-home.js guards against running twice.
+{%- endcomment -%}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500&family=Jost:wght@400;500&family=Newsreader:opsz,wght@6..72,300..500&family=Nothing+You+Could+Do&display=swap">
+{{ 'jvli-home.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'jvli-home.js' | asset_url }}" defer></script>

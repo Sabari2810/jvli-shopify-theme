@@ -1,0 +1,51 @@
+{%- render 'jvli-assets' -%}
+<section class="jvli jvli-fabric jvli-paper">
+  <div class="jvli-fabric__text">
+    <h2 class="jvli-fabric__heading">{{ section.settings.heading | newline_to_br }}</h2>
+    {%- if section.settings.text != blank -%}<div class="jvli-body">{{ section.settings.text }}</div>{%- endif -%}
+    {%- if section.settings.button_label != blank -%}
+      <a href="{{ section.settings.button_link | default: '#' }}" class="jvli-button jvli-button--outline-dark">
+        {{- section.settings.button_label -}}
+        {%- render 'jvli-icon', icon: 'arrow' -%}
+      </a>
+    {%- endif -%}
+  </div>
+  <div class="jvli-fabric__media">
+    {%- render 'jvli-media',
+      image: section.settings.image,
+      alt: section.settings.image_alt,
+      sizes: '(max-width: 749px) 100vw, 30vw',
+      class: 'jvli-cover',
+      placeholder: 'lifestyle-1'
+    -%}
+  </div>
+  <div class="jvli-fabric__aside">
+    <figure class="jvli-polaroid jvli-fabric__polaroid">
+      <div class="jvli-polaroid__photo">
+        {%- render 'jvli-media', image: section.settings.polaroid_image, sizes: '200px', class: 'jvli-cover', placeholder: 'image' -%}
+      </div>
+    </figure>
+    {%- if section.settings.note != blank -%}
+      <p class="jvli-handwriting jvli-fabric__note">{{ section.settings.note | newline_to_br }}</p>
+    {%- endif -%}
+    {%- render 'jvli-sprig', class: 'jvli-fabric__sprig' -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "JVLI Fabric",
+  "class": "jvli-section-fabric",
+  "settings": [
+    { "type": "textarea", "id": "heading", "label": "Heading", "default": "It starts\nwith the fabric." },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Every piece begins with the fabric. The colours, textures and prints influence what the garment becomes.</p>" },
+    { "type": "text", "id": "button_label", "label": "Button", "default": "Our Fabrics" },
+    { "type": "url", "id": "button_link", "label": "Button link" },
+    { "type": "image_picker", "id": "image", "label": "Fabric image", "info": "1600 × 1150" },
+    { "type": "text", "id": "image_alt", "label": "Image description", "default": "Folds of cream cotton with a red floral block print" },
+    { "type": "image_picker", "id": "polaroid_image", "label": "Polaroid photo", "info": "800 × 1000" },
+    { "type": "textarea", "id": "note", "label": "Handwritten note", "default": "Cotton\nfor brighter\ndays" }
+  ],
+  "presets": [{ "name": "JVLI Fabric" }]
+}
+{% endschema %}

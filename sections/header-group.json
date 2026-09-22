@@ -1,0 +1,59 @@
+{
+  "name": "t:sections.header.name",
+  "type": "header",
+  "sections": {
+    "jvli_announcement": {
+      "type": "jvli-announcement",
+      "settings": {
+        "text": "Made in Tamil Nadu — for everyday stories",
+        "side_text": "Free shipping on orders above ₹999",
+        "background": "#763530",
+        "text_color": "#ffffff"
+      }
+    },
+    "announcement-bar": {
+      "type": "announcement-bar",
+      "disabled": true,
+      "blocks": {
+        "announcement-bar-0": { "type": "announcement", "settings": { "text": "Made in Tamil Nadu · Designed for everyday", "link": "" } }
+      },
+      "block_order": ["announcement-bar-0"],
+      "custom_css": [
+        ".utility-bar {width: 100%; background: var(--var-jvli-maroon);}",
+        ".announcement-bar__message {color: white;}"
+      ],
+      "settings": {
+        "auto_rotate": false, "change_slides_speed": 5, "color_scheme": "scheme-1", "show_line_separator": true,
+        "show_social": false, "enable_country_selector": false, "enable_language_selector": false
+      }
+    },
+    "header": {
+      "type": "header",
+      "disabled": true,
+      "custom_css": [
+        ".cart-count-bubble {background: var(--var-jvli-maroon);}",
+        ".cart-notification__links .button--primary {background: var(--var-jvli-maroon);}"
+      ],
+      "settings": {
+        "logo_position": "middle-center", "mobile_logo_position": "center", "menu": "main-menu", "menu_type_desktop": "dropdown",
+        "sticky_header_type": "on-scroll-up", "show_line_separator": false, "color_scheme": "scheme-1", "menu_color_scheme": "scheme-1",
+        "enable_country_selector": true, "enable_language_selector": true, "enable_customer_avatar": true,
+        "margin_bottom": 24, "padding_top": 20, "padding_bottom": 0
+      }
+    },
+    "jvli_header_hUYPnU": {
+      "type": "jvli-header",
+      "name": "JVLI Header",
+      "settings": {
+        "logo_style": "text",
+        "logo_text": "JVLI",
+        "logo": "shopify://shop_images/Logo_-_PNG.png",
+        "logo_width": 110,
+        "menu": "main-menu",
+        "transparent_on_home": true,
+        "show_favorites": true
+      }
+    }
+  },
+  "order": ["jvli_announcement", "announcement-bar", "header", "jvli_header_hUYPnU"]
+}

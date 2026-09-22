@@ -1,0 +1,53 @@
+{%- render 'jvli-assets' -%}
+<section class="jvli jvli-banner" style="--jvli-overlay: {{ section.settings.overlay_opacity | divided_by: 100.0 }};">
+  <picture class="jvli-banner__media">
+    {%- if section.settings.mobile_image != blank -%}
+      <source
+        media="(max-width: 749px)"
+        srcset="{{ section.settings.mobile_image | image_url: width: 750 }} 750w, {{ section.settings.mobile_image | image_url: width: 1100 }} 1100w"
+        sizes="100vw"
+      >
+    {%- endif -%}
+    {%- render 'jvli-media',
+      image: section.settings.image,
+      alt: section.settings.image_alt,
+      sizes: '100vw',
+      class: 'jvli-cover',
+      position: section.settings.image_position,
+      placeholder: 'lifestyle-2'
+    -%}
+  </picture>
+  <div class="jvli-banner__content">
+    <h2 class="jvli-banner__heading">{{ section.settings.heading | newline_to_br }}</h2>
+    {%- if section.settings.text != blank -%}<p class="jvli-banner__text">{{ section.settings.text }}</p>{%- endif -%}
+    {%- if section.settings.link_label != blank -%}
+      <a href="{{ section.settings.link | default: '#' }}" class="jvli-link-caps jvli-link-caps--underline">
+        {{- section.settings.link_label -}}
+        {%- render 'jvli-icon', icon: 'arrow' -%}
+      </a>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "JVLI Banner",
+  "class": "jvli-section-banner",
+  "settings": [
+    { "type": "image_picker", "id": "image", "label": "Desktop image", "info": "2880 × 800. Keep the left third dark and calm for the text." },
+    { "type": "image_picker", "id": "mobile_image", "label": "Mobile image", "info": "1080 × 1080 (optional)" },
+    { "type": "text", "id": "image_alt", "label": "Image description", "default": "Temple gopuram between palm trees in Tamil Nadu" },
+    { "type": "select", "id": "image_position", "label": "Image focus", "default": "center center", "options": [
+      { "value": "left center", "label": "Left" },
+      { "value": "center center", "label": "Center" },
+      { "value": "right center", "label": "Right" }
+    ] },
+    { "type": "textarea", "id": "heading", "label": "Heading", "default": "Rooted\nin Tamil Nadu." },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "From its streets, homes, fabrics and people — Tamil Nadu is at the heart of everything we do." },
+    { "type": "text", "id": "link_label", "label": "Link text", "default": "Our Story" },
+    { "type": "url", "id": "link", "label": "Link" },
+    { "type": "range", "id": "overlay_opacity", "label": "Darkening behind the text", "min": 0, "max": 80, "step": 5, "unit": "%", "default": 45 }
+  ],
+  "presets": [{ "name": "JVLI Banner" }]
+}
+{% endschema %}

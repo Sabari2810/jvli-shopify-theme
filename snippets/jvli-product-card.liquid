@@ -1,0 +1,114 @@
+{%- comment -%}
+  Product card used by JVLI sections.
+  Params: product, add_text, sizes (image sizes attribute), loading.
+
+  Sizes: if the product has an option named "Size", each size is a radio
+  button whose value is the variant id, so the form posts the chosen variant
+  to /cart/add even without JavaScript. Otherwise the first available variant
+  is added. The heart carries the product GID for the global favorites
+  script (not wired up yet).
+{%- endcomment -%}
+{%- liquid
+  assign jvli_size_index = -1
+  for option in product.options_with_values
+    assign jvli_option_name = option.name | downcase | strip
+    if jvli_option_name == 'size' or jvli_option_name == 'sizes'
+      assign jvli_size_index = forloop.index0
+    endif
+  endfor
+  assign jvli_second_image = product.media[1].preview_image
+-%}
+<article class="jvli-card" data-jvli-card>
+  <div class="jvli-card__media">
+    <a href="{{ product.url }}" class="jvli-card__image-link" tabindex="-1" aria-hidden="true">
+      {%- render 'jvli-media',
+        image: product.featured_media.preview_image,
+        alt: product.title,
+        sizes: sizes,
+        loading: loading,
+        class: 'jvli-card__image',
+        placeholder: 'product-apparel-1'
+      -%}
+      {%- if jvli_second_image != blank -%}
+        {%- render 'jvli-media',
+          image: jvli_second_image,
+          alt: '',
+          sizes: sizes,
+          class: 'jvli-card__image jvli-card__image--hover'
+        -%}
+      {%- endif -%}
+    </a>
+    <button
+      type="button"
+      class="jvli-card__fav"
+      data-jvli-favorite
+      data-product-id="gid://shopify/Product/{{ product.id }}"
+      aria-pressed="false"
+      aria-label="Save {{ product.title | escape }} to favorites"
+    >
+      {%- render 'jvli-icon', icon: 'heart' -%}
+    </button>
+    {%- unless product.available -%}
+      <span class="jvli-card__badge">Sold out</span>
+    {%- endunless -%}
+  </div>
+
+  <div class="jvli-card__info">
+    <a href="{{ product.url }}" class="jvli-card__title">{{ product.title }}</a>
+    <div class="jvli-card__price">
+      {%- if product.compare_at_price > product.price -%}
+        <span class="jvli-card__price-sale">{{ product.price | money_without_trailing_zeros }}</span>
+        <s class="jvli-card__price-was">{{ product.compare_at_price | money_without_trailing_zeros }}</s>
+      {%- else -%}
+        {{- product.price | money_without_trailing_zeros -}}
+      {%- endif -%}
+    </div>
+
+    <form method="post" action="{{ routes.cart_add_url }}" class="jvli-card__form" data-jvli-add-form>
+      <input type="hidden" name="quantity" value="1">
+      {%- if jvli_size_index >= 0 and product.available -%}
+        <fieldset class="jvli-card__sizes">
+          <legend class="jvli-visually-hidden">Size</legend>
+          {%- for value in product.options_with_values[jvli_size_index].values -%}
+            {%- liquid
+              assign jvli_size_variant = nil
+              for variant in product.variants
+                if variant.options[jvli_size_index] == value and variant.available
+                  assign jvli_size_variant = variant
+                  break
+                endif
+              endfor
+              if jvli_size_variant == nil
+                for variant in product.variants
+                  if variant.options[jvli_size_index] == value
+                    assign jvli_size_variant = variant
+                    break
+                  endif
+                endfor
+              endif
+            -%}
+            {%- if jvli_size_variant -%}
+              <label class="jvli-card__size">
+                <input
+                  type="radio"
+                  name="id"
+                  value="{{ jvli_size_variant.id }}"
+                  required
+                  {% unless jvli_size_variant.available %}disabled{% endunless %}
+                >
+                <span>{{ value }}</span>
+              </label>
+            {%- endif -%}
+          {%- endfor -%}
+        </fieldset>
+      {%- else -%}
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+      {%- endif -%}
+
+      <button type="submit" class="jvli-card__add" {% unless product.available %}disabled{% endunless %}>
+        {%- if product.available -%}{{ add_text | default: 'Add to bag' }}{%- else -%}Sold out{%- endif -%}
+      </button>
+      <p class="jvli-card__message" role="status" data-jvli-add-message></p>
+    </form>
+  </div>
+</article>

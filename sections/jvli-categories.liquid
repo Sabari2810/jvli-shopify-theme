@@ -1,0 +1,69 @@
+{%- render 'jvli-assets' -%}
+<section class="jvli jvli-categories jvli-section">
+  <div class="jvli-container">
+    <div class="jvli-section-head">
+      <h2 class="jvli-h2">{{ section.settings.heading }}</h2>
+    </div>
+    <div class="jvli-categories__grid">
+      {%- for block in section.blocks -%}
+        {%- liquid
+          assign jvli_cat = block.settings.collection
+          assign jvli_cat_image = block.settings.image | default: jvli_cat.featured_image
+          assign jvli_cat_title = block.settings.title | default: jvli_cat.title
+          assign jvli_cat_url = block.settings.link | default: jvli_cat.url | default: routes.collections_url
+        -%}
+        <a href="{{ jvli_cat_url }}" class="jvli-category" {{ block.shopify_attributes }}>
+          <div class="jvli-category__media">
+            {%- render 'jvli-media',
+              image: jvli_cat_image,
+              alt: jvli_cat_title,
+              sizes: '(max-width: 749px) 50vw, 25vw',
+              class: 'jvli-cover',
+              placeholder: 'collection-apparel-1'
+            -%}
+          </div>
+          <div class="jvli-category__panel">
+            <h3 class="jvli-category__title">{{ jvli_cat_title | default: 'Category' }}</h3>
+            <span class="jvli-link-caps jvli-link-caps--small">
+              {{- block.settings.link_label -}}
+              {%- render 'jvli-icon', icon: 'arrow' -%}
+            </span>
+          </div>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "JVLI Categories",
+  "class": "jvli-section-categories",
+  "max_blocks": 6,
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Shop by Category" }
+  ],
+  "blocks": [
+    {
+      "type": "category",
+      "name": "Category",
+      "settings": [
+        { "type": "collection", "id": "collection", "label": "Collection" },
+        { "type": "image_picker", "id": "image", "label": "Image", "info": "1200 × 1080. Defaults to the collection image." },
+        { "type": "text", "id": "title", "label": "Title", "info": "Defaults to the collection title." },
+        { "type": "url", "id": "link", "label": "Link", "info": "Defaults to the collection." },
+        { "type": "text", "id": "link_label", "label": "Link text", "default": "Shop now" }
+      ]
+    }
+  ],
+  "presets": [{
+    "name": "JVLI Categories",
+    "blocks": [
+      { "type": "category", "settings": { "title": "Short Kurtis" } },
+      { "type": "category", "settings": { "title": "Long Kurtis" } },
+      { "type": "category", "settings": { "title": "Everyday Edits" } },
+      { "type": "category", "settings": { "title": "New In" } }
+    ]
+  }]
+}
+{% endschema %}

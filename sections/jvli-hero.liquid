@@ -1,0 +1,149 @@
+{%- render 'jvli-assets' -%}
+{%- liquid
+  assign jvli_slide_count = section.blocks.size | plus: 1
+-%}
+<section
+  class="jvli jvli-hero"
+  style="--jvli-overlay: {{ section.settings.overlay_opacity | divided_by: 100.0 }};"
+  data-jvli-hero
+  data-autoplay="{{ section.settings.autoplay_seconds }}"
+>
+  <div class="jvli-hero__slides">
+    <div class="jvli-hero__slide is-active" data-jvli-slide>
+      <picture class="jvli-hero__media">
+        {%- if section.settings.mobile_image != blank -%}
+          <source
+            media="(max-width: 749px)"
+            srcset="{{ section.settings.mobile_image | image_url: width: 750 }} 750w, {{ section.settings.mobile_image | image_url: width: 1100 }} 1100w"
+            sizes="100vw"
+          >
+        {%- endif -%}
+        {%- render 'jvli-media',
+          image: section.settings.hero_image,
+          alt: section.settings.heading,
+          sizes: '100vw',
+          loading: 'eager',
+          class: 'jvli-hero__image',
+          position: section.settings.image_position,
+          placeholder: 'lifestyle-1'
+        -%}
+      </picture>
+      <div class="jvli-hero__content">
+        {%- if section.settings.eyebrow != blank -%}
+          <p class="jvli-eyebrow">{{ section.settings.eyebrow }}</p>
+        {%- endif -%}
+        <h1 class="jvli-hero__heading">{{ section.settings.heading | newline_to_br }}</h1>
+        <div class="jvli-hero__buttons">
+          {%- if section.settings.primary_label != blank -%}
+            <a href="{{ section.settings.primary_link | default: routes.all_products_collection_url }}" class="jvli-button jvli-button--light">
+              {{- section.settings.primary_label -}}
+              {%- render 'jvli-icon', icon: 'arrow' -%}
+            </a>
+          {%- endif -%}
+          {%- if section.settings.secondary_label != blank -%}
+            <a href="{{ section.settings.secondary_link | default: '#' }}" class="jvli-button jvli-button--outline-light">
+              {{- section.settings.secondary_label -}}
+            </a>
+          {%- endif -%}
+        </div>
+      </div>
+    </div>
+
+    {%- for block in section.blocks -%}
+      <div class="jvli-hero__slide" data-jvli-slide {{ block.shopify_attributes }} aria-hidden="true">
+        <picture class="jvli-hero__media">
+          {%- if block.settings.mobile_image != blank -%}
+            <source
+              media="(max-width: 749px)"
+              srcset="{{ block.settings.mobile_image | image_url: width: 750 }} 750w, {{ block.settings.mobile_image | image_url: width: 1100 }} 1100w"
+              sizes="100vw"
+            >
+          {%- endif -%}
+          {%- render 'jvli-media',
+            image: block.settings.image,
+            alt: block.settings.heading,
+            sizes: '100vw',
+            class: 'jvli-hero__image',
+            placeholder: 'lifestyle-2'
+          -%}
+        </picture>
+        <div class="jvli-hero__content">
+          {%- if block.settings.eyebrow != blank -%}
+            <p class="jvli-eyebrow">{{ block.settings.eyebrow }}</p>
+          {%- endif -%}
+          <h2 class="jvli-hero__heading">{{ block.settings.heading | newline_to_br }}</h2>
+          <div class="jvli-hero__buttons">
+            {%- if block.settings.primary_label != blank -%}
+              <a href="{{ block.settings.primary_link | default: '#' }}" class="jvli-button jvli-button--light">
+                {{- block.settings.primary_label -}}
+                {%- render 'jvli-icon', icon: 'arrow' -%}
+              </a>
+            {%- endif -%}
+            {%- if block.settings.secondary_label != blank -%}
+              <a href="{{ block.settings.secondary_link | default: '#' }}" class="jvli-button jvli-button--outline-light">
+                {{- block.settings.secondary_label -}}
+              </a>
+            {%- endif -%}
+          </div>
+        </div>
+      </div>
+    {%- endfor -%}
+  </div>
+
+  {%- if jvli_slide_count > 1 -%}
+    <div class="jvli-hero__pager">
+      {%- for i in (1..jvli_slide_count) -%}
+        <button type="button" class="jvli-hero__dot{% if forloop.first %} is-active{% endif %}" data-jvli-dot="{{ forloop.index0 }}" aria-label="Show slide {{ i }}"></button>
+      {%- endfor -%}
+      <button type="button" class="jvli-hero__next" data-jvli-next aria-label="Next slide">
+        {%- render 'jvli-icon', icon: 'arrow' -%}
+      </button>
+    </div>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "JVLI Hero",
+  "class": "jvli-section-hero",
+  "max_blocks": 5,
+  "settings": [
+    { "type": "header", "content": "First slide" },
+    { "type": "image_picker", "id": "hero_image", "label": "Desktop image", "info": "2400 × 1400. Keep the left side calm for the text." },
+    { "type": "image_picker", "id": "mobile_image", "label": "Mobile image", "info": "1080 × 1350. Keep the bottom calm for the text." },
+    { "type": "select", "id": "image_position", "label": "Desktop image focus", "default": "center center", "options": [
+      { "value": "left center", "label": "Left" },
+      { "value": "center center", "label": "Center" },
+      { "value": "right center", "label": "Right" },
+      { "value": "center top", "label": "Top" },
+      { "value": "center bottom", "label": "Bottom" }
+    ] },
+    { "type": "text", "id": "eyebrow", "label": "Eyebrow", "default": "Clothes for real life" },
+    { "type": "textarea", "id": "heading", "label": "Heading", "info": "Press Enter for a line break.", "default": "Made for\neveryday stories." },
+    { "type": "text", "id": "primary_label", "label": "Primary button", "default": "Shop New In" },
+    { "type": "url", "id": "primary_link", "label": "Primary button link" },
+    { "type": "text", "id": "secondary_label", "label": "Secondary button", "default": "Our Story" },
+    { "type": "url", "id": "secondary_link", "label": "Secondary button link" },
+    { "type": "header", "content": "Style" },
+    { "type": "range", "id": "overlay_opacity", "label": "Image darkening", "min": 0, "max": 60, "step": 5, "unit": "%", "default": 30 },
+    { "type": "range", "id": "autoplay_seconds", "label": "Change slides every", "info": "Only when there's more than one slide. 0 turns autoplay off.", "min": 0, "max": 12, "step": 1, "unit": "s", "default": 6 }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Extra slide",
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Desktop image" },
+        { "type": "image_picker", "id": "mobile_image", "label": "Mobile image" },
+        { "type": "text", "id": "eyebrow", "label": "Eyebrow" },
+        { "type": "textarea", "id": "heading", "label": "Heading", "default": "New slide" },
+        { "type": "text", "id": "primary_label", "label": "Primary button" },
+        { "type": "url", "id": "primary_link", "label": "Primary button link" },
+        { "type": "text", "id": "secondary_label", "label": "Secondary button" },
+        { "type": "url", "id": "secondary_link", "label": "Secondary button link" }
+      ]
+    }
+  ],
+  "presets": [{ "name": "JVLI Hero" }]
+}
+{% endschema %}

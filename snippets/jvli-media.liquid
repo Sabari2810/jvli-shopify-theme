@@ -1,0 +1,29 @@
+{%- comment -%}
+  Responsive image, or a placeholder until an image is chosen.
+  Params: image, sizes, class, alt, loading ('lazy'|'eager'), position
+  (object-position), placeholder (placeholder_svg_tag name).
+{%- endcomment -%}
+{%- if image != blank -%}
+  {%- assign jvli_widths = '360,540,720,960,1200,1500,1800,2400' | split: ',' -%}
+  <img
+    src="{{ image | image_url: width: 1500 }}"
+    srcset="
+      {%- for w in jvli_widths -%}
+        {%- assign wn = w | plus: 0 -%}
+        {%- if image.width >= wn -%}{{ image | image_url: width: wn }} {{ wn }}w,{%- endif -%}
+      {%- endfor -%}
+      {{ image | image_url }} {{ image.width }}w"
+    sizes="{{ sizes | default: '100vw' }}"
+    width="{{ image.width }}"
+    height="{{ image.height }}"
+    alt="{{ alt | default: image.alt | escape }}"
+    class="{{ class }}"
+    loading="{{ loading | default: 'lazy' }}"
+    {%- if loading == 'eager' %} fetchpriority="high"{% endif %}
+    {%- if position != blank %} style="object-position: {{ position }};"{% endif -%}
+  >
+{%- else -%}
+  <div class="jvli-placeholder {{ class }}">
+    {{- placeholder | default: 'image' | placeholder_svg_tag: 'jvli-placeholder__svg' -}}
+  </div>
+{%- endif -%}
