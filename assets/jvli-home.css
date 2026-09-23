@@ -3295,8 +3295,11 @@ a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
     grid-template-columns: 1fr;
   }
 
+  /* Explicit height: Safari collapsed the photo with aspect-ratio plus the
+     desktop min-height. */
   .jvli-story__media {
-    aspect-ratio: 4 / 3;
+    min-height: 0;
+    height: 75vw;
   }
 
   .jvli-story__body {
@@ -3365,32 +3368,39 @@ a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
     padding: 44px var(--jvli-gutter) 28px;
   }
 
+  /* Explicit height (4:3 of the inset width): Safari collapsed the photo
+     with aspect-ratio plus the desktop min-height. */
   .jvli-fabric__media {
-    aspect-ratio: 4 / 3;
+    min-height: 0;
+    height: calc((100vw - 2 * var(--jvli-gutter)) * 0.75);
     margin: 0 var(--jvli-gutter);
   }
 
-  /* Tall enough for the tilted polaroid, with room below it. */
+  /* The polaroid overlaps the photo's bottom-left corner; the note sits
+     beside it, so there's no tall empty block. */
   .jvli-fabric__aside {
-    min-height: 340px;
+    min-height: 0;
+    height: 190px;
   }
 
   .jvli-fabric__polaroid {
-    left: var(--jvli-gutter);
-    top: 36px;
-    width: 46%;
-    max-width: 190px;
+    z-index: 1;
+    left: calc(var(--jvli-gutter) + 10px);
+    top: -84px;
+    width: 36%;
+    max-width: 160px;
   }
 
   .jvli-fabric__note {
-    left: 58%;
-    top: 60px;
+    left: 50%;
+    top: 34px;
     font-size: 20px;
   }
 
   .jvli-fabric__sprig {
-    left: 72%;
-    bottom: 24px;
+    left: auto;
+    right: var(--jvli-gutter);
+    bottom: 26px;
   }
 
   .jvli-gallery {
