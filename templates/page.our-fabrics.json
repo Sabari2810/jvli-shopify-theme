@@ -17,6 +17,7 @@
         "fabric_mul": {
           "type": "fabric",
           "settings": {
+            "image": "shopify://shop_images/jvli-fabric-mul-cotton.webp",
             "name": "Mul Cotton",
             "text": "Lightweight, airy and soft on the skin. Mul cotton has a beautiful natural texture that makes it easy to wear all day.",
             "feature_1_icon": "feather", "feature_1": "Featherlight",
