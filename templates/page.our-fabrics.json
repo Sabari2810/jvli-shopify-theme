@@ -50,6 +50,7 @@
         "fabric_handloom": {
           "type": "fabric",
           "settings": {
+            "image": "shopify://shop_images/jvli-fabric-handloom-cotton.webp",
             "name": "Handloom Cotton",
             "text": "Woven on traditional looms, handloom cotton has a distinct texture and character. It's breathable, durable and always in style.",
             "feature_1_icon": "sprout", "feature_1": "Naturally breathable",
