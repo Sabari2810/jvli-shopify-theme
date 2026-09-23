@@ -322,6 +322,13 @@ const globals = {
   request: { page_type: (process.env.TEMPLATE || "index").split(".")[0] },
   product: sampleProductPage(),
   collection: sampleCollectionPage(),
+  // /collections: a few collections, including a tax one that should be hidden.
+  collections: [
+    { title: "New In", handle: "new-in", url: "/collections/new-in", all_products_count: 5, featured_image: standin("jvli_categories.cat_new.image"), products: sampleProducts, published_at: "2026-09-01" },
+    { title: "Sarees", handle: "sarees", url: "/collections/sarees", all_products_count: 1, featured_image: null, products: [sampleProducts[2]], published_at: "2026-08-01" },
+    { title: "gst-5", handle: "gst-5", url: "/collections/gst-5", all_products_count: 9, featured_image: null, products: [], published_at: "2026-01-01" },
+    { title: "Short Kurtis", handle: "short-kurtis", url: "/collections/short-kurtis", all_products_count: 3, featured_image: standin("jvli_categories.cat_short.image"), products: sampleProducts, published_at: "2026-07-01" },
+  ],
   recommendations: { performed: false },
 };
 

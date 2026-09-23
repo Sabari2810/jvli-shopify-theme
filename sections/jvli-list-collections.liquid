@@ -1,0 +1,95 @@
+{%- render 'jvli-assets' -%}
+{%- comment -%}
+  /collections: every collection as a JVLI collection card (the same card as
+  the home page's Shop by Collections). Collections whose handles are listed
+  in "Hide collections" are left out.
+{%- endcomment -%}
+{%- liquid
+  assign hidden = section.settings.hidden_handles | downcase | remove: ' ' | split: ','
+  case section.settings.sort
+    when 'products_high'
+      assign sorted = collections | sort: 'all_products_count' | reverse
+    when 'products_low'
+      assign sorted = collections | sort: 'all_products_count'
+    when 'date'
+      assign sorted = collections | sort: 'published_at' | reverse
+    else
+      assign sorted = collections | sort: 'title'
+  endcase
+-%}
+
+<section class="jvli jvli-collection jvli-collections-list">
+  <div class="jvli-container">
+    <header class="jvli-collection__head">
+      <h1 class="jvli-collection__title">{{ section.settings.title }}</h1>
+      {%- if section.settings.text != blank -%}
+        <div class="jvli-collection__description">{{ section.settings.text }}</div>
+      {%- endif -%}
+    </header>
+
+    <div class="jvli-categories__grid jvli-collections-list__grid">
+      {%- for item in sorted -%}
+        {%- if hidden contains item.handle -%}{%- continue -%}{%- endif -%}
+        {%- liquid
+          assign item_image = item.featured_image | default: item.products.first.featured_media.preview_image
+        -%}
+        <a href="{{ item.url }}" class="jvli-category">
+          <div class="jvli-category__media">
+            {%- render 'jvli-media',
+              image: item_image,
+              alt: item.title,
+              sizes: '(max-width: 749px) 50vw, 25vw',
+              class: 'jvli-cover',
+              placeholder: 'collection-apparel-1'
+            -%}
+          </div>
+          <div class="jvli-category__panel">
+            <h2 class="jvli-category__title">{{ item.title }}</h2>
+            {%- if section.settings.show_count -%}
+              <p class="jvli-collections-list__count">
+                {{ item.all_products_count }}
+                {% if item.all_products_count == 1 %}piece{% else %}pieces{% endif %}
+              </p>
+            {%- endif -%}
+            <span class="jvli-link-caps jvli-link-caps--small">
+              {{- section.settings.link_label -}}
+              {%- render 'jvli-icon', icon: 'arrow' -%}
+            </span>
+          </div>
+        </a>
+      {%- endfor -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "JVLI Collections list",
+  "class": "jvli-section-collections-list",
+  "settings": [
+    { "type": "text", "id": "title", "label": "Heading", "default": "Collections" },
+    { "type": "textarea", "id": "text", "label": "Text", "default": "Everyday kurtis and sarees, block printed and made in Tamil Nadu." },
+    {
+      "type": "select",
+      "id": "sort",
+      "label": "Order",
+      "default": "alphabetical",
+      "options": [
+        { "value": "alphabetical", "label": "Alphabetical" },
+        { "value": "products_high", "label": "Most products first" },
+        { "value": "products_low", "label": "Fewest products first" },
+        { "value": "date", "label": "Newest first" }
+      ]
+    },
+    { "type": "checkbox", "id": "show_count", "label": "Show number of pieces", "default": true },
+    { "type": "text", "id": "link_label", "label": "Link text", "default": "Shop now" },
+    {
+      "type": "text",
+      "id": "hidden_handles",
+      "label": "Hide collections",
+      "default": "frontpage, gst-5, gst-18",
+      "info": "Collection handles to leave out, separated by commas (e.g. tax or internal collections)."
+    }
+  ]
+}
+{% endschema %}

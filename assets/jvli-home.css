@@ -2130,6 +2130,19 @@ a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
   transform: rotate(180deg);
 }
 
+/* /collections: the same collection cards, in left-aligned rows. */
+.jvli-collections-list__grid {
+  justify-content: flex-start;
+  row-gap: clamp(20px, 2.2vw, 36px);
+  margin-top: clamp(8px, 1vw, 16px);
+}
+
+.jvli-collections-list__count {
+  margin: -8px 0 14px;
+  color: var(--jvli-ink-soft);
+  font-size: 13px;
+}
+
 /* ==========================================================================
    Favorites page
    ========================================================================== */
