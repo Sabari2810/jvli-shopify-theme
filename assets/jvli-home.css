@@ -2673,6 +2673,20 @@ a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
   border-top: 0;
 }
 
+/* Footer links: no underline (Sense underlines them), a thin one on hover. */
+.shopify-section-group-footer-group .footer a.link,
+.shopify-section-group-footer-group .footer .list-menu__item--link {
+  text-decoration: none;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1px;
+}
+
+.shopify-section-group-footer-group .footer a.link:hover,
+.shopify-section-group-footer-group .footer .list-menu__item--link:hover {
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+}
+
 /* "Let's stay in touch": Sense's newsletter signup, centred, with the social
    icons below it instead of beside it. */
 .shopify-section-group-footer-group .footer-block--newsletter {
