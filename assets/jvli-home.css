@@ -1678,8 +1678,9 @@ a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
     margin: 0 var(--jvli-gutter);
   }
 
+  /* Tall enough for the tilted polaroid, with room below it. */
   .jvli-fabric__aside {
-    min-height: 300px;
+    min-height: 340px;
   }
 
   .jvli-fabric__polaroid {
@@ -1698,6 +1699,10 @@ a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
   .jvli-fabric__sprig {
     left: 72%;
     bottom: 24px;
+  }
+
+  .jvli-gallery {
+    padding-top: 44px;
   }
 
   .jvli-gallery__head {
