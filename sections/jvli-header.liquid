@@ -49,7 +49,6 @@
       {%- if section.settings.show_favorites -%}
         <a href="{{ jvli_fav_url }}" class="jvli-header__icon jvli-header__icon--favorites" aria-label="Favorites">
           {%- render 'jvli-icon', icon: 'heart' -%}
-          <span class="jvli-header__count jvli-header__count--favorites" data-jvli-favorites-count hidden>0</span>
         </a>
       {%- endif -%}
       <a href="{{ routes.cart_url }}" class="jvli-header__icon jvli-header__icon--bag" aria-label="Bag, {{ cart.item_count }} items">
