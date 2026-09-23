@@ -1,0 +1,67 @@
+{
+  "sections": {
+    "our_fabrics": {
+      "type": "jvli-our-fabrics",
+      "blocks": {
+        "fabric_cotton": {
+          "type": "fabric",
+          "settings": {
+            "image": "shopify://shop_images/jvli-fabric-cotton.webp",
+            "name": "Cotton",
+            "text": "Light, breathable and perfect for everyday wear. Cotton keeps you comfortable through Chennai heat and busy days.",
+            "feature_1_icon": "leaf", "feature_1": "Breathable",
+            "feature_2_icon": "waves", "feature_2": "Soft & comfortable",
+            "feature_3_icon": "sun", "feature_3": "Ideal for everyday"
+          }
+        },
+        "fabric_mul": {
+          "type": "fabric",
+          "settings": {
+            "name": "Mul Cotton",
+            "text": "Lightweight, airy and soft on the skin. Mul cotton has a beautiful natural texture that makes it easy to wear all day.",
+            "feature_1_icon": "feather", "feature_1": "Featherlight",
+            "feature_2_icon": "cloud", "feature_2": "Soft feel",
+            "feature_3_icon": "heat", "feature_3": "Great for warm weather"
+          }
+        },
+        "fabric_block": {
+          "type": "fabric",
+          "settings": {
+            "image": "shopify://shop_images/jvli-fabric-block-print.webp",
+            "name": "Hand Block Prints",
+            "text": "Thoughtfully printed designs, inspired by traditional techniques. Each piece carries the charm of handmade imperfections.",
+            "feature_1_icon": "heart", "feature_1": "Unique patterns",
+            "feature_2_icon": "hand", "feature_2": "Artisanal craft",
+            "feature_3_icon": "shirt", "feature_3": "Timeless appeal"
+          }
+        },
+        "fabric_linen": {
+          "type": "fabric",
+          "settings": {
+            "name": "Linen",
+            "text": "Crisp, breathable and gets softer with every wear. Linen is easy, effortless and perfect for days when you want to keep it simple.",
+            "feature_1_icon": "wind", "feature_1": "Breathable",
+            "feature_2_icon": "leaf", "feature_2": "Gets softer over time",
+            "feature_3_icon": "sparkle", "feature_3": "A relaxed, natural look"
+          }
+        },
+        "fabric_handloom": {
+          "type": "fabric",
+          "settings": {
+            "name": "Handloom Cotton",
+            "text": "Woven on traditional looms, handloom cotton has a distinct texture and character. It's breathable, durable and always in style.",
+            "feature_1_icon": "sprout", "feature_1": "Naturally breathable",
+            "feature_2_icon": "sun", "feature_2": "Durable",
+            "feature_3_icon": "heart", "feature_3": "Supports traditional weaving communities"
+          }
+        }
+      },
+      "block_order": ["fabric_cotton", "fabric_mul", "fabric_block", "fabric_linen", "fabric_handloom"],
+      "settings": {
+        "hero_image": "shopify://shop_images/jvli-story-fabric-stack.webp",
+        "closing_image": "shopify://shop_images/jvli-story-wall-chair.webp"
+      }
+    }
+  },
+  "order": ["our_fabrics"]
+}

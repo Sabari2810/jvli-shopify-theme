@@ -1,0 +1,161 @@
+{%- render 'jvli-assets' -%}
+{%- comment -%}
+  Our Fabrics page:
+  1. Hero: photo fading into the paper, handwritten note, heading and text.
+  2. Top fabrics: heading, intro and one card per "fabric" block (photo,
+     number, name, text and three features with icons).
+  3. Closing banner: photo fading into the paper, heading and text.
+  On phones the hero and banner stack, and the fabric cards scroll sideways.
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+-%}
+<section class="jvli jvli-paper jvli-fabrics">
+
+  {%- comment -%} 1. Hero {%- endcomment -%}
+  <div class="jvli-fabrics__feature jvli-fabrics__hero">
+    <div class="jvli-fabrics__feature-media">
+      {%- render 'jvli-media', image: s.hero_image, alt: s.hero_alt, sizes: '(max-width: 749px) 100vw, 62vw', class: 'jvli-cover', loading: 'eager', placeholder: 'lifestyle-1' -%}
+      {%- if s.hero_note != blank -%}
+        <p class="jvli-fabrics__note jvli-handwriting">{{ s.hero_note | newline_to_br }}</p>
+      {%- endif -%}
+    </div>
+    <div class="jvli-fabrics__feature-text">
+      {%- if s.hero_eyebrow != blank -%}
+        <p class="jvli-eyebrow jvli-fabrics__eyebrow">{{ s.hero_eyebrow }}</p>
+      {%- endif -%}
+      <h1 class="jvli-fabrics__title">{{ s.hero_heading }}</h1>
+      <div class="jvli-fabrics__body">{{ s.hero_text }}</div>
+    </div>
+  </div>
+
+  {%- comment -%} 2. Top fabrics {%- endcomment -%}
+  <div class="jvli-container jvli-fabrics__list">
+    <div class="jvli-fabrics__head">
+      <div>
+        {%- if s.list_eyebrow != blank -%}
+          <p class="jvli-eyebrow jvli-fabrics__eyebrow">{{ s.list_eyebrow }}</p>
+        {%- endif -%}
+        <h2 class="jvli-h2 jvli-fabrics__heading">{{ s.list_heading }}</h2>
+      </div>
+      {%- if s.list_intro != blank -%}
+        <p class="jvli-fabrics__intro">{{ s.list_intro }}</p>
+      {%- endif -%}
+    </div>
+
+    <ol class="jvli-fabrics__grid" role="list">
+      {%- for block in section.blocks -%}
+        <li class="jvli-fabric-card" {{ block.shopify_attributes }}>
+          <div class="jvli-fabric-card__media">
+            {%- render 'jvli-media', image: block.settings.image, alt: block.settings.name, sizes: '(max-width: 749px) 78vw, (max-width: 1100px) 32vw, 19vw', class: 'jvli-cover', placeholder: 'image' -%}
+          </div>
+          <p class="jvli-fabric-card__number">{{ forloop.index | prepend: '0' | slice: -2, 2 }}</p>
+          <h3 class="jvli-fabric-card__name">{{ block.settings.name }}</h3>
+          <p class="jvli-fabric-card__text">{{ block.settings.text }}</p>
+          <ul class="jvli-fabric-card__features" role="list">
+            {%- for n in (1..3) -%}
+              {%- liquid
+                assign feature_key = 'feature_' | append: n
+                assign icon_key = feature_key | append: '_icon'
+                assign feature = block.settings[feature_key]
+              -%}
+              {%- if feature != blank -%}
+                <li>
+                  {%- render 'jvli-fabric-icon', icon: block.settings[icon_key] -%}
+                  <span>{{ feature }}</span>
+                </li>
+              {%- endif -%}
+            {%- endfor -%}
+          </ul>
+        </li>
+      {%- endfor -%}
+    </ol>
+  </div>
+
+  {%- comment -%} 3. Closing banner {%- endcomment -%}
+  <div class="jvli-fabrics__feature jvli-fabrics__closing">
+    <div class="jvli-fabrics__feature-media">
+      {%- render 'jvli-media', image: s.closing_image, alt: '', sizes: '(max-width: 749px) 100vw, 62vw', class: 'jvli-cover', placeholder: 'lifestyle-2' -%}
+    </div>
+    <div class="jvli-fabrics__feature-text">
+      {%- if s.closing_eyebrow != blank -%}
+        <p class="jvli-eyebrow jvli-fabrics__eyebrow">{{ s.closing_eyebrow }}</p>
+      {%- endif -%}
+      <h2 class="jvli-fabrics__closing-heading">{{ s.closing_heading }}</h2>
+      <span class="jvli-fabrics__rule" aria-hidden="true"></span>
+      <div class="jvli-fabrics__body">{{ s.closing_text }}</div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "JVLI Our Fabrics",
+  "class": "jvli-section-our-fabrics",
+  "settings": [
+    { "type": "header", "content": "Top" },
+    { "type": "image_picker", "id": "hero_image", "label": "Photo", "info": "Landscape, about 1800 × 1100. The right side fades into the page, so keep the subject on the left." },
+    { "type": "text", "id": "hero_alt", "label": "Photo description", "default": "Folded block-printed and handloom fabrics" },
+    { "type": "textarea", "id": "hero_note", "label": "Handwritten note", "default": "Woven\nDyed\nWorn\nHere" },
+    { "type": "text", "id": "hero_eyebrow", "label": "Small heading", "default": "Our fabrics" },
+    { "type": "text", "id": "hero_heading", "label": "Heading", "default": "Fabric from here. For your everyday." },
+    { "type": "richtext", "id": "hero_text", "label": "Text", "default": "<p>Tamil Nadu has a rich textile history, and we love working with fabrics that are rooted in the region. They're breathable, comfortable and perfect for everyday wear, just the way we like it.</p>" },
+
+    { "type": "header", "content": "Fabrics" },
+    { "type": "text", "id": "list_eyebrow", "label": "Small heading", "default": "Our top 5" },
+    { "type": "text", "id": "list_heading", "label": "Heading", "default": "Tamil Nadu Fabrics We Love" },
+    { "type": "textarea", "id": "list_intro", "label": "Intro", "default": "Every fabric has its own story. Here are a few we keep coming back to." },
+
+    { "type": "header", "content": "Bottom" },
+    { "type": "image_picker", "id": "closing_image", "label": "Photo", "info": "Landscape, about 1800 × 1000. Keep the subject on the left." },
+    { "type": "text", "id": "closing_eyebrow", "label": "Small heading", "default": "Good fabrics. Brighter days." },
+    { "type": "text", "id": "closing_heading", "label": "Heading", "default": "Clothes feel different when the fabric feels right." },
+    { "type": "richtext", "id": "closing_text", "label": "Text", "default": "<p>We choose fabrics that are comfortable, versatile and made for real life. Because great days often start with what you wear.</p>" }
+  ],
+  "blocks": [
+    {
+      "type": "fabric",
+      "name": "Fabric",
+      "limit": 8,
+      "settings": [
+        { "type": "image_picker", "id": "image", "label": "Photo", "info": "Portrait, about 800 × 1050" },
+        { "type": "text", "id": "name", "label": "Name", "default": "Cotton" },
+        { "type": "textarea", "id": "text", "label": "Text" },
+        { "type": "select", "id": "feature_1_icon", "label": "Feature 1 icon", "default": "leaf", "options": [
+          { "value": "leaf", "label": "Leaf" }, { "value": "waves", "label": "Soft waves" }, { "value": "sun", "label": "Sun" },
+          { "value": "feather", "label": "Feather" }, { "value": "cloud", "label": "Cloud" }, { "value": "heat", "label": "Heat" },
+          { "value": "heart", "label": "Heart" }, { "value": "hand", "label": "Hand" }, { "value": "shirt", "label": "Top" },
+          { "value": "wind", "label": "Breeze" }, { "value": "sparkle", "label": "Sparkle" }, { "value": "sprout", "label": "Sprout" }
+        ] },
+        { "type": "text", "id": "feature_1", "label": "Feature 1" },
+        { "type": "select", "id": "feature_2_icon", "label": "Feature 2 icon", "default": "waves", "options": [
+          { "value": "leaf", "label": "Leaf" }, { "value": "waves", "label": "Soft waves" }, { "value": "sun", "label": "Sun" },
+          { "value": "feather", "label": "Feather" }, { "value": "cloud", "label": "Cloud" }, { "value": "heat", "label": "Heat" },
+          { "value": "heart", "label": "Heart" }, { "value": "hand", "label": "Hand" }, { "value": "shirt", "label": "Top" },
+          { "value": "wind", "label": "Breeze" }, { "value": "sparkle", "label": "Sparkle" }, { "value": "sprout", "label": "Sprout" }
+        ] },
+        { "type": "text", "id": "feature_2", "label": "Feature 2" },
+        { "type": "select", "id": "feature_3_icon", "label": "Feature 3 icon", "default": "sun", "options": [
+          { "value": "leaf", "label": "Leaf" }, { "value": "waves", "label": "Soft waves" }, { "value": "sun", "label": "Sun" },
+          { "value": "feather", "label": "Feather" }, { "value": "cloud", "label": "Cloud" }, { "value": "heat", "label": "Heat" },
+          { "value": "heart", "label": "Heart" }, { "value": "hand", "label": "Hand" }, { "value": "shirt", "label": "Top" },
+          { "value": "wind", "label": "Breeze" }, { "value": "sparkle", "label": "Sparkle" }, { "value": "sprout", "label": "Sprout" }
+        ] },
+        { "type": "text", "id": "feature_3", "label": "Feature 3" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "JVLI Our Fabrics",
+      "blocks": [
+        { "type": "fabric", "settings": { "name": "Cotton" } },
+        { "type": "fabric", "settings": { "name": "Mul Cotton" } },
+        { "type": "fabric", "settings": { "name": "Hand Block Prints" } },
+        { "type": "fabric", "settings": { "name": "Linen" } },
+        { "type": "fabric", "settings": { "name": "Handloom Cotton" } }
+      ]
+    }
+  ]
+}
+{% endschema %}
