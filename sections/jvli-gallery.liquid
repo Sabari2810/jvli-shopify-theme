@@ -21,6 +21,7 @@
       {% if section.settings.instagram_feed_url != blank %}
         data-jvli-reels="{{ section.settings.instagram_feed_url | escape }}"
         data-jvli-reels-count="{{ section.settings.reels_count }}"
+        data-jvli-reels-display="{{ section.settings.reels_display }}"
       {% endif %}
     >
       {%- for block in section.blocks limit: section.settings.reels_count -%}
@@ -60,7 +61,18 @@
       "default": "https://jvli-shopify-instagram.thejvlistore.workers.dev/reels",
       "info": "Shows your latest Instagram reels. Leave empty to show only the photos below; they are also shown if the feed can't be reached."
     },
-    { "type": "range", "id": "reels_count", "label": "Number of items", "min": 3, "max": 8, "step": 1, "default": 4 }
+    { "type": "range", "id": "reels_count", "label": "Number of items", "min": 3, "max": 8, "step": 1, "default": 4 },
+    {
+      "type": "select",
+      "id": "reels_display",
+      "label": "Show reels as",
+      "default": "embed",
+      "options": [
+        { "value": "embed", "label": "Instagram embeds (play on the page)" },
+        { "value": "tiles", "label": "Tiles (open Instagram)" }
+      ],
+      "info": "Embeds load Instagram's player when the section scrolls into view. If it can't load, tiles are shown."
+    }
   ],
   "blocks": [
     {

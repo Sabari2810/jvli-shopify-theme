@@ -1283,6 +1283,50 @@ a.jvli-gallery__item:hover .jvli-cover {
   opacity: 0;
 }
 
+/* Instagram embeds: Instagram's player is at least 326px wide. The row may
+   use most of the page margins so four fit on a 1440px screen; on narrower
+   screens it scrolls sideways. Auto margins centre the players when they fit
+   without clipping the first one when they don't. */
+.jvli-gallery__row--embeds {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-inline: calc(16px - var(--jvli-gutter));
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  scrollbar-width: thin;
+}
+
+.jvli-gallery__embed {
+  flex: 0 0 326px;
+  scroll-snap-align: center;
+}
+
+.jvli-gallery__embed:first-child {
+  margin-left: auto;
+}
+
+.jvli-gallery__embed:last-child {
+  margin-right: auto;
+}
+
+.jvli-gallery__embed .instagram-media {
+  width: 100% !important;
+  min-width: 326px !important;
+  max-width: none !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border: 1px solid var(--jvli-line) !important;
+}
+
+/* Before embed.js swaps it for the player: a plain link. */
+.jvli-gallery__embed blockquote.instagram-media {
+  padding: 24px;
+  background: var(--jvli-white);
+  font-size: 13px;
+}
+
 /* ==========================================================================
    Favorites page
    ========================================================================== */
@@ -1613,6 +1657,17 @@ a.jvli-gallery__item:hover .jvli-cover {
 
   .jvli-gallery__item {
     scroll-snap-align: start;
+  }
+
+  .jvli-gallery__row--embeds {
+    margin-inline: calc(-1 * var(--jvli-gutter));
+    padding-inline: var(--jvli-gutter);
+    scroll-padding-inline: var(--jvli-gutter);
+    scrollbar-width: none;
+  }
+
+  .jvli-gallery__embed {
+    flex-basis: min(326px, 86vw);
   }
 
   /* Reels: a 2 x 2 grid, like an Instagram profile, instead of a swipe row. */

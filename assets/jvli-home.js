@@ -165,6 +165,91 @@
     return link;
   }
 
+  // Tiles: the reel covers, linking to Instagram. Remaining slots keep the
+  // fallback photos.
+  function showTiles(row, reels, count) {
+    var photos = Array.prototype.slice.call(row.querySelectorAll(':scope > .jvli-gallery__item:not(.jvli-gallery__item--reel)'));
+    var items = reels.slice(0, count).map(reelItem);
+    photos.slice(0, count - items.length).forEach(function (photo) {
+      items.push(photo);
+    });
+    row.replaceChildren.apply(row, items);
+    row.classList.remove('jvli-gallery__row--embeds');
+    row.classList.add('jvli-gallery__row--reels');
+  }
+
+  /* Instagram's embed player. embed.js turns each blockquote into an iframe
+     and loads only when the section is about to scroll into view. */
+  var embedScript = null;
+
+  function loadEmbedScript() {
+    if (window.instgrm && window.instgrm.Embeds) return Promise.resolve();
+    if (!embedScript) {
+      embedScript = new Promise(function (resolve, reject) {
+        var script = document.createElement('script');
+        script.src = 'https://www.instagram.com/embed.js';
+        script.async = true;
+        script.onload = function () {
+          if (window.instgrm && window.instgrm.Embeds) resolve();
+          else reject(new Error('Instagram embed script did not load'));
+        };
+        script.onerror = function () {
+          embedScript = null;
+          reject(new Error('Instagram embed script was blocked'));
+        };
+        document.head.appendChild(script);
+      });
+    }
+    return embedScript;
+  }
+
+  function embedItem(reel) {
+    var item = document.createElement('div');
+    item.className = 'jvli-gallery__embed';
+    var quote = document.createElement('blockquote');
+    quote.className = 'instagram-media';
+    quote.setAttribute('data-instgrm-permalink', reel.permalink.split('?')[0] + '?utm_source=ig_embed');
+    quote.setAttribute('data-instgrm-version', '14');
+    var link = document.createElement('a');
+    link.href = reel.permalink;
+    link.target = '_blank';
+    link.rel = 'noopener';
+    link.textContent = 'View this reel on Instagram';
+    quote.appendChild(link);
+    item.appendChild(quote);
+    return item;
+  }
+
+  function showEmbeds(row, reels, count) {
+    var build = function () {
+      loadEmbedScript()
+        .then(function () {
+          row.replaceChildren.apply(row, reels.slice(0, count).map(embedItem));
+          row.classList.remove('jvli-gallery__row--reels');
+          row.classList.add('jvli-gallery__row--embeds');
+          window.instgrm.Embeds.process();
+        })
+        .catch(function () {
+          showTiles(row, reels, count);
+        });
+    };
+    if (!('IntersectionObserver' in window)) {
+      build();
+      return;
+    }
+    // Show the tiles straight away; swap in the players near the viewport.
+    showTiles(row, reels, count);
+    var observer = new IntersectionObserver(
+      function (entries) {
+        if (!entries.some(function (entry) { return entry.isIntersecting; })) return;
+        observer.disconnect();
+        build();
+      },
+      { rootMargin: '600px 0px' }
+    );
+    observer.observe(row);
+  }
+
   function initReels(scope) {
     scope.querySelectorAll('[data-jvli-reels]').forEach(function (row) {
       if (row.dataset.jvliReady) return;
@@ -181,14 +266,8 @@
         .then(function (data) {
           var reels = (data && data.reels) || [];
           if (!reels.length) return;
-          // Reels first; any remaining slots keep the fallback photos.
-          var photos = Array.prototype.slice.call(row.children);
-          var items = reels.slice(0, count).map(reelItem);
-          photos.slice(0, count - items.length).forEach(function (photo) {
-            items.push(photo);
-          });
-          row.replaceChildren.apply(row, items);
-          row.classList.add('jvli-gallery__row--reels');
+          if (row.dataset.jvliReelsDisplay === 'embed') showEmbeds(row, reels, count);
+          else showTiles(row, reels, count);
         })
         .catch(function () {});
     });
