@@ -1451,5 +1451,19 @@
         "default": "scheme-1"
       }
     ]
+  },
+  {
+    "name": "WhatsApp chat",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "A round WhatsApp button in the bottom-right corner of every page. It opens a chat with your number and a message already typed."
+      },
+      { "type": "checkbox", "id": "jvli_whatsapp_enabled", "label": "Show WhatsApp button", "default": true },
+      { "type": "text", "id": "jvli_whatsapp_number", "label": "WhatsApp number", "default": "918939012321", "info": "With the country code, e.g. 918939012321 for +91 89390 12321." },
+      { "type": "text", "id": "jvli_whatsapp_message", "label": "Message", "default": "Hi JVLI! I have a question." },
+      { "type": "text", "id": "jvli_whatsapp_product_message", "label": "Message on product pages", "default": "Hi JVLI! I have a question about [product]:", "info": "[product] becomes the product name, and the product link is added after the message." },
+      { "type": "color", "id": "jvli_whatsapp_color", "label": "Button colour", "default": "#25d366" }
+    ]
   }
 ]
