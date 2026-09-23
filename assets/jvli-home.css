@@ -2178,25 +2178,38 @@ a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
 
 /* ==========================================================================
    Our Story page (sections/jvli-our-story)
+   A scrapbook on three columns (photo | text | photo) that stacks on phones.
    ========================================================================== */
 
 .jvli-ourstory {
-  --jvli-script: "Allura", "Segoe Script", cursive;
-  padding-top: clamp(32px, 4vw, 64px);
+  --jvli-os-cols: minmax(0, 37fr) minmax(0, 34fr) minmax(0, 29fr);
+  --jvli-os-pad: clamp(24px, 3.2vw, 56px);
+  --jvli-os-ink: #6a2723;
+  --jvli-os-pen: #6a3b30;
+  padding-top: clamp(28px, 3.6vw, 56px);
   color: var(--jvli-ink);
   overflow: hidden;
 }
 
-.jvli-ourstory__script {
-  font-family: var(--jvli-script);
-  font-weight: 400;
-  letter-spacing: 0;
+.jvli-ourstory__row {
+  display: grid;
+  grid-template-columns: var(--jvli-os-cols);
+}
+
+.jvli-ourstory .jvli-ourstory__heading {
+  margin: 0 0 16px;
+  font-family: var(--jvli-serif);
+  font-size: clamp(26px, 2.3vw, 38px);
+  font-weight: 450;
+  line-height: 1.1;
+  color: var(--jvli-os-ink);
 }
 
 .jvli-ourstory__body {
   font-family: var(--jvli-serif);
-  font-size: clamp(16px, 1.2vw, 18px);
-  line-height: 1.6;
+  font-size: clamp(16px, 1.15vw, 18.5px);
+  line-height: 1.55;
+  color: var(--jvli-ink-soft);
 }
 
 .jvli-ourstory__body p {
@@ -2204,288 +2217,434 @@ a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
 }
 
 .jvli-ourstory__body p + p {
-  margin-top: 0.9em;
-}
-
-.jvli-ourstory__heading {
-  margin: 0;
-  color: var(--jvli-maroon);
-  font-family: var(--jvli-serif);
-  font-size: clamp(26px, 2.3vw, 36px);
-  font-weight: 500;
-  line-height: 1.15;
-}
-
-.jvli-ourstory__heading .jvli-ourstory__script {
-  display: inline-block;
-  font-size: 1.45em;
-  line-height: 0.9;
+  margin-top: 0.85em;
 }
 
 .jvli-ourstory__rule {
   display: block;
-  width: 44px;
+  width: 64px;
   height: 1px;
-  margin: 16px 0;
-  background: var(--jvli-maroon);
-  opacity: 0.6;
+  margin: clamp(18px, 1.8vw, 26px) 0;
+  background: var(--jvli-line);
 }
 
-/* 1. Intro */
-.jvli-ourstory__intro {
-  display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-  gap: clamp(28px, 4vw, 72px);
-  align-items: start;
+/* Handwriting: every line after the first sits a little further in. */
+.jvli-ourstory .jvli-ourstory__tagline,
+.jvli-ourstory .jvli-ourstory__signature {
+  margin: 0;
+  padding-left: 1.3em;
+  text-indent: -1.3em;
+  color: var(--jvli-os-pen);
+  line-height: 1.2;
+  transform: rotate(-6deg);
+  transform-origin: left center;
 }
 
-.jvli-ourstory__intro-text {
-  position: relative;
-  padding-top: clamp(12px, 2vw, 32px);
-}
-
-.jvli-ourstory__flower {
-  position: absolute;
-  top: 0;
-  right: clamp(0px, 3vw, 40px);
-  width: clamp(54px, 5.5vw, 80px);
+.jvli-ourstory__sketch {
   fill: none;
-  stroke: var(--jvli-maroon);
-  stroke-width: 1.3;
+  stroke: var(--jvli-os-ink);
+  stroke-width: 1.2;
   stroke-linecap: round;
   stroke-linejoin: round;
   opacity: 0.8;
 }
 
-.jvli-ourstory__title {
-  display: flex;
-  flex-direction: column;
-  margin: 0 0 clamp(20px, 2.4vw, 36px);
-  color: var(--jvli-maroon);
-  line-height: 0.85;
-}
-
-.jvli-ourstory__title-serif {
-  font-family: var(--jvli-serif);
-  font-size: clamp(64px, 7vw, 108px);
-  font-weight: 500;
-  letter-spacing: -0.01em;
-}
-
-.jvli-ourstory__title .jvli-ourstory__script {
-  margin: -0.12em 0 0 0.9em;
-  padding-bottom: 0.3em;
-  font-size: clamp(76px, 8.4vw, 128px);
-}
-
-.jvli-ourstory__hero {
+.jvli-ourstory__photo {
   position: relative;
-  padding: 0 clamp(20px, 5vw, 80px) clamp(40px, 5vw, 70px) 0;
+  overflow: hidden;
+  background: #d9cfc3;
 }
 
-.jvli-ourstory__hero-polaroid {
-  padding: 14px 14px 0;
-  transform: rotate(1.5deg);
+.jvli-ourstory__photo > .jvli-cover {
+  position: absolute;
+  inset: 0;
 }
 
-.jvli-ourstory__hero-polaroid .jvli-polaroid__photo {
-  aspect-ratio: 4 / 3;
+.jvli-ourstory__scrawl {
+  position: absolute;
+  top: 7%;
+  left: 36%;
+  margin: 0;
+  color: #3f2e24;
+  font-size: clamp(24px, 2.4vw, 38px);
+  line-height: 1.12;
+  text-shadow: 0 0 10px rgba(248, 242, 232, 0.9), 0 0 22px rgba(248, 242, 232, 0.7);
+  transform: rotate(-9deg);
 }
 
-.jvli-ourstory__hero-polaroid figcaption {
-  padding: 14px 10px 18px 30%;
-  font-size: clamp(22px, 2vw, 30px);
-  line-height: 1.15;
-  text-align: center;
-  transform: rotate(-4deg);
+.jvli-ourstory__scrawl--low {
+  top: 16%;
+  left: 18%;
+  transform: rotate(-10deg);
 }
 
 .jvli-ourstory__note {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  width: clamp(110px, 10vw, 150px);
-  margin: 0;
-  padding: 22px 14px 18px;
-  background: #f1ebe0;
-  box-shadow: 0 6px 16px rgba(40, 28, 18, 0.15);
-  font-size: clamp(17px, 1.5vw, 22px);
-  line-height: 1.25;
-  transform: rotate(-5deg);
-}
-
-/* 2. Rooted in Tamil Nadu + Why JVLI */
-.jvli-ourstory__middle {
-  display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr) minmax(0, 1.15fr);
-  gap: clamp(28px, 3.6vw, 64px);
-  align-items: start;
-  margin-top: clamp(32px, 4vw, 64px);
-}
-
-.jvli-ourstory__roots-polaroid {
-  transform: rotate(-3deg);
-}
-
-.jvli-ourstory__roots-polaroid .jvli-polaroid__photo {
-  aspect-ratio: 1 / 0.95;
-}
-
-.jvli-ourstory__roots-polaroid figcaption {
-  padding: 12px 8px 18px;
-  font-size: clamp(19px, 1.6vw, 25px);
-  line-height: 1.2;
-  text-align: center;
-  transform: rotate(-4deg);
-}
-
-.jvli-ourstory__block {
   position: relative;
+  margin: 0;
+  padding: 24px 18px 20px;
+  background: #ebe3d6;
+  box-shadow: 0 6px 16px rgba(40, 28, 18, 0.14);
+  color: var(--jvli-os-pen);
+  font-size: clamp(19px, 1.7vw, 26px);
+  line-height: 1.2;
 }
 
-.jvli-ourstory__block > .jvli-ourstory__heading {
-  margin-bottom: 4px;
+/* 1. Intro */
+.jvli-ourstory__intro-text {
+  padding: 0 var(--jvli-os-pad) 0 var(--jvli-gutter);
 }
 
-.jvli-ourstory__why > .jvli-ourstory__heading {
-  margin-bottom: 18px;
-}
-
-.jvli-ourstory__leaf {
-  display: block;
-  width: 70px;
-  margin: 18px 0 0 auto;
-  fill: none;
-  stroke: var(--jvli-maroon);
-  opacity: 0.75;
-}
-
-.jvli-ourstory__why .jvli-ourstory__body {
-  font-size: clamp(15px, 1.1vw, 17px);
-}
-
-.jvli-ourstory__sketch {
-  width: clamp(120px, 11vw, 170px);
-  margin: 18px 0 0 auto;
-}
-
-/* 3. What JVLI stands for */
-.jvli-ourstory__values {
-  margin-top: clamp(40px, 4.4vw, 72px);
-}
-
-.jvli-ourstory__values-head {
+.jvli-ourstory .jvli-ourstory__title {
   display: flex;
-  align-items: center;
-  gap: 24px;
-  margin-bottom: clamp(24px, 2.6vw, 40px);
+  flex-direction: column;
+  margin: 0 0 clamp(14px, 1.6vw, 24px);
+  font-family: var(--jvli-serif);
+  font-size: clamp(60px, 7.2vw, 118px);
+  font-weight: 450;
+  line-height: 0.92;
+  letter-spacing: -0.01em;
+  color: var(--jvli-os-ink);
 }
 
-.jvli-ourstory__line {
-  flex: 1;
-  height: 1px;
-  background: var(--jvli-maroon);
-  opacity: 0.35;
+.jvli-ourstory__title-indent {
+  padding-left: 0.42em;
 }
 
-.jvli-ourstory__values-grid {
+.jvli-ourstory .jvli-ourstory__tagline {
+  margin-left: -0.2em;
+  font-size: clamp(26px, 2.6vw, 40px);
+}
+
+.jvli-ourstory .jvli-ourstory__hero {
+  align-self: start;
+  margin-top: 6px;
+  padding: 16px 16px 0;
+  transform: rotate(-1.2deg);
+}
+
+.jvli-ourstory__hero .jvli-polaroid__photo {
+  aspect-ratio: 1 / 1.08;
+}
+
+.jvli-ourstory__hero figcaption {
+  padding: 14px 10% 24px 45%;
+  font-size: clamp(22px, 2vw, 30px);
+  line-height: 1.12;
+  color: var(--jvli-os-pen);
+  text-align: center;
+  transform: rotate(-7deg);
+}
+
+.jvli-ourstory__peg {
+  position: absolute;
+  z-index: 1;
+  top: -40px;
+  left: 42%;
+  width: 24px;
+  fill: #b48a5e;
+  stroke: #7d5c3c;
+  stroke-width: 1.2;
+  transform: rotate(10deg);
+}
+
+.jvli-ourstory__aside {
+  position: relative;
+  padding: clamp(40px, 4vw, 64px) var(--jvli-gutter) 0 var(--jvli-os-pad);
+}
+
+.jvli-ourstory__note--torn {
+  width: min(210px, 76%);
+  padding: 30px 22px 30px 26px;
+  box-shadow: none;
+  background: #e5dbcd;
+  transform: rotate(5deg);
+  clip-path: polygon(0 3%, 9% 0, 20% 2%, 33% 0, 47% 2%, 61% 0, 74% 2%, 88% 0, 100% 2%, 98% 14%, 100% 29%, 98% 44%, 100% 58%, 98% 72%, 100% 86%, 99% 100%, 86% 98%, 72% 100%, 58% 98%, 44% 100%, 30% 98%, 16% 100%, 2% 98%, 1% 84%, 0 70%, 2% 55%, 0 40%, 2% 26%, 0 14%);
+}
+
+.jvli-ourstory__sketch--branch {
+  position: absolute;
+  top: clamp(130px, 13vw, 200px);
+  right: calc(var(--jvli-gutter) - 24px);
+  width: clamp(56px, 5.4vw, 86px);
+}
+
+.jvli-ourstory__aside .jvli-ourstory__rule {
+  margin-top: clamp(40px, 4vw, 60px);
+}
+
+.jvli-ourstory .jvli-ourstory__aside-text {
+  max-width: 200px;
+  margin: 0;
+  font-family: var(--jvli-serif);
+  font-size: clamp(16px, 1.15vw, 18.5px);
+  line-height: 1.4;
+  color: var(--jvli-ink-soft);
+}
+
+/* 2. Why JVLI */
+.jvli-ourstory__why {
+  margin-top: clamp(28px, 3vw, 48px);
+}
+
+.jvli-ourstory__why .jvli-ourstory__photo--left {
+  align-self: start;
+  aspect-ratio: 1.15;
+  margin-top: clamp(20px, 2.4vw, 40px);
+}
+
+.jvli-ourstory__why .jvli-ourstory__photo--right {
+  aspect-ratio: 3 / 4;
+  margin-top: calc(-1 * clamp(20px, 3vw, 60px));
+}
+
+.jvli-ourstory__text {
+  padding: clamp(28px, 3vw, 48px) var(--jvli-os-pad);
+}
+
+/* 3. Everyday problem + what we make */
+.jvli-ourstory__band {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: clamp(20px, 2.4vw, 40px);
+  grid-template-columns: minmax(0, 1.1fr) 1px minmax(0, 1fr);
+  gap: clamp(24px, 3vw, 48px);
+  margin: clamp(8px, 1vw, 16px) clamp(16px, 3vw, 44px) 0;
+  padding: clamp(36px, 3.4vw, 56px) clamp(24px, 3vw, 48px);
+  background: #e8dbd3;
+  clip-path: polygon(0 1.5%, 6% 0, 14% 1%, 23% 0, 34% 1.2%, 46% 0, 57% 1%, 69% 0, 80% 1.3%, 91% 0, 100% 1%, 100% 99%, 93% 100%, 82% 98.8%, 71% 100%, 59% 99%, 47% 100%, 35% 98.8%, 24% 100%, 12% 99%, 4% 100%, 0 98.5%);
 }
 
-.jvli-ourstory__value {
+.jvli-ourstory__band .jvli-ourstory__text {
+  padding: 0;
+}
+
+.jvli-ourstory__band-line {
+  background: var(--jvli-line);
+}
+
+.jvli-ourstory__problem {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) clamp(70px, 8vw, 120px);
+  gap: clamp(12px, 2vw, 32px);
+  align-items: center;
+}
+
+.jvli-ourstory__sketch--flower {
+  width: 100%;
+}
+
+.jvli-ourstory__make-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(22px, 2.6vw, 40px) clamp(14px, 2vw, 28px);
+  margin: clamp(10px, 1.4vw, 20px) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.jvli-ourstory__make-item {
   text-align: center;
 }
 
-.jvli-ourstory__value-icon {
-  width: 40px;
-  height: 40px;
+.jvli-ourstory__icon {
+  width: clamp(32px, 2.8vw, 42px);
+  height: auto;
+  margin-bottom: 10px;
   fill: none;
-  stroke: var(--jvli-maroon);
+  stroke: var(--jvli-os-ink);
   stroke-width: 1.3;
   stroke-linecap: round;
   stroke-linejoin: round;
 }
 
-.jvli-ourstory__value-title {
-  margin: 12px 0 6px;
-  color: var(--jvli-maroon);
-  font-family: var(--jvli-serif);
-  font-size: clamp(18px, 1.4vw, 21px);
-  font-weight: 500;
-}
-
-.jvli-ourstory__value-text {
-  max-width: 240px;
+.jvli-ourstory .jvli-ourstory__make-item p {
+  max-width: 190px;
   margin: 0 auto;
-  color: var(--jvli-ink-soft);
   font-family: var(--jvli-serif);
-  font-size: 15px;
-  line-height: 1.5;
+  font-size: clamp(15px, 1.1vw, 17.5px);
+  line-height: 1.35;
+  color: var(--jvli-ink-soft);
 }
 
 /* 4. Where we're going */
 .jvli-ourstory__going {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 0.7fr);
-  align-items: center;
-  margin-top: clamp(48px, 5vw, 80px);
-  padding-bottom: clamp(48px, 5vw, 80px);
+  margin-top: clamp(8px, 1vw, 16px);
 }
 
-.jvli-ourstory__going-media {
-  align-self: stretch;
-  min-height: clamp(360px, 32vw, 520px);
-  overflow: hidden;
-  background: var(--jvli-cream-deep);
+.jvli-ourstory__going .jvli-ourstory__photo--left {
+  align-self: start;
+  aspect-ratio: 1.1;
+  margin-top: clamp(16px, 1.6vw, 24px);
 }
 
-.jvli-ourstory__card {
+.jvli-ourstory .jvli-ourstory__signature {
+  margin-top: clamp(14px, 1.4vw, 22px);
+  margin-left: 0.3em;
+  font-size: clamp(24px, 2.1vw, 32px);
+}
+
+.jvli-ourstory__end {
   position: relative;
-  z-index: 1;
-  margin-left: -8%;
-  padding: clamp(28px, 3vw, 48px);
-  background: #f6f1e8;
-  box-shadow: 0 12px 30px rgba(40, 28, 18, 0.14);
+  align-self: start;
+  padding: clamp(20px, 2vw, 32px) var(--jvli-gutter) clamp(56px, 5vw, 80px) 0;
 }
 
-.jvli-ourstory__card > .jvli-ourstory__heading {
-  margin-bottom: 18px;
+.jvli-ourstory__end-polaroid {
+  padding: 12px 12px 44px;
+  transform: rotate(1.5deg);
 }
 
-.jvli-ourstory__signature {
-  margin: 20px 0 0;
-  font-size: clamp(22px, 1.9vw, 28px);
-  line-height: 1.15;
-  transform: rotate(-4deg);
-  transform-origin: left;
+.jvli-ourstory__end-polaroid .jvli-polaroid__photo {
+  aspect-ratio: 1.08;
 }
 
-.jvli-ourstory__dreams-polaroid {
-  width: 88%;
-  margin-left: 6%;
-  transform: rotate(3deg);
-}
-
-.jvli-ourstory__dreams-polaroid .jvli-polaroid__photo {
-  aspect-ratio: 3 / 4;
-}
-
-.jvli-ourstory__dreams-polaroid {
-  padding-bottom: 36px;
-}
-
-.jvli-ourstory__dreams-caption {
+.jvli-ourstory__note--end {
   position: absolute;
-  top: 18%;
-  right: 8%;
+  right: calc(var(--jvli-gutter) - 20px);
+  bottom: clamp(16px, 2vw, 32px);
+  width: clamp(130px, 11vw, 170px);
+  transform: rotate(-4deg);
+}
+
+/* 5. Closing line */
+.jvli-ourstory__closing {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 2vw, 28px);
+  padding: clamp(28px, 3vw, 44px) var(--jvli-gutter) clamp(36px, 4vw, 60px);
+}
+
+.jvli-ourstory__closing-mark {
+  font-family: var(--jvli-serif);
+  font-size: clamp(22px, 2vw, 30px);
+  color: var(--jvli-os-ink);
+}
+
+.jvli-ourstory__closing-line {
+  flex: 1;
+  height: 1px;
+  background: var(--jvli-line);
+}
+
+.jvli-ourstory__closing-words {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 12px;
   margin: 0;
-  padding: 10px 12px;
-  background: rgba(246, 241, 232, 0.8);
-  font-size: clamp(20px, 1.8vw, 28px);
-  line-height: 1.2;
-  transform: rotate(-6deg);
+  font-family: var(--jvli-caps);
+  font-size: 11.5px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--jvli-ink-soft);
+}
+
+.jvli-ourstory__closing-words span + span::before {
+  content: "/";
+  margin-right: 12px;
+}
+
+/* Tablets: a little more room for the text column. */
+@media (max-width: 1100px) and (min-width: 750px) {
+  .jvli-ourstory {
+    --jvli-os-cols: minmax(0, 36fr) minmax(0, 38fr) minmax(0, 26fr);
+  }
+}
+
+/* Phones: one column. */
+@media (max-width: 749px) {
+  .jvli-ourstory__row,
+  .jvli-ourstory__band {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .jvli-ourstory__intro-text {
+    padding: 0 var(--jvli-gutter);
+  }
+
+  .jvli-ourstory .jvli-ourstory__hero {
+    width: 84%;
+    margin: 64px auto 0;
+  }
+
+  .jvli-ourstory__problem {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .jvli-ourstory__sketch--flower {
+    display: none;
+  }
+
+  .jvli-ourstory__aside {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 70px;
+    align-items: center;
+    column-gap: 20px;
+    padding: 36px var(--jvli-gutter) 0;
+  }
+
+  .jvli-ourstory__note--torn {
+    width: auto;
+    max-width: 220px;
+  }
+
+  .jvli-ourstory__sketch--branch {
+    position: static;
+    width: 64px;
+  }
+
+  .jvli-ourstory__aside .jvli-ourstory__rule,
+  .jvli-ourstory__aside-text {
+    grid-column: 1 / -1;
+  }
+
+  .jvli-ourstory__aside .jvli-ourstory__rule {
+    margin-top: 28px;
+  }
+
+  .jvli-ourstory__why .jvli-ourstory__photo--left,
+  .jvli-ourstory__going .jvli-ourstory__photo--left {
+    aspect-ratio: 4 / 3;
+    margin-top: 0;
+  }
+
+  .jvli-ourstory__why .jvli-ourstory__photo--right {
+    aspect-ratio: 4 / 5;
+    margin-top: 0;
+  }
+
+  .jvli-ourstory__text {
+    padding: 32px var(--jvli-gutter) 36px;
+  }
+
+  .jvli-ourstory__band {
+    margin: 12px 10px 0;
+    padding: 40px 22px;
+  }
+
+  .jvli-ourstory__band-line {
+    height: 1px;
+  }
+
+  .jvli-ourstory__end {
+    padding: 8px var(--jvli-gutter) 64px;
+  }
+
+  .jvli-ourstory__end-polaroid {
+    width: 82%;
+    margin-top: 12px;
+  }
+
+  .jvli-ourstory__note--end {
+    right: var(--jvli-gutter);
+    bottom: 36px;
+  }
+
+  .jvli-ourstory__closing {
+    flex-wrap: wrap;
+  }
+
+  .jvli-ourstory__closing-words {
+    flex-basis: 100%;
+    font-size: 10.5px;
+  }
 }
 
 /* ==========================================================================
@@ -2639,53 +2798,6 @@ a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
 
   .jvli-favorites__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  /* Our Story: everything stacks. */
-  .jvli-ourstory__intro,
-  .jvli-ourstory__middle,
-  .jvli-ourstory__going {
-    grid-template-columns: 1fr;
-  }
-
-  .jvli-ourstory__hero {
-    padding-right: 30px;
-  }
-
-  .jvli-ourstory__hero-polaroid figcaption {
-    padding: 12px 42% 16px 6px;
-    font-size: 20px;
-  }
-
-  .jvli-ourstory__leaf {
-    display: none;
-  }
-
-  .jvli-ourstory__roots-polaroid {
-    width: 78%;
-    margin: 8px auto 0;
-  }
-
-  .jvli-ourstory__values-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    row-gap: 28px;
-  }
-
-  .jvli-ourstory__going {
-    gap: 0;
-  }
-
-  .jvli-ourstory__going-media {
-    min-height: 260px;
-  }
-
-  .jvli-ourstory__card {
-    margin: -40px var(--jvli-gutter) 0;
-  }
-
-  .jvli-ourstory__dreams-polaroid {
-    width: 70%;
-    margin: 36px auto 0;
   }
 
   /* Collection: two cards per row; the toolbar stacks. */

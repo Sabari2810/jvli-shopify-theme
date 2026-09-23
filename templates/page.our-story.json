@@ -3,17 +3,18 @@
     "our_story": {
       "type": "jvli-our-story",
       "blocks": {
-        "value_design": { "type": "value", "settings": { "icon": "flower", "title": "Thoughtful Design", "text": "Contemporary ethnic wear that feels effortless, not overdressed." } },
-        "value_comfort": { "type": "value", "settings": { "icon": "kolam", "title": "Comfort First", "text": "Breathable fabrics and easy silhouettes for real life." } },
-        "value_everyday": { "type": "value", "settings": { "icon": "leaf", "title": "Made for Everyday", "text": "From college to office, from errands to evenings, clothes that fit your day." } },
-        "value_you": { "type": "value", "settings": { "icon": "sun", "title": "A More You", "text": "Styles that let you feel comfortable, confident and like yourself." } }
+        "make_design": { "type": "item", "settings": { "icon": "flower", "text": "Contemporary everyday ethnic wear" } },
+        "make_fabric": { "type": "item", "settings": { "icon": "waves", "text": "Breathable fabrics and easy silhouettes" } },
+        "make_details": { "type": "item", "settings": { "icon": "leaf", "text": "Thoughtful details that feel effortless" } },
+        "make_day": { "type": "item", "settings": { "icon": "sun", "text": "Styles that move with your day" } }
       },
-      "block_order": ["value_design", "value_comfort", "value_everyday", "value_you"],
+      "block_order": ["make_design", "make_fabric", "make_details", "make_day"],
       "settings": {
-        "hero_image": "shopify://shop_images/jvli-banner-temple.webp",
-        "roots_image": "shopify://shop_images/jvli-fabric-cotton.webp",
-        "going_image": "shopify://shop_images/jvli-fabric-block-print.webp",
-        "dreams_image": "shopify://shop_images/jvli-story-banana-leaves.webp"
+        "hero_image": "shopify://shop_images/jvli-fabric-block-print.webp",
+        "why_image": "shopify://shop_images/jvli-story-fabric.webp",
+        "wall_image": "shopify://shop_images/jvli-story-banana-leaves.webp",
+        "going_image": "shopify://shop_images/jvli-banner-temple.webp",
+        "end_image": "shopify://shop_images/jvli-fabric-cotton.webp"
       }
     }
   },
