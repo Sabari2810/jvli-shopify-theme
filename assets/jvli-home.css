@@ -2177,6 +2177,318 @@ a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
 }
 
 /* ==========================================================================
+   Our Story page (sections/jvli-our-story)
+   ========================================================================== */
+
+.jvli-ourstory {
+  --jvli-script: "Allura", "Segoe Script", cursive;
+  padding-top: clamp(32px, 4vw, 64px);
+  color: var(--jvli-ink);
+  overflow: hidden;
+}
+
+.jvli-ourstory__script {
+  font-family: var(--jvli-script);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+.jvli-ourstory__body {
+  font-family: var(--jvli-serif);
+  font-size: clamp(16px, 1.2vw, 18px);
+  line-height: 1.6;
+}
+
+.jvli-ourstory__body p {
+  margin: 0;
+}
+
+.jvli-ourstory__body p + p {
+  margin-top: 0.9em;
+}
+
+.jvli-ourstory__heading {
+  margin: 0;
+  color: var(--jvli-maroon);
+  font-family: var(--jvli-serif);
+  font-size: clamp(26px, 2.3vw, 36px);
+  font-weight: 500;
+  line-height: 1.15;
+}
+
+.jvli-ourstory__heading .jvli-ourstory__script {
+  display: inline-block;
+  font-size: 1.45em;
+  line-height: 0.9;
+}
+
+.jvli-ourstory__rule {
+  display: block;
+  width: 44px;
+  height: 1px;
+  margin: 16px 0;
+  background: var(--jvli-maroon);
+  opacity: 0.6;
+}
+
+/* 1. Intro */
+.jvli-ourstory__intro {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: clamp(28px, 4vw, 72px);
+  align-items: start;
+}
+
+.jvli-ourstory__intro-text {
+  position: relative;
+  padding-top: clamp(12px, 2vw, 32px);
+}
+
+.jvli-ourstory__flower {
+  position: absolute;
+  top: 0;
+  right: clamp(0px, 3vw, 40px);
+  width: clamp(54px, 5.5vw, 80px);
+  fill: none;
+  stroke: var(--jvli-maroon);
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.8;
+}
+
+.jvli-ourstory__title {
+  display: flex;
+  flex-direction: column;
+  margin: 0 0 clamp(20px, 2.4vw, 36px);
+  color: var(--jvli-maroon);
+  line-height: 0.85;
+}
+
+.jvli-ourstory__title-serif {
+  font-family: var(--jvli-serif);
+  font-size: clamp(64px, 7vw, 108px);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.jvli-ourstory__title .jvli-ourstory__script {
+  margin: -0.12em 0 0 0.9em;
+  padding-bottom: 0.3em;
+  font-size: clamp(76px, 8.4vw, 128px);
+}
+
+.jvli-ourstory__hero {
+  position: relative;
+  padding: 0 clamp(20px, 5vw, 80px) clamp(40px, 5vw, 70px) 0;
+}
+
+.jvli-ourstory__hero-polaroid {
+  padding: 14px 14px 0;
+  transform: rotate(1.5deg);
+}
+
+.jvli-ourstory__hero-polaroid .jvli-polaroid__photo {
+  aspect-ratio: 4 / 3;
+}
+
+.jvli-ourstory__hero-polaroid figcaption {
+  padding: 14px 10px 18px 30%;
+  font-size: clamp(22px, 2vw, 30px);
+  line-height: 1.15;
+  text-align: center;
+  transform: rotate(-4deg);
+}
+
+.jvli-ourstory__note {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: clamp(110px, 10vw, 150px);
+  margin: 0;
+  padding: 22px 14px 18px;
+  background: #f1ebe0;
+  box-shadow: 0 6px 16px rgba(40, 28, 18, 0.15);
+  font-size: clamp(17px, 1.5vw, 22px);
+  line-height: 1.25;
+  transform: rotate(-5deg);
+}
+
+/* 2. Rooted in Tamil Nadu + Why JVLI */
+.jvli-ourstory__middle {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1fr) minmax(0, 1.15fr);
+  gap: clamp(28px, 3.6vw, 64px);
+  align-items: start;
+  margin-top: clamp(32px, 4vw, 64px);
+}
+
+.jvli-ourstory__roots-polaroid {
+  transform: rotate(-3deg);
+}
+
+.jvli-ourstory__roots-polaroid .jvli-polaroid__photo {
+  aspect-ratio: 1 / 0.95;
+}
+
+.jvli-ourstory__roots-polaroid figcaption {
+  padding: 12px 8px 18px;
+  font-size: clamp(19px, 1.6vw, 25px);
+  line-height: 1.2;
+  text-align: center;
+  transform: rotate(-4deg);
+}
+
+.jvli-ourstory__block {
+  position: relative;
+}
+
+.jvli-ourstory__block > .jvli-ourstory__heading {
+  margin-bottom: 4px;
+}
+
+.jvli-ourstory__why > .jvli-ourstory__heading {
+  margin-bottom: 18px;
+}
+
+.jvli-ourstory__leaf {
+  display: block;
+  width: 70px;
+  margin: 18px 0 0 auto;
+  fill: none;
+  stroke: var(--jvli-maroon);
+  opacity: 0.75;
+}
+
+.jvli-ourstory__why .jvli-ourstory__body {
+  font-size: clamp(15px, 1.1vw, 17px);
+}
+
+.jvli-ourstory__sketch {
+  width: clamp(120px, 11vw, 170px);
+  margin: 18px 0 0 auto;
+}
+
+/* 3. What JVLI stands for */
+.jvli-ourstory__values {
+  margin-top: clamp(40px, 4.4vw, 72px);
+}
+
+.jvli-ourstory__values-head {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: clamp(24px, 2.6vw, 40px);
+}
+
+.jvli-ourstory__line {
+  flex: 1;
+  height: 1px;
+  background: var(--jvli-maroon);
+  opacity: 0.35;
+}
+
+.jvli-ourstory__values-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(20px, 2.4vw, 40px);
+}
+
+.jvli-ourstory__value {
+  text-align: center;
+}
+
+.jvli-ourstory__value-icon {
+  width: 40px;
+  height: 40px;
+  fill: none;
+  stroke: var(--jvli-maroon);
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.jvli-ourstory__value-title {
+  margin: 12px 0 6px;
+  color: var(--jvli-maroon);
+  font-family: var(--jvli-serif);
+  font-size: clamp(18px, 1.4vw, 21px);
+  font-weight: 500;
+}
+
+.jvli-ourstory__value-text {
+  max-width: 240px;
+  margin: 0 auto;
+  color: var(--jvli-ink-soft);
+  font-family: var(--jvli-serif);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* 4. Where we're going */
+.jvli-ourstory__going {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 0.7fr);
+  align-items: center;
+  margin-top: clamp(48px, 5vw, 80px);
+  padding-bottom: clamp(48px, 5vw, 80px);
+}
+
+.jvli-ourstory__going-media {
+  align-self: stretch;
+  min-height: clamp(360px, 32vw, 520px);
+  overflow: hidden;
+  background: var(--jvli-cream-deep);
+}
+
+.jvli-ourstory__card {
+  position: relative;
+  z-index: 1;
+  margin-left: -8%;
+  padding: clamp(28px, 3vw, 48px);
+  background: #f6f1e8;
+  box-shadow: 0 12px 30px rgba(40, 28, 18, 0.14);
+}
+
+.jvli-ourstory__card > .jvli-ourstory__heading {
+  margin-bottom: 18px;
+}
+
+.jvli-ourstory__signature {
+  margin: 20px 0 0;
+  font-size: clamp(22px, 1.9vw, 28px);
+  line-height: 1.15;
+  transform: rotate(-4deg);
+  transform-origin: left;
+}
+
+.jvli-ourstory__dreams-polaroid {
+  width: 88%;
+  margin-left: 6%;
+  transform: rotate(3deg);
+}
+
+.jvli-ourstory__dreams-polaroid .jvli-polaroid__photo {
+  aspect-ratio: 3 / 4;
+}
+
+.jvli-ourstory__dreams-polaroid {
+  padding-bottom: 36px;
+}
+
+.jvli-ourstory__dreams-caption {
+  position: absolute;
+  top: 18%;
+  right: 8%;
+  margin: 0;
+  padding: 10px 12px;
+  background: rgba(246, 241, 232, 0.8);
+  font-size: clamp(20px, 1.8vw, 28px);
+  line-height: 1.2;
+  transform: rotate(-6deg);
+}
+
+/* ==========================================================================
    Favorites page
    ========================================================================== */
 
@@ -2327,6 +2639,53 @@ a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
 
   .jvli-favorites__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Our Story: everything stacks. */
+  .jvli-ourstory__intro,
+  .jvli-ourstory__middle,
+  .jvli-ourstory__going {
+    grid-template-columns: 1fr;
+  }
+
+  .jvli-ourstory__hero {
+    padding-right: 30px;
+  }
+
+  .jvli-ourstory__hero-polaroid figcaption {
+    padding: 12px 42% 16px 6px;
+    font-size: 20px;
+  }
+
+  .jvli-ourstory__leaf {
+    display: none;
+  }
+
+  .jvli-ourstory__roots-polaroid {
+    width: 78%;
+    margin: 8px auto 0;
+  }
+
+  .jvli-ourstory__values-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 28px;
+  }
+
+  .jvli-ourstory__going {
+    gap: 0;
+  }
+
+  .jvli-ourstory__going-media {
+    min-height: 260px;
+  }
+
+  .jvli-ourstory__card {
+    margin: -40px var(--jvli-gutter) 0;
+  }
+
+  .jvli-ourstory__dreams-polaroid {
+    width: 70%;
+    margin: 36px auto 0;
   }
 
   /* Collection: two cards per row; the toolbar stacks. */

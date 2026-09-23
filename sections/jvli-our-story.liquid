@@ -1,0 +1,211 @@
+{%- render 'jvli-assets' -%}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Allura&display=swap">
+{%- comment -%}
+  Our Story page: intro with a large polaroid, Rooted in Tamil Nadu and
+  Why JVLI, the four values ("stand" blocks) and Where We're Going. Every
+  text and photo is a setting; headings mix the serif with an Allura
+  script word (e.g. Our *Story*).
+{%- endcomment -%}
+<section class="jvli jvli-paper jvli-ourstory">
+  <div class="jvli-container">
+
+    {%- comment -%} 1. Intro {%- endcomment -%}
+    <div class="jvli-ourstory__intro">
+      <div class="jvli-ourstory__intro-text">
+        <svg class="jvli-ourstory__flower" viewBox="0 0 80 150" aria-hidden="true" focusable="false">
+          <circle cx="40" cy="30" r="5" />
+          <path d="M40 25c-3-9-3-15 0-20 3 5 3 11 0 20ZM40 35c-3 9-3 15 0 20 3-5 3-11 0-20ZM35 30c-9-3-15-3-20 0 5 3 11 3 20 0ZM45 30c9-3 15-3 20 0-5 3-11 3-20 0Z" />
+          <path d="M36.5 26.5c-7-6-12-8-17-7 1.5 5 6 8 17 7ZM43.5 33.5c7 6 12 8 17 7-1.5-5-6-8-17-7ZM43.5 26.5c6-7 8-12 7-17-5 1.5-8 6-7 17ZM36.5 33.5c-6 7-8 12-7 17 5-1.5 8-6 7-17Z" />
+          <path d="M40 55c-2 30 2 60-4 92" />
+          <path d="M39 85c-10-2-18-9-20-18 9 1 16 7 20 18ZM38.5 110c9-3 15-10 16-19-8 2-14 8-16 19Z" />
+        </svg>
+        <h1 class="jvli-ourstory__title">
+          <span class="jvli-ourstory__title-serif">{{ section.settings.title_serif }}</span>
+          <span class="jvli-ourstory__script">{{ section.settings.title_script }}</span>
+        </h1>
+        <div class="jvli-ourstory__body">{{ section.settings.intro }}</div>
+      </div>
+
+      <div class="jvli-ourstory__hero">
+        <figure class="jvli-polaroid jvli-ourstory__hero-polaroid">
+          <div class="jvli-polaroid__photo">
+            {%- render 'jvli-media', image: section.settings.hero_image, alt: section.settings.hero_alt, sizes: '(max-width: 749px) 90vw, 55vw', class: 'jvli-cover', loading: 'eager', placeholder: 'lifestyle-1' -%}
+          </div>
+          {%- if section.settings.hero_caption != blank -%}
+            <figcaption class="jvli-handwriting">{{ section.settings.hero_caption | newline_to_br }}</figcaption>
+          {%- endif -%}
+        </figure>
+        {%- if section.settings.hero_note != blank -%}
+          <p class="jvli-ourstory__note jvli-handwriting">
+            <span class="jvli-polaroid__tape" aria-hidden="true"></span>
+            {{ section.settings.hero_note | newline_to_br }}
+          </p>
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- comment -%} 2. Rooted in Tamil Nadu + Why JVLI {%- endcomment -%}
+    <div class="jvli-ourstory__middle">
+      <figure class="jvli-polaroid jvli-ourstory__roots-polaroid">
+        <span class="jvli-polaroid__tape" aria-hidden="true"></span>
+        <div class="jvli-polaroid__photo">
+          {%- render 'jvli-media', image: section.settings.roots_image, alt: '', sizes: '(max-width: 749px) 70vw, 24vw', class: 'jvli-cover', placeholder: 'image' -%}
+        </div>
+        {%- if section.settings.roots_caption != blank -%}
+          <figcaption class="jvli-handwriting">{{ section.settings.roots_caption | newline_to_br }}</figcaption>
+        {%- endif -%}
+      </figure>
+
+      <div class="jvli-ourstory__block">
+        <h2 class="jvli-ourstory__heading">
+          {{ section.settings.roots_heading }}
+          <span class="jvli-ourstory__script">{{ section.settings.roots_script }}</span>
+        </h2>
+        <span class="jvli-ourstory__rule" aria-hidden="true"></span>
+        <div class="jvli-ourstory__body">{{ section.settings.roots_text }}</div>
+        {%- render 'jvli-sprig', class: 'jvli-ourstory__leaf' -%}
+      </div>
+
+      <div class="jvli-ourstory__block jvli-ourstory__why">
+        <h2 class="jvli-ourstory__heading">
+          {{ section.settings.why_heading }}
+          <span class="jvli-ourstory__script">{{ section.settings.why_script }}</span>
+        </h2>
+        <div class="jvli-ourstory__body">{{ section.settings.why_text }}</div>
+        {%- if section.settings.why_image != blank -%}
+          <div class="jvli-ourstory__sketch">
+            {%- render 'jvli-media', image: section.settings.why_image, alt: '', sizes: '200px' -%}
+          </div>
+        {%- endif -%}
+      </div>
+    </div>
+
+    {%- comment -%} 3. What JVLI stands for {%- endcomment -%}
+    {%- if section.blocks.size > 0 -%}
+      <div class="jvli-ourstory__values">
+        <div class="jvli-ourstory__values-head">
+          <h2 class="jvli-ourstory__heading">{{ section.settings.values_heading }}</h2>
+          <span class="jvli-ourstory__line" aria-hidden="true"></span>
+        </div>
+        <div class="jvli-ourstory__values-grid">
+          {%- for block in section.blocks -%}
+            <div class="jvli-ourstory__value" {{ block.shopify_attributes }}>
+              <svg class="jvli-ourstory__value-icon" viewBox="0 0 40 40" aria-hidden="true" focusable="false">
+                {%- case block.settings.icon -%}
+                  {%- when 'kolam' -%}
+                    <path d="M20 4 36 20 20 36 4 20Z" /><path d="M20 12 28 20 20 28 12 20Z" /><circle cx="20" cy="20" r="2" /><circle cx="20" cy="8" r="1.4" /><circle cx="32" cy="20" r="1.4" /><circle cx="20" cy="32" r="1.4" /><circle cx="8" cy="20" r="1.4" /><path d="M12 12c2 2 2 4 0 6M28 12c-2 2-2 4 0 6M12 28c2-2 2-4 0-6M28 28c-2-2-2-4 0-6" />
+                  {%- when 'leaf' -%}
+                    <path d="M8 34C8 16 18 6 34 6c0 16-10 26-26 28Z" /><path d="M8 34 26 14M15 26l-1-6M20 21l-1-6M20 21l6 1M15 26l6 1" />
+                  {%- when 'sun' -%}
+                    <circle cx="20" cy="20" r="7" /><path d="M20 4v6M20 30v6M4 20h6M30 20h6M8.7 8.7l4.2 4.2M27.1 27.1l4.2 4.2M8.7 31.3l4.2-4.2M27.1 12.9l4.2-4.2" />
+                  {%- else -%}
+                    <circle cx="20" cy="20" r="4" /><path d="M20 16c-3-5-3-9 0-12 3 3 3 7 0 12ZM20 24c-3 5-3 9 0 12 3-3 3-7 0-12ZM16 20c-5-3-9-3-12 0 3 3 7 3 12 0ZM24 20c5-3 9-3 12 0-3 3-7 3-12 0Z" /><path d="M17 17c-4-4-7-5-10-4 1 3 4 5 10 4ZM23 23c4 4 7 5 10 4-1-3-4-5-10-4ZM23 17c4-4 5-7 4-10-3 1-5 4-4 10ZM17 23c-4 4-5 7-4 10 3-1 5-4 4-10Z" />
+                {%- endcase -%}
+              </svg>
+              <h3 class="jvli-ourstory__value-title">{{ block.settings.title }}</h3>
+              <p class="jvli-ourstory__value-text">{{ block.settings.text }}</p>
+            </div>
+          {%- endfor -%}
+        </div>
+      </div>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%} 4. Where we're going {%- endcomment -%}
+  <div class="jvli-ourstory__going">
+    <div class="jvli-ourstory__going-media">
+      {%- render 'jvli-media', image: section.settings.going_image, alt: '', sizes: '(max-width: 749px) 100vw, 40vw', class: 'jvli-cover', placeholder: 'lifestyle-2' -%}
+    </div>
+    <div class="jvli-ourstory__card">
+      <h2 class="jvli-ourstory__heading">
+        {{ section.settings.going_heading }}
+        <span class="jvli-ourstory__script">{{ section.settings.going_script }}</span>
+      </h2>
+      <div class="jvli-ourstory__body">{{ section.settings.going_text }}</div>
+      <span class="jvli-ourstory__rule" aria-hidden="true"></span>
+      <div class="jvli-ourstory__body">{{ section.settings.thanks_text }}</div>
+      {%- if section.settings.signature != blank -%}
+        <p class="jvli-ourstory__signature jvli-handwriting">{{ section.settings.signature | newline_to_br }}</p>
+      {%- endif -%}
+    </div>
+    <figure class="jvli-polaroid jvli-ourstory__dreams-polaroid">
+      <div class="jvli-polaroid__photo">
+        {%- render 'jvli-media', image: section.settings.dreams_image, alt: '', sizes: '(max-width: 749px) 60vw, 22vw', class: 'jvli-cover', placeholder: 'image' -%}
+        {%- if section.settings.dreams_caption != blank -%}
+          <p class="jvli-ourstory__dreams-caption jvli-handwriting">{{ section.settings.dreams_caption | newline_to_br }}</p>
+        {%- endif -%}
+      </div>
+    </figure>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "JVLI Our Story",
+  "class": "jvli-section-our-story",
+  "settings": [
+    { "type": "header", "content": "Intro" },
+    { "type": "text", "id": "title_serif", "label": "Title", "default": "Our" },
+    { "type": "text", "id": "title_script", "label": "Title (script word)", "default": "Story" },
+    { "type": "richtext", "id": "intro", "label": "Text", "default": "<p>We are three friends — two women and one man — architects and software engineers by profession, but always drawn to creativity, design and the little details that make everyday life beautiful.</p><p>JVLI is our way of bringing that passion to life — a clothing brand born from our shared love for fabrics, people, places and the everyday moments around us.</p>" },
+    { "type": "image_picker", "id": "hero_image", "label": "Photo", "info": "Landscape, 1600 × 1100" },
+    { "type": "text", "id": "hero_alt", "label": "Photo description", "default": "The three JVLI founders sitting together near a temple gopuram" },
+    { "type": "textarea", "id": "hero_caption", "label": "Photo caption", "default": "Different paths\nSame home" },
+    { "type": "textarea", "id": "hero_note", "label": "Taped note", "default": "Three\nfriends\nOne shared\nbelief" },
+
+    { "type": "header", "content": "Rooted in Tamil Nadu" },
+    { "type": "image_picker", "id": "roots_image", "label": "Polaroid photo" },
+    { "type": "textarea", "id": "roots_caption", "label": "Polaroid caption", "default": "Same roots\nJust a new form" },
+    { "type": "text", "id": "roots_heading", "label": "Heading", "default": "Rooted in" },
+    { "type": "text", "id": "roots_script", "label": "Heading (script words)", "default": "Tamil Nadu" },
+    { "type": "richtext", "id": "roots_text", "label": "Text", "default": "<p>JVLI is a Tamil Nadu based brand, inspired by the people, places and everyday moments around us. From our love for local fabrics and crafts to the way women here live, move and express themselves — our roots keep us grounded.</p>" },
+
+    { "type": "header", "content": "Why JVLI?" },
+    { "type": "text", "id": "why_heading", "label": "Heading", "default": "Why" },
+    { "type": "text", "id": "why_script", "label": "Heading (script word)", "default": "JVLI?" },
+    { "type": "richtext", "id": "why_text", "label": "Text", "default": "<p>One day, while searching for a name, we found ourselves drawn to a word that felt familiar yet slowly fading — “ஜவுளி (ja vu li)”. A word we grew up hearing in everyday conversations — “ஜவுளி கடைக்கு போரேன்”, “ஜவுளி எடுக்கணும்”, “ஜவுளி வாங்கலையா?”</p><p>Over time, its usage may have softened, but the feeling it carries remains deep. More than just a word, ஜவுளி (ja vu li) holds memory, culture and warmth — and that is what JVLI stands for.</p>" },
+    { "type": "image_picker", "id": "why_image", "label": "Illustration (optional)", "info": "A line drawing works best, on a transparent or cream background." },
+
+    { "type": "header", "content": "What JVLI stands for" },
+    { "type": "text", "id": "values_heading", "label": "Heading", "default": "What JVLI Stands For" },
+
+    { "type": "header", "content": "Where we're going" },
+    { "type": "image_picker", "id": "going_image", "label": "Photo (left)" },
+    { "type": "text", "id": "going_heading", "label": "Heading", "default": "Where We’re" },
+    { "type": "text", "id": "going_script", "label": "Heading (script word)", "default": "Going" },
+    { "type": "richtext", "id": "going_text", "label": "Text", "default": "<p>We hope to grow JVLI into a brand that women can always come back to — for well-made, versatile and timeless everyday ethnic wear. We want to keep creating clothes that feel like home, no matter where life takes you.</p>" },
+    { "type": "richtext", "id": "thanks_text", "label": "Closing text", "default": "<p>Thank you for being here.<br>This is just the beginning.</p>" },
+    { "type": "textarea", "id": "signature", "label": "Signature", "default": "With love,\nThe JVLI Team" },
+    { "type": "image_picker", "id": "dreams_image", "label": "Polaroid photo (right)" },
+    { "type": "textarea", "id": "dreams_caption", "label": "Polaroid caption", "default": "Same\nGirls\nBigger\nDreams ♡" }
+  ],
+  "blocks": [
+    {
+      "type": "value",
+      "name": "Value",
+      "settings": [
+        { "type": "select", "id": "icon", "label": "Icon", "default": "flower", "options": [
+          { "value": "flower", "label": "Flower" },
+          { "value": "kolam", "label": "Kolam" },
+          { "value": "leaf", "label": "Leaf" },
+          { "value": "sun", "label": "Sun" }
+        ] },
+        { "type": "text", "id": "title", "label": "Title", "default": "Thoughtful Design" },
+        { "type": "textarea", "id": "text", "label": "Text", "default": "Contemporary ethnic wear that feels effortless, not overdressed." }
+      ]
+    }
+  ],
+  "max_blocks": 4,
+  "presets": [
+    {
+      "name": "JVLI Our Story",
+      "blocks": [
+        { "type": "value", "settings": { "icon": "flower", "title": "Thoughtful Design", "text": "Contemporary ethnic wear that feels effortless, not overdressed." } },
+        { "type": "value", "settings": { "icon": "kolam", "title": "Comfort First", "text": "Breathable fabrics and easy silhouettes for real life." } },
+        { "type": "value", "settings": { "icon": "leaf", "title": "Made for Everyday", "text": "From college to office, from errands to evenings — clothes that fit your day." } },
+        { "type": "value", "settings": { "icon": "sun", "title": "A More You", "text": "Styles that let you feel comfortable, confident and like yourself." } }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,20 @@
+{
+  "sections": {
+    "our_story": {
+      "type": "jvli-our-story",
+      "blocks": {
+        "value_design": { "type": "value", "settings": { "icon": "flower", "title": "Thoughtful Design", "text": "Contemporary ethnic wear that feels effortless, not overdressed." } },
+        "value_comfort": { "type": "value", "settings": { "icon": "kolam", "title": "Comfort First", "text": "Breathable fabrics and easy silhouettes for real life." } },
+        "value_everyday": { "type": "value", "settings": { "icon": "leaf", "title": "Made for Everyday", "text": "From college to office, from errands to evenings — clothes that fit your day." } },
+        "value_you": { "type": "value", "settings": { "icon": "sun", "title": "A More You", "text": "Styles that let you feel comfortable, confident and like yourself." } }
+      },
+      "block_order": ["value_design", "value_comfort", "value_everyday", "value_you"],
+      "settings": {
+        "roots_image": "shopify://shop_images/jvli-fabric-cotton.webp",
+        "going_image": "shopify://shop_images/jvli-fabric-block-print.webp",
+        "dreams_image": "shopify://shop_images/jvli-story-banana-leaves.webp"
+      }
+    }
+  },
+  "order": ["our_story"]
+}
