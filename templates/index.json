@@ -54,7 +54,7 @@
         "cat_new": { "type": "category", "settings": { "collection": "new-in", "title": "New In", "link_label": "Shop now" } }
       },
       "block_order": ["cat_short", "cat_long", "cat_everyday", "cat_new"],
-      "settings": { "heading": "Shop by Category" }
+      "settings": { "heading": "Shop by Collections" }
     },
     "jvli_banner": {
       "type": "jvli-banner",
