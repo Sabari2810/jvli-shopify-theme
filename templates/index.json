@@ -48,13 +48,21 @@
     "jvli_categories": {
       "type": "jvli-categories",
       "blocks": {
-        "cat_short": { "type": "category", "settings": { "title": "Short Kurtis", "link": "shopify://collections/all", "link_label": "Shop now" } },
-        "cat_long": { "type": "category", "settings": { "title": "Long Kurtis", "link": "shopify://collections/all", "link_label": "Shop now" } },
-        "cat_everyday": { "type": "category", "settings": { "title": "Everyday Edits", "link": "shopify://collections/all", "link_label": "Shop now" } },
-        "cat_new": { "type": "category", "settings": { "collection": "new-in", "title": "New In", "link_label": "Shop now" } }
+        "cat_new": {
+          "type": "category",
+          "settings": {
+            "collection": "new-in",
+            "title": "New In",
+            "link_label": "Shop now"
+          }
+        }
       },
-      "block_order": ["cat_short", "cat_long", "cat_everyday", "cat_new"],
-      "settings": { "heading": "Shop by Collections" }
+      "block_order": [
+        "cat_new"
+      ],
+      "settings": {
+        "heading": "Shop by Collections"
+      }
     },
     "jvli_banner": {
       "type": "jvli-banner",
