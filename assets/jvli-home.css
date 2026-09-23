@@ -1650,12 +1650,26 @@ a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
 
 .jvli-product__checkout .shopify-payment-button__button--unbranded {
   min-height: 50px;
-  border-radius: 0;
+  border: 0;
+  border-radius: 0 !important;
+  box-shadow: none !important;
   background: var(--jvli-maroon);
   font-family: var(--jvli-caps);
   font-size: 12px;
   letter-spacing: 0.16em;
   text-transform: uppercase;
+}
+
+/* Sense draws a rounded shadow outline around buttons with ::before and
+   ::after; the JVLI buttons are square and flat. */
+.jvli-product__checkout .shopify-payment-button__button--unbranded::before,
+.jvli-product__checkout .shopify-payment-button__button--unbranded::after {
+  display: none !important;
+}
+
+.jvli-product__checkout .shopify-payment-button,
+.jvli-product__checkout .shopify-payment-button__button {
+  border-radius: 0 !important;
 }
 
 /* Shopify's own hover (and Sense's scheme colour) would turn it blue. */
