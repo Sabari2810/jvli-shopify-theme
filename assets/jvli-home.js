@@ -166,9 +166,13 @@
       var avatar = el('span', 'jvli-igpost__avatar');
       if (post.avatar) {
         var avatarImg = el('img');
-        avatarImg.src = post.avatar;
         avatarImg.alt = '';
         avatarImg.loading = 'lazy';
+        // If the avatar can't load, show the first letter instead.
+        avatarImg.addEventListener('error', function () {
+          avatar.textContent = (post.handle || '?').charAt(0).toUpperCase();
+        });
+        avatarImg.src = post.avatar;
         avatar.appendChild(avatarImg);
       } else {
         avatar.textContent = (post.handle || '?').charAt(0).toUpperCase();
@@ -198,6 +202,11 @@
       video.playsInline = true;
       video.preload = 'none';
       video.setAttribute('aria-hidden', 'true');
+      // No preview if the video can't load; the thumbnail stays.
+      video.addEventListener('error', function () {
+        link.classList.remove('is-playing');
+        video.remove();
+      });
       media.appendChild(video);
       link.addEventListener('mouseenter', function () {
         if (!video.src) video.src = reel.video;
@@ -226,6 +235,25 @@
     return link;
   }
 
+  function thumbnailLoads(reel) {
+    return new Promise(function (resolve) {
+      if (!reel || !reel.thumbnail) return resolve(false);
+      var image = new Image();
+      var timer = setTimeout(function () {
+        resolve(false);
+      }, 8000);
+      image.onload = function () {
+        clearTimeout(timer);
+        resolve(image.naturalWidth > 0);
+      };
+      image.onerror = function () {
+        clearTimeout(timer);
+        resolve(false);
+      };
+      image.src = reel.thumbnail;
+    });
+  }
+
   function initReels(scope) {
     scope.querySelectorAll('[data-jvli-reels]').forEach(function (row) {
       if (row.dataset.jvliReady) return;
@@ -239,16 +267,39 @@
       var url = row.dataset.jvliReels;
       url += (url.indexOf('?') === -1 ? '?' : '&') + 'limit=' + count;
 
+      // Without the feed, keep only real photos; with nothing left, hide the
+      // section rather than show empty tiles.
+      function fallBack() {
+        row.querySelectorAll('[data-jvli-empty]').forEach(function (item) {
+          item.remove();
+        });
+        if (!row.children.length) {
+          var section = row.closest('.jvli-gallery');
+          if (section) section.hidden = true;
+        }
+      }
+
       fetch(url, { headers: { Accept: 'application/json' } })
         .then(function (response) {
           return response.ok ? response.json() : { reels: [] };
         })
         .then(function (data) {
-          var reels = (data && data.reels) || [];
-          if (!reels.length) return;
-          // Reels first; any remaining slots keep the fallback photos.
-          var photos = Array.prototype.slice.call(row.children);
-          var items = reels.slice(0, count).map(function (reel) {
+          var reels = ((data && data.reels) || []).slice(0, count);
+          // Only reels whose thumbnail actually loads replace the photos, so
+          // a visitor never sees a broken image.
+          return Promise.all(reels.map(thumbnailLoads)).then(function (loaded) {
+            return reels.filter(function (reel, i) {
+              return loaded[i];
+            });
+          });
+        })
+        .then(function (reels) {
+          if (!reels || !reels.length) return fallBack();
+          // Reels first; any remaining slots keep the real fallback photos.
+          var photos = Array.prototype.slice.call(row.children).filter(function (item) {
+            return !item.hasAttribute('data-jvli-empty');
+          });
+          var items = reels.map(function (reel) {
             return reelItem(reel, post);
           });
           photos.slice(0, count - items.length).forEach(function (photo) {
@@ -258,7 +309,7 @@
           row.classList.add('jvli-gallery__row--reels');
           if (post) row.classList.add('jvli-gallery__row--posts');
         })
-        .catch(function () {});
+        .catch(fallBack);
     });
   }
 

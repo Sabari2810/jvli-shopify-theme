@@ -14,7 +14,10 @@
     </div>
     {%- comment -%}
       The photo blocks render first and stay as the fallback. When an
-      Instagram feed URL is set, jvli-home.js swaps in the latest reels.
+      Instagram feed URL is set, jvli-home.js swaps in the latest reels whose
+      thumbnails load. Photo slots without an image (data-jvli-empty) are
+      only loading tiles: they are never kept, and if nothing real is left
+      the whole section hides.
     {%- endcomment -%}
     <div
       class="jvli-gallery__row"
@@ -38,10 +41,16 @@
             placeholder: 'lifestyle-1'
           -%}
         {%- endcapture -%}
+        {%- liquid
+          assign jvli_empty = ''
+          if block.settings.image == blank
+            assign jvli_empty = ' data-jvli-empty'
+          endif
+        -%}
         {%- if block.settings.link != blank -%}
-          <a href="{{ block.settings.link }}" class="jvli-gallery__item" {{ block.shopify_attributes }}>{{ jvli_gallery_image }}</a>
+          <a href="{{ block.settings.link }}" class="jvli-gallery__item"{{ jvli_empty }} {{ block.shopify_attributes }}>{{ jvli_gallery_image }}</a>
         {%- else -%}
-          <div class="jvli-gallery__item" {{ block.shopify_attributes }}>{{ jvli_gallery_image }}</div>
+          <div class="jvli-gallery__item"{{ jvli_empty }} {{ block.shopify_attributes }}>{{ jvli_gallery_image }}</div>
         {%- endif -%}
       {%- endfor -%}
     </div>
