@@ -1025,13 +1025,13 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   padding-block: clamp(32px, 2.6vw, 44px) clamp(28px, 2.4vw, 40px);
 }
 
-/* Each card keeps the width of a four-across row, and the cards are
-   centred, so the section looks right with any number of collections. */
+/* Each card keeps the width of a four-across row, and the cards line up
+   from the left, under the heading, with any number of collections. */
 .jvli-categories__grid {
   --jvli-cat-gap: clamp(14px, 1.6vw, 24px);
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
   gap: var(--jvli-cat-gap);
 }
 
