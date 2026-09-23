@@ -39,6 +39,7 @@
         "fabric_linen": {
           "type": "fabric",
           "settings": {
+            "image": "shopify://shop_images/jvli-fabric-linen.webp",
             "name": "Linen",
             "text": "Crisp, breathable and gets softer with every wear. Linen is easy, effortless and perfect for days when you want to keep it simple.",
             "feature_1_icon": "wind", "feature_1": "Breathable",
