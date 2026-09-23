@@ -2282,6 +2282,46 @@ a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
   margin: 0;
 }
 
+/* Desktop: the signup is the footer's fourth column, left-aligned like the
+   others, with the social icons under the email box. */
+@media screen and (min-width: 990px) {
+  .shopify-section-group-footer-group .footer__content-top {
+    display: flex;
+    align-items: flex-start;
+    column-gap: var(--grid-desktop-horizontal-spacing, 4rem);
+  }
+
+  .shopify-section-group-footer-group .footer__blocks-wrapper {
+    flex: 3 1 0;
+    min-width: 0;
+    margin-bottom: 0;
+  }
+
+  .shopify-section-group-footer-group .footer-block--newsletter {
+    flex: 1 1 0;
+    min-width: 0;
+    align-items: flex-start;
+    gap: 1.6rem;
+    margin-top: 0;
+  }
+
+  .shopify-section-group-footer-group .footer-block__newsletter,
+  .shopify-section-group-footer-group .footer-block__newsletter:not(:only-child) {
+    max-width: none;
+    margin: 0;
+    text-align: left;
+  }
+
+  .shopify-section-group-footer-group .footer-block__newsletter:not(:only-child) .footer__newsletter {
+    justify-content: flex-start;
+    margin: 0;
+  }
+
+  .shopify-section-group-footer-group .footer__list-social.list-social {
+    justify-content: flex-start;
+  }
+}
+
 .shopify-section-group-footer-group .footer::before {
   content: "";
   position: absolute;
