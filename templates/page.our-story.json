@@ -10,6 +10,7 @@
       },
       "block_order": ["value_design", "value_comfort", "value_everyday", "value_you"],
       "settings": {
+        "hero_image": "shopify://shop_images/jvli-banner-temple.webp",
         "roots_image": "shopify://shop_images/jvli-fabric-cotton.webp",
         "going_image": "shopify://shop_images/jvli-fabric-block-print.webp",
         "dreams_image": "shopify://shop_images/jvli-story-banana-leaves.webp"
