@@ -11,7 +11,7 @@
       "block_order": ["make_design", "make_fabric", "make_details", "make_day"],
       "settings": {
         "hero_image": "shopify://shop_images/jvli-story-clothesline.webp",
-        "why_image": "shopify://shop_images/jvli-story-fabric.webp",
+        "why_image": "shopify://shop_images/jvli-story-fabric-stack.webp",
         "wall_image": "shopify://shop_images/jvli-story-banana-leaves.webp",
         "going_image": "shopify://shop_images/jvli-banner-temple.webp",
         "end_image": "shopify://shop_images/jvli-fabric-cotton.webp"
