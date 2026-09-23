@@ -3305,19 +3305,28 @@ a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
     padding: 40px var(--jvli-gutter) 44px;
   }
 
+  /* Phones: a smaller polaroid pinned over the photo's bottom-right corner,
+     beside the heading, so it doesn't leave an empty block under the text. */
   .jvli-story__polaroid {
-    position: relative;
-    right: auto;
-    bottom: auto;
-    align-self: flex-end;
-    width: 58%;
-    max-width: 230px;
-    margin: 36px 8px 0 0;
+    top: -84px;
+    right: var(--jvli-gutter);
+    z-index: 2;
+    width: 34%;
+    max-width: 150px;
+  }
+
+  .jvli-story__polaroid figcaption {
+    padding: 8px 4px 12px;
+    font-size: 16px;
+  }
+
+  .jvli-story__text .jvli-eyebrow,
+  .jvli-story__text .jvli-h2 {
+    max-width: calc(100% - min(34%, 150px) - 12px);
   }
 
   .jvli-story__sprig {
-    right: var(--jvli-gutter);
-    bottom: 12px;
+    display: none;
   }
 
   .jvli-categories__grid {
