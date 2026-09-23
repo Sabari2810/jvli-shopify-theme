@@ -1,0 +1,60 @@
+# Copies a Shopify theme (all files, including theme editor settings) into
+# this repo, so the repo holds the complete theme. Run it from the Actions
+# tab ("Pull theme from Shopify"), choosing which theme to copy.
+#
+# Needs the repository secret SHOPIFY_CLI_THEME_TOKEN: a password from the
+# Shopify "Theme Access" app.
+name: Pull theme from Shopify
+
+on:
+  workflow_dispatch:
+    inputs:
+      theme_id:
+        description: "Theme ID to copy (default: JVLI – draft)"
+        required: true
+        default: "166996705430"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pull-theme
+  cancel-in-progress: false
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    env:
+      SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_CLI_THEME_TOKEN }}
+      SHOPIFY_FLAG_STORE: nny1uh-yv.myshopify.com
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install Shopify CLI
+        run: npm install -g @shopify/cli@latest
+
+      - name: Check the password is set
+        run: |
+          if [ -z "$SHOPIFY_CLI_THEME_TOKEN" ]; then
+            echo "::error::Add the SHOPIFY_CLI_THEME_TOKEN secret (a Theme Access password) first."
+            exit 1
+          fi
+
+      - name: Pull the theme
+        run: shopify theme pull --theme "${{ inputs.theme_id }}" --path . --force
+
+      - name: Commit the changes
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Nothing changed."
+          else
+            git commit -m "chore: pull theme ${{ inputs.theme_id }} from Shopify"
+            git push
+          fi
