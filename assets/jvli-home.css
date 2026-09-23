@@ -1658,6 +1658,13 @@ a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
   text-transform: uppercase;
 }
 
+/* Shopify's own hover (and Sense's scheme colour) would turn it blue. */
+.jvli-product__checkout .shopify-payment-button__button--unbranded:hover:not([disabled]),
+.jvli-product__checkout .shopify-payment-button__button--unbranded:focus-visible:not([disabled]) {
+  background: var(--jvli-ink) !important;
+  color: var(--jvli-white) !important;
+}
+
 .jvli-product__checkout .shopify-payment-button__more-options {
   color: var(--jvli-ink-soft);
   font-size: 12px;
