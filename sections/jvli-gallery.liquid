@@ -22,6 +22,10 @@
         data-jvli-reels="{{ section.settings.instagram_feed_url | escape }}"
         data-jvli-reels-count="{{ section.settings.reels_count }}"
         data-jvli-reels-display="{{ section.settings.reels_display }}"
+        data-jvli-reels-handle="{{ section.settings.instagram_handle | escape }}"
+        {% if section.settings.instagram_avatar != blank %}
+          data-jvli-reels-avatar="{{ section.settings.instagram_avatar | image_url: width: 96, height: 96, crop: 'top' }}"
+        {% endif %}
       {% endif %}
     >
       {%- for block in section.blocks limit: section.settings.reels_count -%}
@@ -66,13 +70,15 @@
       "type": "select",
       "id": "reels_display",
       "label": "Show reels as",
-      "default": "embed",
+      "default": "post",
       "options": [
-        { "value": "embed", "label": "Instagram embeds (play on the page)" },
-        { "value": "tiles", "label": "Tiles (open Instagram)" }
+        { "value": "post", "label": "Instagram posts" },
+        { "value": "tiles", "label": "Tiles" }
       ],
-      "info": "Embeds load Instagram's player when the section scrolls into view. If it can't load, tiles are shown."
-    }
+      "info": "Both open the reel on Instagram. Posts add the profile, icons and caption around each reel."
+    },
+    { "type": "text", "id": "instagram_handle", "label": "Instagram username", "default": "jvli.store" },
+    { "type": "image_picker", "id": "instagram_avatar", "label": "Profile picture", "info": "Shown round, like on Instagram. Square, at least 96 × 96." }
   ],
   "blocks": [
     {

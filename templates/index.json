@@ -93,7 +93,8 @@
       "settings": {
         "heading": "JVLI in real life",
         "follow_text": "Follow us @jvli.store",
-        "follow_link": "https://www.instagram.com/jvli.store/"
+        "follow_link": "https://www.instagram.com/jvli.store/",
+        "instagram_avatar": "shopify://shop_images/Logo_-_PNG_449da485-77c3-42b0-bdfb-2ff4dd939744.png"
       }
     },
     "featured-collection": {

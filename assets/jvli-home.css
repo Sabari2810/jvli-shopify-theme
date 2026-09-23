@@ -1283,57 +1283,115 @@ a.jvli-gallery__item:hover .jvli-cover {
   opacity: 0;
 }
 
-/* Instagram embeds: Instagram's player is at least 326px wide. The row may
-   use most of the page margins so four fit on a 1440px screen; on narrower
-   screens it scrolls sideways. Auto margins centre the players when they fit
-   without clipping the first one when they don't. */
-.jvli-gallery__row--embeds {
+/* Reels as Instagram posts: profile row, 4:5 media, action icons, caption. */
+.jvli-gallery__row--posts .jvli-igpost {
   display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  margin-inline: calc(16px - var(--jvli-gutter));
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: thin;
-}
-
-.jvli-gallery__embed {
-  flex: 0 0 326px;
-  scroll-snap-align: center;
-}
-
-.jvli-gallery__embed:first-child {
-  margin-left: auto;
-}
-
-.jvli-gallery__embed:last-child {
-  margin-right: auto;
-}
-
-.jvli-gallery__embed .instagram-media {
-  width: 100% !important;
-  min-width: 326px !important;
-  max-width: none !important;
-  margin: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  border: 1px solid var(--jvli-line) !important;
-}
-
-/* Before embed.js swaps it for the player: a plain link. */
-.jvli-gallery__embed blockquote.instagram-media {
-  padding: 24px;
-  background: var(--jvli-white);
+  flex-direction: column;
+  aspect-ratio: auto;
+  overflow: hidden;
+  border: 1px solid rgba(34, 28, 24, 0.12);
+  background: #fff;
+  color: #262626;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   font-size: 13px;
+  line-height: 1.35;
 }
 
-/* ==========================================================================
-   Favorites page
-   ========================================================================== */
-
-.jvli-favorites {
-  padding-block: clamp(36px, 4vw, 64px) clamp(48px, 5vw, 80px);
+.jvli-igpost__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
 }
+
+.jvli-igpost__avatar {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--jvli-maroon);
+  color: #fff;
+  font-weight: 600;
+}
+
+.jvli-igpost__avatar img {
+  width: 78%;
+  height: 78%;
+  object-fit: contain;
+}
+
+.jvli-igpost__user {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.jvli-igpost__more {
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+.jvli-igpost__media {
+  position: relative;
+  display: block;
+  aspect-ratio: 4 / 5;
+  overflow: hidden;
+  background: #efefef;
+}
+
+a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
+  transform: scale(1.03);
+}
+
+.jvli-igpost__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 12px 6px;
+}
+
+.jvli-igpost__icons {
+  display: flex;
+  gap: 14px;
+}
+
+.jvli-igpost__actions svg {
+  width: 22px;
+  height: 22px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.jvli-igpost__caption {
+  display: -webkit-box;
+  margin: 0 12px;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.jvli-igpost__caption b {
+  font-weight: 600;
+}
+
+.jvli-igpost__date {
+  margin: 6px 12px 12px;
+  color: #737373;
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
 
 .jvli-favorites__head {
   display: flex;
@@ -1659,17 +1717,6 @@ a.jvli-gallery__item:hover .jvli-cover {
     scroll-snap-align: start;
   }
 
-  .jvli-gallery__row--embeds {
-    margin-inline: calc(-1 * var(--jvli-gutter));
-    padding-inline: var(--jvli-gutter);
-    scroll-padding-inline: var(--jvli-gutter);
-    scrollbar-width: none;
-  }
-
-  .jvli-gallery__embed {
-    flex-basis: min(326px, 86vw);
-  }
-
   /* Reels: a 2 x 2 grid, like an Instagram profile, instead of a swipe row. */
   .jvli-gallery__row--reels {
     grid-auto-flow: row;
@@ -1687,6 +1734,48 @@ a.jvli-gallery__item:hover .jvli-cover {
     right: 8px;
     width: 24px;
     height: 24px;
+  }
+
+  /* Compact posts in the 2 x 2 grid. */
+  .jvli-gallery__row--posts .jvli-igpost {
+    font-size: 11px;
+  }
+
+  .jvli-igpost__head {
+    gap: 6px;
+    padding: 7px 8px;
+  }
+
+  .jvli-igpost__avatar {
+    width: 22px;
+    height: 22px;
+    font-size: 10px;
+  }
+
+  .jvli-igpost__more {
+    display: none;
+  }
+
+  .jvli-igpost__actions {
+    padding: 7px 8px 4px;
+  }
+
+  .jvli-igpost__icons {
+    gap: 9px;
+  }
+
+  .jvli-igpost__actions svg {
+    width: 17px;
+    height: 17px;
+  }
+
+  .jvli-igpost__caption {
+    margin: 0 8px;
+  }
+
+  .jvli-igpost__date {
+    margin: 4px 8px 8px;
+    font-size: 9px;
   }
 }
 
