@@ -1,0 +1,212 @@
+{%- render 'jvli-assets' -%}
+{%- comment -%}
+  JVLI collection page (every collection, including /collections/all):
+  header, filters and sorting (Shopify storefront filtering, applied by
+  reloading with the filter parameters, so pages can be shared and Back
+  works), JVLI product cards and pagination.
+{%- endcomment -%}
+{%- paginate collection.products by section.settings.products_per_page -%}
+  {%- liquid
+    assign sort_by = collection.sort_by | default: collection.default_sort_by
+    assign active_count = 0
+    for filter in collection.filters
+      assign active_count = active_count | plus: filter.active_values.size
+      if filter.type == 'price_range'
+        if filter.min_value.value != nil or filter.max_value.value != nil
+          assign active_count = active_count | plus: 1
+        endif
+      endif
+    endfor
+  -%}
+
+  <section class="jvli jvli-collection" data-jvli-collection>
+    <div class="jvli-container">
+      <header class="jvli-collection__head">
+        <h1 class="jvli-collection__title">{{ collection.title | default: 'All products' }}</h1>
+        {%- if section.settings.show_description and collection.description != blank -%}
+          <div class="jvli-collection__description rte">{{ collection.description }}</div>
+        {%- endif -%}
+      </header>
+
+      {%- comment -%} Toolbar: filters, sort and count. {%- endcomment -%}
+      <form class="jvli-collection__toolbar" action="{{ collection.url }}" method="get" data-jvli-filter-form>
+        <div class="jvli-collection__filters">
+          {%- if section.settings.enable_filtering -%}
+            {%- for filter in collection.filters -%}
+              <details class="jvli-filter" data-jvli-filter>
+                <summary class="jvli-filter__toggle">
+                  {{ filter.label }}
+                  {%- if filter.active_values.size > 0 -%}<span class="jvli-filter__count">{{ filter.active_values.size }}</span>{%- endif -%}
+                  {%- render 'jvli-icon', icon: 'chevron' -%}
+                </summary>
+                <div class="jvli-filter__panel">
+                  {%- case filter.type -%}
+                    {%- when 'price_range' -%}
+                      <div class="jvli-filter__price">
+                        <label>
+                          <span>From ₹</span>
+                          <input
+                            type="number"
+                            name="{{ filter.min_value.param_name }}"
+                            value="{% if filter.min_value.value %}{{ filter.min_value.value | money_without_currency | remove: ',' | remove: '.00' }}{% endif %}"
+                            min="0"
+                            placeholder="0"
+                            inputmode="numeric"
+                          >
+                        </label>
+                        <label>
+                          <span>To ₹</span>
+                          <input
+                            type="number"
+                            name="{{ filter.max_value.param_name }}"
+                            value="{% if filter.max_value.value %}{{ filter.max_value.value | money_without_currency | remove: ',' | remove: '.00' }}{% endif %}"
+                            min="0"
+                            placeholder="{{ filter.range_max | money_without_currency | remove: ',' | remove: '.00' }}"
+                            inputmode="numeric"
+                          >
+                        </label>
+                      </div>
+                    {%- else -%}
+                      <ul class="jvli-filter__values">
+                        {%- for value in filter.values -%}
+                          <li>
+                            <label class="jvli-filter__value{% if value.count == 0 and value.active == false %} is-empty{% endif %}">
+                              <input
+                                type="checkbox"
+                                name="{{ value.param_name }}"
+                                value="{{ value.value }}"
+                                {% if value.active %}checked{% endif %}
+                                {% if value.count == 0 and value.active == false %}disabled{% endif %}
+                              >
+                              <span class="jvli-filter__box" aria-hidden="true"></span>
+                              <span>{{ value.label }}</span>
+                              <span class="jvli-filter__num">({{ value.count }})</span>
+                            </label>
+                          </li>
+                        {%- endfor -%}
+                      </ul>
+                  {%- endcase -%}
+                  <div class="jvli-filter__actions">
+                    <a href="{{ filter.url_to_remove }}" class="jvli-filter__reset">Reset</a>
+                    <button type="submit" class="jvli-button jvli-button--dark jvli-filter__apply">Apply</button>
+                  </div>
+                </div>
+              </details>
+            {%- endfor -%}
+          {%- endif -%}
+        </div>
+
+        <div class="jvli-collection__sort-count">
+          {%- if section.settings.enable_sorting -%}
+            <label class="jvli-collection__sort">
+              <span>Sort by</span>
+              <select name="sort_by" data-jvli-sort>
+                {%- for option in collection.sort_options -%}
+                  <option value="{{ option.value | escape }}"{% if option.value == sort_by %} selected{% endif %}>{{ option.name }}</option>
+                {%- endfor -%}
+              </select>
+            </label>
+          {%- endif -%}
+          <p class="jvli-collection__count">
+            {{ collection.products_count }}
+            {% if collection.products_count == 1 %}product{% else %}products{% endif %}
+          </p>
+        </div>
+      </form>
+
+      {%- comment -%} Active filters as removable chips. {%- endcomment -%}
+      {%- if active_count > 0 -%}
+        <div class="jvli-collection__active">
+          {%- for filter in collection.filters -%}
+            {%- for value in filter.active_values -%}
+              <a href="{{ value.url_to_remove }}" class="jvli-chip">
+                {{ value.label }}
+                {%- render 'jvli-icon', icon: 'close' -%}
+                <span class="jvli-visually-hidden">Remove filter</span>
+              </a>
+            {%- endfor -%}
+            {%- if filter.type == 'price_range' -%}
+              {%- if filter.min_value.value != nil or filter.max_value.value != nil -%}
+                <a href="{{ filter.url_to_remove }}" class="jvli-chip">
+                  {{ filter.min_value.value | default: 0 | money_without_trailing_zeros }} –
+                  {{ filter.max_value.value | default: filter.range_max | money_without_trailing_zeros }}
+                  {%- render 'jvli-icon', icon: 'close' -%}
+                  <span class="jvli-visually-hidden">Remove filter</span>
+                </a>
+              {%- endif -%}
+            {%- endif -%}
+          {%- endfor -%}
+          <a href="{{ collection.url }}?sort_by={{ sort_by }}" class="jvli-collection__clear">Clear all</a>
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Products {%- endcomment -%}
+      {%- if collection.products.size > 0 -%}
+        <div class="jvli-collection__grid">
+          {%- for product in collection.products -%}
+            {%- liquid
+              assign card_loading = 'lazy'
+              if forloop.index <= 4
+                assign card_loading = 'eager'
+              endif
+            -%}
+            {%- render 'jvli-product-card',
+              product: product,
+              add_text: 'Add to bag',
+              sizes: '(max-width: 749px) 50vw, (max-width: 1100px) 33vw, 25vw',
+              loading: card_loading
+            -%}
+          {%- endfor -%}
+        </div>
+      {%- else -%}
+        <div class="jvli-collection__empty">
+          {%- if active_count > 0 -%}
+            <p>No products match these filters.</p>
+            <a href="{{ collection.url }}" class="jvli-button jvli-button--dark">Clear filters</a>
+          {%- else -%}
+            <p>There's nothing here yet. Please check back soon.</p>
+            <a href="{{ routes.root_url }}" class="jvli-button jvli-button--dark">Back to home</a>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Pagination {%- endcomment -%}
+      {%- if paginate.pages > 1 -%}
+        <nav class="jvli-pagination" aria-label="Pages">
+          {%- if paginate.previous -%}
+            <a href="{{ paginate.previous.url }}" class="jvli-pagination__arrow" aria-label="Previous page">
+              {%- render 'jvli-icon', icon: 'arrow' -%}
+            </a>
+          {%- endif -%}
+          {%- for part in paginate.parts -%}
+            {%- if part.is_link -%}
+              <a href="{{ part.url }}" class="jvli-pagination__page">{{ part.title }}</a>
+            {%- elsif part.title == paginate.current_page -%}
+              <span class="jvli-pagination__page is-current" aria-current="page">{{ part.title }}</span>
+            {%- else -%}
+              <span class="jvli-pagination__gap">{{ part.title }}</span>
+            {%- endif -%}
+          {%- endfor -%}
+          {%- if paginate.next -%}
+            <a href="{{ paginate.next.url }}" class="jvli-pagination__arrow" aria-label="Next page">
+              {%- render 'jvli-icon', icon: 'arrow' -%}
+            </a>
+          {%- endif -%}
+        </nav>
+      {%- endif -%}
+    </div>
+  </section>
+{%- endpaginate -%}
+
+{% schema %}
+{
+  "name": "JVLI Collection",
+  "class": "jvli-section-collection",
+  "settings": [
+    { "type": "range", "id": "products_per_page", "label": "Products per page", "min": 8, "max": 48, "step": 4, "default": 16 },
+    { "type": "checkbox", "id": "show_description", "label": "Show collection description", "default": true },
+    { "type": "checkbox", "id": "enable_filtering", "label": "Show filters", "default": true, "info": "Filters come from Shopify's Search & Discovery app." },
+    { "type": "checkbox", "id": "enable_sorting", "label": "Show sort", "default": true }
+  ]
+}
+{% endschema %}

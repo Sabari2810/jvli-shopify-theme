@@ -122,6 +122,45 @@ function sampleProductPage() {
   };
 }
 
+// /collections/all with filters (one active) and sort options.
+function sampleCollectionPage() {
+  const value = (label, count, active = false) => ({
+    label, value: label, count, active, param_name: "filter.v.option.size",
+    url_to_remove: "/collections/all",
+  });
+  const size = sizes.map((label) => value(label, label === "XS" ? 0 : 5, label === "M"));
+  return {
+    title: "All products",
+    url: "/collections/all",
+    description: "",
+    products: sampleProducts,
+    products_count: sampleProducts.length,
+    sort_by: "",
+    default_sort_by: "manual",
+    sort_options: [
+      { name: "Featured", value: "manual" },
+      { name: "Best selling", value: "best-selling" },
+      { name: "Price, low to high", value: "price-ascending" },
+      { name: "Price, high to low", value: "price-descending" },
+      { name: "Date, new to old", value: "created-descending" },
+    ],
+    filters: [
+      {
+        label: "Availability", type: "list", url_to_remove: "/collections/all",
+        values: [{ ...value("In stock", 5), param_name: "filter.v.availability" }, { ...value("Out of stock", 1), param_name: "filter.v.availability" }],
+        active_values: [],
+      },
+      {
+        label: "Price", type: "price_range", url_to_remove: "/collections/all", range_max: 89900,
+        min_value: { param_name: "filter.v.price.gte", value: null },
+        max_value: { param_name: "filter.v.price.lte", value: null },
+        active_values: [],
+      },
+      { label: "Size", type: "list", url_to_remove: "/collections/all", values: size, active_values: size.filter((v) => v.active) },
+    ],
+  };
+}
+
 /* ---------- Setting values -> Liquid objects ---------- */
 
 function schemaOf(type) {
@@ -219,6 +258,38 @@ engine.registerFilter("payment_button", () =>
   '<div class="shopify-payment-button"><button type="button" class="shopify-payment-button__button shopify-payment-button__button--unbranded">Buy it now</button><button type="button" class="shopify-payment-button__more-options">More payment options</button></div>',
 );
 engine.registerFilter("metafield_tag", (value) => value);
+engine.registerFilter("money_without_currency", (cents) => String(Number(cents) / 100));
+
+// {% paginate collection.products by N %}: exposes a two-page `paginate`.
+engine.registerTag("paginate", {
+  parse(token, remainTokens) {
+    this.templates = [];
+    const stream = this.liquid.parser
+      .parseStream(remainTokens)
+      .on("tag:endpaginate", () => stream.stop())
+      .on("template", (tpl) => this.templates.push(tpl))
+      .on("end", () => {
+        throw new Error("paginate tag not closed");
+      });
+    stream.start();
+  },
+  *render(ctx, emitter) {
+    ctx.push({
+      paginate: {
+        pages: 2,
+        current_page: 1,
+        previous: null,
+        next: { url: "?page=2" },
+        parts: [
+          { title: 1, is_link: false },
+          { title: 2, is_link: true, url: "?page=2" },
+        ],
+      },
+    });
+    yield this.liquid.renderer.renderTemplates(this.templates, ctx, emitter);
+    ctx.pop();
+  },
+});
 
 engine.registerFilter("asset_url", (name) => `assets/${name}`);
 engine.registerFilter("stylesheet_tag", (url) => `<link rel="stylesheet" href="${url}">`);
@@ -250,6 +321,7 @@ const globals = {
   cart: { item_count: 0 },
   request: { page_type: (process.env.TEMPLATE || "index").split(".")[0] },
   product: sampleProductPage(),
+  collection: sampleCollectionPage(),
   recommendations: { performed: false },
 };
 

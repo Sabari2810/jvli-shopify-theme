@@ -406,6 +406,54 @@
     });
   }
 
+  /* ---------- Collection filters and sorting ---------- */
+
+  function initCollection(scope) {
+    scope.querySelectorAll('[data-jvli-collection]').forEach(function (section) {
+      if (section.dataset.jvliReady) return;
+      section.dataset.jvliReady = 'true';
+      var form = section.querySelector('[data-jvli-filter-form]');
+      if (!form) return;
+
+      // Leave empty price boxes out of the URL.
+      form.addEventListener('submit', function () {
+        form.querySelectorAll('input[type="number"]').forEach(function (input) {
+          if (input.value === '') input.disabled = true;
+        });
+      });
+
+      var sort = form.querySelector('[data-jvli-sort]');
+      if (sort) {
+        sort.addEventListener('change', function () {
+          if (form.requestSubmit) form.requestSubmit();
+          else form.submit();
+        });
+      }
+
+      // One filter open at a time; clicking elsewhere or Escape closes it.
+      var filters = Array.prototype.slice.call(form.querySelectorAll('[data-jvli-filter]'));
+      filters.forEach(function (filter) {
+        filter.addEventListener('toggle', function () {
+          if (!filter.open) return;
+          filters.forEach(function (other) {
+            if (other !== filter) other.open = false;
+          });
+        });
+      });
+      document.addEventListener('click', function (event) {
+        filters.forEach(function (filter) {
+          if (filter.open && !filter.contains(event.target)) filter.open = false;
+        });
+      });
+      document.addEventListener('keydown', function (event) {
+        if (event.key !== 'Escape') return;
+        filters.forEach(function (filter) {
+          filter.open = false;
+        });
+      });
+    });
+  }
+
   /* ---------- Related products ---------- */
 
   function initRelated(scope) {
@@ -501,6 +549,7 @@
     initReels(scope);
     initProduct(scope);
     initRelated(scope);
+    initCollection(scope);
   }
 
   document.addEventListener('submit', onAddSubmit);

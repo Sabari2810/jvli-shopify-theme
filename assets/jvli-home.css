@@ -1792,6 +1792,340 @@ a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
 }
 
 /* ==========================================================================
+   Collection page (sections/jvli-collection)
+   ========================================================================== */
+
+.jvli-collection {
+  padding-block: clamp(28px, 3.5vw, 56px) clamp(48px, 5vw, 80px);
+  background: var(--jvli-cream);
+}
+
+.jvli-collection__head {
+  max-width: 720px;
+  margin-bottom: clamp(20px, 2.4vw, 36px);
+}
+
+.jvli-collection__title {
+  margin: 0;
+  font-family: var(--jvli-serif);
+  font-size: var(--jvli-h2);
+  font-weight: var(--jvli-display-weight);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+}
+
+.jvli-collection__description {
+  margin-top: 12px;
+  color: var(--jvli-ink-soft);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* Toolbar */
+.jvli-collection__toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+  padding-block: 14px;
+  border-top: 1px solid var(--jvli-line);
+  border-bottom: 1px solid var(--jvli-line);
+}
+
+.jvli-collection__filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 22px;
+}
+
+.jvli-filter {
+  position: relative;
+}
+
+.jvli-filter__toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 0;
+  font-family: var(--jvli-caps);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  list-style: none;
+  cursor: pointer;
+}
+
+.jvli-filter__toggle::-webkit-details-marker {
+  display: none;
+}
+
+.jvli-filter__toggle .jvli-icon--chevron {
+  width: 14px;
+  height: 14px;
+  transition: transform 0.2s ease;
+}
+
+.jvli-filter[open] .jvli-filter__toggle .jvli-icon--chevron {
+  transform: rotate(180deg);
+}
+
+.jvli-filter__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: var(--jvli-maroon);
+  color: #fff;
+  font-size: 10px;
+  letter-spacing: 0;
+}
+
+.jvli-filter__panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 0;
+  z-index: 30;
+  width: max-content;
+  min-width: 240px;
+  max-width: min(320px, calc(100vw - 32px));
+  padding: 18px;
+  border: 1px solid var(--jvli-line);
+  background: var(--jvli-white);
+  box-shadow: 0 12px 30px rgba(34, 28, 24, 0.12);
+}
+
+.jvli-filter__values {
+  display: grid;
+  gap: 10px;
+  max-height: 280px;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.jvli-filter__value {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.jvli-filter__value input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.jvli-filter__box {
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--jvli-ink);
+}
+
+.jvli-filter__value input:checked + .jvli-filter__box {
+  border-color: var(--jvli-maroon);
+  background: var(--jvli-maroon) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='m4 8 3 3 5-6' fill='none' stroke='%23fff' stroke-width='1.6'/%3E%3C/svg%3E") center / 14px no-repeat;
+}
+
+.jvli-filter__value input:focus-visible + .jvli-filter__box {
+  outline: 1px solid var(--jvli-ink);
+  outline-offset: 2px;
+}
+
+.jvli-filter__value.is-empty {
+  color: rgba(34, 28, 24, 0.4);
+  cursor: not-allowed;
+}
+
+.jvli-filter__num {
+  margin-left: auto;
+  color: var(--jvli-ink-soft);
+  font-size: 12px;
+}
+
+.jvli-filter__price {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.jvli-filter__price label {
+  display: grid;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--jvli-ink-soft);
+}
+
+.jvli-filter__price input {
+  width: 100%;
+  padding: 9px 10px;
+  border: 1px solid var(--jvli-line);
+  background: #fff;
+  color: var(--jvli-ink);
+  font: inherit;
+  font-size: 14px;
+}
+
+.jvli-filter__actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+}
+
+.jvli-filter__reset {
+  font-size: 13px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.jvli-filter__apply {
+  min-height: 40px;
+  padding: 0 22px;
+}
+
+.jvli-collection__sort-count {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-left: auto;
+}
+
+.jvli-collection__sort {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--jvli-caps);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.jvli-collection__sort select {
+  padding: 6px 26px 6px 8px;
+  border: 1px solid var(--jvli-line);
+  background: transparent url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m6 9 6 6 6-6' fill='none' stroke='%23221c18' stroke-width='1.5'/%3E%3C/svg%3E") right 6px center / 14px no-repeat;
+  color: var(--jvli-ink);
+  font: inherit;
+  font-family: var(--jvli-body, inherit);
+  font-size: 13px;
+  letter-spacing: 0;
+  text-transform: none;
+  appearance: none;
+  cursor: pointer;
+}
+
+.jvli-collection__count {
+  margin: 0;
+  color: var(--jvli-ink-soft);
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+/* Active filters */
+.jvli-collection__active {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  margin-top: 14px;
+}
+
+.jvli-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: 1px solid var(--jvli-line);
+  background: var(--jvli-white);
+  font-size: 13px;
+}
+
+.jvli-chip .jvli-icon {
+  width: 12px;
+  height: 12px;
+}
+
+.jvli-chip:hover {
+  border-color: var(--jvli-ink);
+}
+
+.jvli-collection__clear {
+  font-size: 13px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Products */
+.jvli-collection__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: clamp(32px, 3.4vw, 52px) clamp(16px, 1.75vw, 28px);
+  margin-top: clamp(24px, 2.6vw, 40px);
+}
+
+.jvli-collection__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 18px;
+  padding-block: 48px;
+  color: var(--jvli-ink-soft);
+}
+
+.jvli-collection__empty p {
+  margin: 0;
+  font-size: 16px;
+}
+
+/* Pagination */
+.jvli-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: clamp(40px, 4vw, 64px);
+  font-size: 14px;
+}
+
+.jvli-pagination__page,
+.jvli-pagination__arrow,
+.jvli-pagination__gap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  height: 38px;
+  padding: 0 8px;
+}
+
+.jvli-pagination__page {
+  border: 1px solid transparent;
+}
+
+.jvli-pagination__page:hover {
+  border-color: var(--jvli-line);
+}
+
+.jvli-pagination__page.is-current {
+  border-color: var(--jvli-maroon);
+  background: var(--jvli-maroon);
+  color: #fff;
+}
+
+.jvli-pagination__arrow:first-child .jvli-icon--arrow {
+  transform: rotate(180deg);
+}
+
+/* ==========================================================================
    Favorites page
    ========================================================================== */
 
@@ -1884,6 +2218,10 @@ a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
   .jvli-favorites__grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+
+  .jvli-collection__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
 }
 
 /* ==========================================================================
@@ -1938,6 +2276,51 @@ a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
 
   .jvli-favorites__grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Collection: two cards per row; the toolbar stacks. */
+  .jvli-collection__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px 12px;
+  }
+
+  /* Two-across cards: smaller size boxes so XS-XL fit on one line. */
+  .jvli-collection__grid .jvli-card__sizes,
+  .jvli-favorites__grid .jvli-card__sizes {
+    gap: 4px;
+  }
+
+  .jvli-collection__grid .jvli-card__size span,
+  .jvli-favorites__grid .jvli-card__size span {
+    min-width: 28px;
+    height: 28px;
+    padding: 0 4px;
+    font-size: 11px;
+  }
+
+  .jvli-collection__toolbar {
+    align-items: flex-start;
+  }
+
+  .jvli-collection__sort-count {
+    width: 100%;
+    justify-content: space-between;
+    margin-left: 0;
+  }
+
+  .jvli-filter {
+    position: static;
+  }
+
+  .jvli-collection__filters {
+    position: relative;
+  }
+
+  .jvli-filter__panel {
+    left: 0;
+    right: 0;
+    width: auto;
+    max-width: none;
   }
 
   /* Product page: photos become a swipeable row with dots, details below. */
