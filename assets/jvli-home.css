@@ -813,10 +813,12 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   flex-direction: column;
 }
 
+/* Sizes are radio buttons styled as small boxes: tap one to choose it, and
+   "Add to bag" adds that size. */
 .jvli-card__sizes {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px clamp(14px, 1.6vw, 24px);
+  gap: 6px;
   margin: 12px 0 14px;
   padding: 0;
   border: 0;
@@ -835,23 +837,36 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   pointer-events: none;
 }
 
-.jvli-card__size span {
-  display: inline-block;
-  padding-bottom: 2px;
-  border-bottom: 1px solid transparent;
+.jvli-card__size span,
+.jvli-card__sizes--static span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 30px;
+  padding: 0 7px;
+  border: 1px solid rgba(34, 28, 24, 0.28);
+  letter-spacing: 0.04em;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.jvli-card__size:hover input:not(:disabled) + span {
+  border-color: var(--jvli-ink);
 }
 
 .jvli-card__size input:checked + span {
-  border-bottom-color: currentColor;
-  font-weight: 500;
+  border-color: var(--jvli-maroon);
+  background: var(--jvli-maroon);
+  color: #fff;
 }
 
 .jvli-card__size input:focus-visible + span {
   outline: 1px solid var(--jvli-ink);
-  outline-offset: 3px;
+  outline-offset: 2px;
 }
 
 .jvli-card__size input:disabled + span {
+  border-color: rgba(34, 28, 24, 0.12);
   color: rgba(34, 28, 24, 0.35);
   text-decoration: line-through;
   cursor: not-allowed;
@@ -896,10 +911,6 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
 
 .jvli-card__message:empty {
   display: none;
-}
-
-.jvli-card--placeholder .jvli-card__sizes--static {
-  gap: 16px;
 }
 
 /* ==========================================================================
