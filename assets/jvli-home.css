@@ -1334,6 +1334,17 @@ a.jvli-gallery__item:hover .jvli-cover {
   display: none;
 }
 
+/* Stretch each card to its row's height so the buttons line up, even when
+   one card has no size row (e.g. sold out). */
+.jvli-favorites__item {
+  display: flex;
+  flex-direction: column;
+}
+
+.jvli-favorites__item > .jvli-card {
+  flex: 1;
+}
+
 /* ==========================================================================
    Tablet
    ========================================================================== */
