@@ -1672,11 +1672,16 @@ a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
   border-radius: 0 !important;
 }
 
-/* Shopify's own hover (and Sense's scheme colour) would turn it blue. */
+/* On hover the maroon just deepens a little (Shopify's own hover, and
+   Sense's scheme colour, would otherwise turn it blue). */
+.jvli-product__checkout .shopify-payment-button__button--unbranded {
+  transition: background-color 0.2s ease;
+}
+
 .jvli-product__checkout .shopify-payment-button__button--unbranded:hover:not([disabled]),
 .jvli-product__checkout .shopify-payment-button__button--unbranded:focus-visible:not([disabled]) {
-  background: var(--jvli-ink) !important;
-  color: var(--jvli-white) !important;
+  background: #652c28 !important;
+  color: #fff !important;
 }
 
 .jvli-product__checkout .shopify-payment-button__more-options {
