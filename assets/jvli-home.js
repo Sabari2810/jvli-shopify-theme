@@ -262,6 +262,170 @@
     });
   }
 
+  /* ---------- Product page ---------- */
+
+  function initProduct(scope) {
+    scope.querySelectorAll('[data-jvli-product]').forEach(function (section) {
+      if (section.dataset.jvliReady) return;
+      section.dataset.jvliReady = 'true';
+
+      var form = section.querySelector('[data-jvli-product-form]');
+      var dataEl = section.querySelector('[data-jvli-variants]');
+      var variants = [];
+      try {
+        variants = JSON.parse(dataEl ? dataEl.textContent : '[]');
+      } catch (error) {
+        variants = [];
+      }
+      var idInput = section.querySelector('[data-jvli-variant-id]');
+      var priceEl = section.querySelector('[data-jvli-price]');
+      var addButton = section.querySelector('[data-jvli-add-button]');
+      var fieldsets = Array.prototype.slice.call(section.querySelectorAll('[data-jvli-option]'));
+
+      /* Gallery: thumbnails, dots and swiping share one "show" function. */
+      var slidesEl = section.querySelector('[data-jvli-slides]');
+      var slides = Array.prototype.slice.call(section.querySelectorAll('.jvli-product__slide'));
+      function showMedia(mediaId, scroll) {
+        var index = slides.findIndex(function (slide) {
+          return String(slide.dataset.mediaId) === String(mediaId);
+        });
+        if (index === -1) return;
+        slides.forEach(function (slide, i) {
+          slide.classList.toggle('is-active', i === index);
+        });
+        section.querySelectorAll('[data-jvli-thumb]').forEach(function (thumb) {
+          thumb.classList.toggle('is-active', thumb.dataset.jvliThumb === String(mediaId));
+        });
+        section.querySelectorAll('[data-jvli-dot-for]').forEach(function (dot) {
+          dot.classList.toggle('is-active', dot.dataset.jvliDotFor === String(mediaId));
+        });
+        if (scroll && slidesEl && slidesEl.scrollWidth > slidesEl.clientWidth + 1) {
+          slidesEl.scrollTo({ left: slides[index].offsetLeft, behavior: 'smooth' });
+        }
+      }
+      section.querySelectorAll('[data-jvli-thumb]').forEach(function (thumb) {
+        thumb.addEventListener('click', function () {
+          showMedia(thumb.dataset.jvliThumb, true);
+        });
+      });
+      // Phones: the slides scroll sideways; keep the dots in step.
+      if (slidesEl) {
+        var scrollTimer = null;
+        slidesEl.addEventListener('scroll', function () {
+          clearTimeout(scrollTimer);
+          scrollTimer = setTimeout(function () {
+            if (slidesEl.scrollWidth <= slidesEl.clientWidth + 1) return;
+            var index = Math.round(slidesEl.scrollLeft / slidesEl.clientWidth);
+            if (slides[index]) showMedia(slides[index].dataset.mediaId, false);
+          }, 80);
+        }, { passive: true });
+      }
+
+      /* Options -> variant. */
+      function selected() {
+        return fieldsets.map(function (fieldset) {
+          var checked = fieldset.querySelector('input:checked');
+          return checked ? checked.value : null;
+        });
+      }
+      function findVariant(options) {
+        return variants.find(function (variant) {
+          return variant.options.every(function (value, i) {
+            return value === options[i];
+          });
+        });
+      }
+      function markAvailability(options) {
+        // A value is struck through when no available variant has it together
+        // with the other options currently chosen.
+        fieldsets.forEach(function (fieldset, position) {
+          fieldset.querySelectorAll('input').forEach(function (input) {
+            var candidate = options.slice();
+            candidate[position] = input.value;
+            var match = findVariant(candidate);
+            input.closest('.jvli-card__size').classList.toggle('is-unavailable', !match || !match.available);
+          });
+        });
+      }
+      function update() {
+        var options = selected();
+        var variant = findVariant(options);
+        fieldsets.forEach(function (fieldset, i) {
+          var label = fieldset.querySelector('[data-jvli-option-value]');
+          if (label) label.textContent = options[i] || '';
+        });
+        markAvailability(options);
+
+        var available = !!(variant && variant.available);
+        if (form) form.dataset.jvliUnavailable = available ? 'false' : 'true';
+        if (addButton) {
+          addButton.disabled = !available;
+          addButton.textContent = !variant ? 'Unavailable' : available ? 'Add to bag' : 'Sold out';
+        }
+        if (!variant) return;
+        if (idInput) idInput.value = variant.id;
+        if (priceEl) priceEl.innerHTML = variant.price;
+        if (variant.media) showMedia(variant.media, true);
+        // Keep the URL shareable for the chosen variant.
+        var url = new URL(window.location.href);
+        url.searchParams.set('variant', variant.id);
+        window.history.replaceState(window.history.state, '', url.toString());
+      }
+      fieldsets.forEach(function (fieldset) {
+        fieldset.addEventListener('change', update);
+      });
+      if (fieldsets.length) markAvailability(selected());
+
+      /* Quantity stepper. */
+      section.querySelectorAll('[data-jvli-qty]').forEach(function (button) {
+        button.addEventListener('click', function () {
+          var input = section.querySelector('input[name="quantity"]');
+          var next = (parseInt(input.value, 10) || 1) + parseInt(button.dataset.jvliQty, 10);
+          input.value = Math.min(Math.max(next, 1), parseInt(input.max, 10) || 99);
+        });
+      });
+
+      /* Size guide pop-up. */
+      var dialog = section.querySelector('[data-jvli-size-guide]');
+      if (dialog && dialog.showModal) {
+        section.querySelectorAll('[data-jvli-size-guide-open]').forEach(function (button) {
+          button.addEventListener('click', function () {
+            dialog.showModal();
+          });
+        });
+        dialog.querySelectorAll('[data-jvli-size-guide-close]').forEach(function (button) {
+          button.addEventListener('click', function () {
+            dialog.close();
+          });
+        });
+        // Clicking the dimmed backdrop closes it too.
+        dialog.addEventListener('click', function (event) {
+          if (event.target === dialog) dialog.close();
+        });
+      }
+    });
+  }
+
+  /* ---------- Related products ---------- */
+
+  function initRelated(scope) {
+    scope.querySelectorAll('[data-jvli-related]').forEach(function (section) {
+      if (section.dataset.jvliReady || !section.dataset.url) return;
+      section.dataset.jvliReady = 'true';
+      fetch(section.dataset.url)
+        .then(function (response) {
+          return response.ok ? response.text() : '';
+        })
+        .then(function (html) {
+          var template = document.createElement('template');
+          template.innerHTML = html;
+          var fresh = template.content.querySelector('[data-jvli-related]');
+          if (fresh && fresh.children.length) section.replaceChildren.apply(section, Array.prototype.slice.call(fresh.children));
+        })
+        .catch(function () {});
+    });
+  }
+
   /* ---------- Add to bag ---------- */
 
   function updateCartCount() {
@@ -294,13 +458,17 @@
     }
 
     var label = button.textContent;
+    var quantityField = form.querySelector('[name="quantity"]');
+    var quantity = Math.max(1, parseInt(quantityField && quantityField.value, 10) || 1);
+    var added = form.querySelector('[data-jvli-added]');
     button.disabled = true;
     if (message) message.textContent = '';
+    if (added) added.hidden = true;
 
     fetch(root + 'cart/add.js', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({ items: [{ id: Number(idField.value), quantity: 1 }] }),
+      body: JSON.stringify({ items: [{ id: Number(idField.value), quantity: quantity }] }),
     })
       .then(function (response) {
         return response.json().then(function (data) {
@@ -310,6 +478,7 @@
       })
       .then(function () {
         button.textContent = 'Added';
+        if (added) added.hidden = false;
         return updateCartCount();
       })
       .catch(function (error) {
@@ -318,7 +487,8 @@
       .finally(function () {
         setTimeout(function () {
           button.textContent = label;
-          button.disabled = false;
+          // The product page may have switched to a sold-out variant meanwhile.
+          button.disabled = form.dataset.jvliUnavailable === 'true';
         }, 1600);
       });
   }
@@ -329,6 +499,8 @@
     initHeader(scope);
     initHero(scope);
     initReels(scope);
+    initProduct(scope);
+    initRelated(scope);
   }
 
   document.addEventListener('submit', onAddSubmit);

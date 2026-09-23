@@ -1,0 +1,36 @@
+{%- render 'jvli-assets' -%}
+{%- comment -%}
+  "You may also like": Shopify's product recommendations as JVLI cards. The
+  page renders an empty shell; jvli-home.js fetches this section again from
+  the recommendations URL (where `recommendations` is filled) and swaps it in.
+{%- endcomment -%}
+<section
+  class="jvli jvli-related jvli-section"
+  data-jvli-related
+  data-url="{{ routes.product_recommendations_url }}?section_id={{ section.id }}&product_id={{ product.id }}&limit={{ section.settings.products_to_show }}&intent=related"
+>
+  {%- if recommendations.performed and recommendations.products_count > 0 -%}
+    <div class="jvli-container">
+      <div class="jvli-related__head">
+        <h2 class="jvli-h2">{{ section.settings.heading }}</h2>
+      </div>
+      <div class="jvli-new-in__grid jvli-related__grid" style="--jvli-cols: {{ section.settings.products_to_show | at_most: 4 }};">
+        {%- for item in recommendations.products -%}
+          {%- render 'jvli-product-card', product: item, add_text: 'Add to bag', sizes: '(max-width: 749px) 68vw, 22vw' -%}
+        {%- endfor -%}
+      </div>
+    </div>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "JVLI Related products",
+  "class": "jvli-section-related",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "You may also like" },
+    { "type": "range", "id": "products_to_show", "label": "Products to show", "min": 2, "max": 8, "step": 1, "default": 4 }
+  ],
+  "presets": [{ "name": "JVLI Related products" }]
+}
+{% endschema %}

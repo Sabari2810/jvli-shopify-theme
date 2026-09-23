@@ -1,0 +1,5 @@
+{%- comment -%} Price for a variant, with the compare-at price struck through when on sale. Param: variant. {%- endcomment -%}
+<span class="jvli-product__price-now">{{ variant.price | money_without_trailing_zeros }}</span>
+{%- if variant.compare_at_price > variant.price -%}
+  <s class="jvli-product__price-was">{{ variant.compare_at_price | money_without_trailing_zeros }}</s>
+{%- endif -%}

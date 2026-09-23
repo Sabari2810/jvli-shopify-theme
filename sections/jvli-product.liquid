@@ -1,0 +1,217 @@
+{%- render 'jvli-assets' -%}
+{%- comment -%}
+  JVLI product page: gallery, options as boxes, quantity, add to bag (the
+  shared [data-jvli-add-form] handler in jvli-home.js), Shopify's dynamic
+  checkout button, favorites heart, size guide pop-up and info panels.
+  jvli-home.js (initProduct) keeps the variant, price, stock and gallery in
+  step with the chosen options, using the variant data printed below.
+{%- endcomment -%}
+{%- liquid
+  assign current = product.selected_or_first_available_variant
+  assign has_options = true
+  if product.has_only_default_variant
+    assign has_options = false
+  endif
+-%}
+{%- capture fabric -%}
+  {%- if product.metafields.custom.fabric_care != blank -%}
+    {{- product.metafields.custom.fabric_care | metafield_tag -}}
+  {%- else -%}
+    {{- section.settings.fabric_text -}}
+  {%- endif -%}
+{%- endcapture -%}
+
+<section class="jvli jvli-product" data-jvli-product data-section-id="{{ section.id }}">
+  <div class="jvli-container jvli-product__layout">
+    {%- comment -%} Gallery {%- endcomment -%}
+    <div class="jvli-product__gallery">
+      <div class="jvli-product__slides" data-jvli-slides>
+        {%- for media in product.media -%}
+          {%- if media.media_type == 'image' or media.preview_image -%}
+            <figure
+              class="jvli-product__slide{% if media.id == current.featured_media.id or forloop.first and current.featured_media == blank %} is-active{% endif %}"
+              data-media-id="{{ media.id }}"
+            >
+              {%- liquid
+                assign slide_loading = 'lazy'
+                if forloop.first
+                  assign slide_loading = 'eager'
+                endif
+                assign slide_alt = media.alt | default: product.title
+              -%}
+              {%- render 'jvli-media',
+                image: media.preview_image,
+                alt: slide_alt,
+                sizes: '(max-width: 749px) 100vw, 55vw',
+                loading: slide_loading
+              -%}
+            </figure>
+          {%- endif -%}
+        {%- else -%}
+          <figure class="jvli-product__slide is-active">
+            {%- render 'jvli-media', image: blank, placeholder: 'product-apparel-1' -%}
+          </figure>
+        {%- endfor -%}
+      </div>
+      {%- if product.media.size > 1 -%}
+        <div class="jvli-product__thumbs" role="list">
+          {%- for media in product.media -%}
+            <button
+              type="button"
+              class="jvli-product__thumb{% if media.id == current.featured_media.id or forloop.first and current.featured_media == blank %} is-active{% endif %}"
+              data-jvli-thumb="{{ media.id }}"
+              aria-label="Show image {{ forloop.index }}"
+              role="listitem"
+            >
+              {%- render 'jvli-media', image: media.preview_image, alt: '', sizes: '96px', loading: 'lazy' -%}
+            </button>
+          {%- endfor -%}
+        </div>
+        <div class="jvli-product__dots" aria-hidden="true">
+          {%- for media in product.media -%}
+            <span class="jvli-product__dot{% if forloop.first %} is-active{% endif %}" data-jvli-dot-for="{{ media.id }}"></span>
+          {%- endfor -%}
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} Details {%- endcomment -%}
+    <div class="jvli-product__info">
+      <h1 class="jvli-product__title">{{ product.title }}</h1>
+
+      <div class="jvli-product__price" data-jvli-price>
+        {%- render 'jvli-product-price', variant: current -%}
+      </div>
+      {%- if section.settings.tax_note != blank -%}
+        <p class="jvli-product__note">{{ section.settings.tax_note }}</p>
+      {%- endif -%}
+
+      {%- form 'product', product, class: 'jvli-product__form', data-jvli-add-form: '', data-jvli-product-form: '', novalidate: 'novalidate' -%}
+        <input type="hidden" name="id" value="{{ current.id }}" data-jvli-variant-id>
+
+        {%- if has_options -%}
+          {%- for option in product.options_with_values -%}
+            {%- assign option_name = option.name | downcase | strip -%}
+            <fieldset class="jvli-product__option" data-jvli-option="{{ forloop.index0 }}">
+              <legend class="jvli-product__label">
+                {{ option.name }}: <span data-jvli-option-value>{{ option.selected_value }}</span>
+                {%- if option_name == 'size' or option_name == 'sizes' -%}
+                  {%- if section.settings.size_chart_page != blank -%}
+                    <button type="button" class="jvli-product__size-guide" data-jvli-size-guide-open>Size guide</button>
+                  {%- endif -%}
+                {%- endif -%}
+              </legend>
+              <div class="jvli-card__sizes jvli-product__values">
+                {%- for value in option.values -%}
+                  <label class="jvli-card__size">
+                    <input
+                      type="radio"
+                      name="option-{{ forloop.parentloop.index0 }}"
+                      value="{{ value | escape }}"
+                      {% if option.selected_value == value %}checked{% endif %}
+                    >
+                    <span>{{ value }}</span>
+                  </label>
+                {%- endfor -%}
+              </div>
+            </fieldset>
+          {%- endfor -%}
+        {%- endif -%}
+
+        <div class="jvli-product__buy">
+          <div class="jvli-product__qty">
+            <button type="button" data-jvli-qty="-1" aria-label="Decrease quantity">−</button>
+            <input type="number" name="quantity" value="1" min="1" max="20" aria-label="Quantity" inputmode="numeric">
+            <button type="button" data-jvli-qty="1" aria-label="Increase quantity">+</button>
+          </div>
+          <button type="submit" class="jvli-card__add jvli-product__add" data-jvli-add-button {% unless current.available %}disabled{% endunless %}>
+            {%- if current.available -%}Add to bag{%- else -%}Sold out{%- endif -%}
+          </button>
+        </div>
+        <p class="jvli-card__message" role="status" data-jvli-add-message></p>
+        <p class="jvli-product__added" data-jvli-added hidden>
+          Added to your bag. <a href="{{ routes.cart_url }}">View bag</a>
+        </p>
+
+        {%- if section.settings.show_dynamic_checkout -%}
+          <div class="jvli-product__checkout">{{ form | payment_button }}</div>
+        {%- endif -%}
+      {%- endform -%}
+
+      {%- render 'jvli-favorite-button', product: product, style: 'text' -%}
+
+      <div class="jvli-product__panels">
+        {%- if product.description != blank -%}
+          <details class="jvli-product__panel" open>
+            <summary>Description</summary>
+            <div class="jvli-product__panel-body rte">{{ product.description }}</div>
+          </details>
+        {%- endif -%}
+        {%- if fabric != blank -%}
+          <details class="jvli-product__panel">
+            <summary>Fabric &amp; care</summary>
+            <div class="jvli-product__panel-body rte">{{ fabric }}</div>
+          </details>
+        {%- endif -%}
+        {%- if section.settings.shipping_text != blank -%}
+          <details class="jvli-product__panel">
+            <summary>Shipping &amp; returns</summary>
+            <div class="jvli-product__panel-body rte">{{ section.settings.shipping_text }}</div>
+          </details>
+        {%- endif -%}
+      </div>
+    </div>
+  </div>
+
+  {%- if section.settings.size_chart_page != blank -%}
+    <dialog class="jvli-product__dialog" data-jvli-size-guide>
+      <div class="jvli-product__dialog-head">
+        <h2>{{ section.settings.size_chart_page.title }}</h2>
+        <button type="button" class="jvli-header__icon" data-jvli-size-guide-close aria-label="Close">
+          {%- render 'jvli-icon', icon: 'close' -%}
+        </button>
+      </div>
+      <div class="rte">{{ section.settings.size_chart_page.content }}</div>
+    </dialog>
+  {%- endif -%}
+
+  {%- comment -%} Variant data for jvli-home.js (prices already formatted). {%- endcomment -%}
+  <script type="application/json" data-jvli-variants>
+    [
+      {%- for variant in product.variants -%}
+        {
+          "id": {{ variant.id }},
+          "options": {{ variant.options | json }},
+          "available": {{ variant.available | json }},
+          "media": {{ variant.featured_media.id | default: 'null' }},
+          "price": {% capture price_html %}{% render 'jvli-product-price', variant: variant %}{% endcapture %}{{ price_html | strip | json }}
+        }{% unless forloop.last %},{% endunless %}
+      {%- endfor -%}
+    ]
+  </script>
+</section>
+
+{% schema %}
+{
+  "name": "JVLI Product",
+  "class": "jvli-section-product",
+  "settings": [
+    { "type": "text", "id": "tax_note", "label": "Note under the price", "default": "Inclusive of all taxes" },
+    { "type": "checkbox", "id": "show_dynamic_checkout", "label": "Show Buy it now button", "default": true },
+    { "type": "page", "id": "size_chart_page", "label": "Size guide page", "info": "Make a page with your size chart (a table works well). The \"Size guide\" link appears next to sizes once a page is chosen." },
+    {
+      "type": "richtext",
+      "id": "fabric_text",
+      "label": "Fabric & care (default)",
+      "default": "<p>Made from breathable cotton, printed and finished in Tamil Nadu.</p><p>Hand wash cold or gentle machine wash, separately. Dry in shade. Warm iron on the reverse.</p>",
+      "info": "Shown when a product has no fabric & care text of its own (product metafield custom.fabric_care)."
+    },
+    {
+      "type": "richtext",
+      "id": "shipping_text",
+      "label": "Shipping & returns",
+      "default": "<p>Free shipping on orders above ₹999. Orders are usually dispatched within 2–3 working days.</p><p>If something isn't right, contact us within 7 days of delivery and we'll help with an exchange or return.</p>"
+    }
+  ]
+}
+{% endschema %}

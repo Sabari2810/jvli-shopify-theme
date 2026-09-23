@@ -9,6 +9,14 @@
  */
 {
   "sections": {
+    "jvli_product": {
+      "type": "jvli-product",
+      "settings": {}
+    },
+    "jvli_related": {
+      "type": "jvli-related",
+      "settings": {}
+    },
     "main": {
       "type": "main-product",
       "blocks": {
@@ -90,7 +98,8 @@
         "enable_video_looping": false,
         "padding_top": 24,
         "padding_bottom": 24
-      }
+      },
+      "disabled": true
     },
     "related-products": {
       "type": "related-products",
@@ -108,10 +117,13 @@
         "show_rating": false,
         "padding_top": 36,
         "padding_bottom": 68
-      }
+      },
+      "disabled": true
     }
   },
   "order": [
+    "jvli_product",
+    "jvli_related",
     "main",
     "related-products"
   ]

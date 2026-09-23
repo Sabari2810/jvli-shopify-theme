@@ -96,6 +96,32 @@ const menus = {
   },
 };
 
+// The product page's product: the first sample, with a gallery, options and
+// one sold-out size, as Shopify's product object exposes them.
+function sampleProductPage() {
+  const base = sampleProducts[3];
+  const media = [1, 2, 3].map((n, i) => ({ id: 700 + i, media_type: "image", alt: "", preview_image: standin(`product-${((3 + i) % 5) + 1}`) }));
+  const variants = base.variants.map((v, i) => ({
+    ...v,
+    title: v.options[0],
+    price: base.price,
+    compare_at_price: i === 0 ? null : 119900,
+    featured_media: null,
+  }));
+  const current = variants.find((v) => v.available);
+  return {
+    ...base,
+    description: "<p>A relaxed straight kurti in soft cotton, hand block printed in madder red. Three-quarter sleeves, side slits and a keyhole neckline.</p>",
+    media,
+    featured_media: media[0],
+    has_only_default_variant: false,
+    options_with_values: [{ name: "Size", values: sizes, selected_value: current.options[0] }],
+    variants,
+    selected_or_first_available_variant: current,
+    metafields: { custom: {} },
+  };
+}
+
 /* ---------- Setting values -> Liquid objects ---------- */
 
 function schemaOf(type) {
@@ -114,6 +140,11 @@ function resolveSettings(defs, values, standinKey) {
       value = value ? collections[value] ?? { title: value, url: `/collections/${value}`, products: [], products_count: 0 } : null;
     } else if (def.type === "link_list") {
       value = menus[value] ?? { links: [] };
+    } else if (def.type === "page") {
+      // Preview a size chart page so the pop-up can be checked.
+      value = def.id === "size_chart_page"
+        ? { title: "Size guide", content: "<table><tr><th>Size</th><th>Bust (in)</th><th>Length (in)</th></tr><tr><td>XS</td><td>34</td><td>38</td></tr><tr><td>S</td><td>36</td><td>38</td></tr><tr><td>M</td><td>38</td><td>39</td></tr><tr><td>L</td><td>40</td><td>39</td></tr><tr><td>XL</td><td>42</td><td>40</td></tr></table><p>Measurements are of the garment, laid flat.</p>" }
+        : null;
     } else if (def.type === "url" && typeof value === "string") {
       value = value.replace(/^shopify:\/\/(collections|pages|products)\//, "/$1/");
     }
@@ -162,6 +193,33 @@ engine.registerTag("schema", {
   },
 });
 
+// {% form 'product', product, class: 'x', data-foo: '' %} ... {% endform %}
+engine.registerTag("form", {
+  parse(token, remainTokens) {
+    this.attrs = [...token.args.matchAll(/([\w-]+):\s*'([^']*)'/g)]
+      .map(([, name, value]) => (value === "" ? name : `${name}="${value}"`))
+      .join(" ");
+    this.templates = [];
+    const stream = this.liquid.parser
+      .parseStream(remainTokens)
+      .on("tag:endform", () => stream.stop())
+      .on("template", (tpl) => this.templates.push(tpl))
+      .on("end", () => {
+        throw new Error("form tag not closed");
+      });
+    stream.start();
+  },
+  *render(ctx, emitter) {
+    emitter.write(`<form method="post" action="/cart/add" ${this.attrs}>`);
+    yield this.liquid.renderer.renderTemplates(this.templates, ctx, emitter);
+    emitter.write("</form>");
+  },
+});
+engine.registerFilter("payment_button", () =>
+  '<div class="shopify-payment-button"><button type="button" class="shopify-payment-button__button shopify-payment-button__button--unbranded">Buy it now</button><button type="button" class="shopify-payment-button__more-options">More payment options</button></div>',
+);
+engine.registerFilter("metafield_tag", (value) => value);
+
 engine.registerFilter("asset_url", (name) => `assets/${name}`);
 engine.registerFilter("stylesheet_tag", (url) => `<link rel="stylesheet" href="${url}">`);
 engine.registerFilter("image_url", (image) => (image && image.src) || "");
@@ -181,6 +239,7 @@ const globals = {
     search_url: "/search",
     account_url: "/account",
     account_login_url: "/account/login",
+    product_recommendations_url: "/recommendations/products",
     cart_url: "/cart",
     cart_add_url: "/cart/add",
     all_products_collection_url: "/collections/all",
@@ -190,6 +249,8 @@ const globals = {
   customer: process.env.LOGGED_IN ? { id: 1, first_name: "Test" } : null,
   cart: { item_count: 0 },
   request: { page_type: (process.env.TEMPLATE || "index").split(".")[0] },
+  product: sampleProductPage(),
+  recommendations: { performed: false },
 };
 
 async function renderSection(id, config, groupClass = "") {
