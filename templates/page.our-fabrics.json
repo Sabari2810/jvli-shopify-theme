@@ -28,7 +28,7 @@
         "fabric_block": {
           "type": "fabric",
           "settings": {
-            "image": "shopify://shop_images/jvli-fabric-block-print.webp",
+            "image": "shopify://shop_images/jvli-fabric-hand-block-print.webp",
             "name": "Hand Block Prints",
             "text": "Thoughtfully printed designs, inspired by traditional techniques. Each piece carries the charm of handmade imperfections.",
             "feature_1_icon": "heart", "feature_1": "Unique patterns",
