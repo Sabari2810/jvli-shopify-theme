@@ -61,7 +61,7 @@
       },
       "block_order": ["fabric_cotton", "fabric_mul", "fabric_block", "fabric_linen", "fabric_handloom"],
       "settings": {
-        "hero_image": "shopify://shop_images/jvli-story-fabric-stack.webp",
+        "hero_image": "shopify://shop_images/jvli-fabrics-stool-stack.webp",
         "closing_image": "shopify://shop_images/jvli-story-wall-chair.webp"
       }
     }
