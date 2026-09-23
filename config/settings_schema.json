@@ -1463,7 +1463,7 @@
       { "type": "text", "id": "jvli_whatsapp_number", "label": "WhatsApp number", "default": "918939012321", "info": "With the country code, e.g. 918939012321 for +91 89390 12321." },
       { "type": "text", "id": "jvli_whatsapp_message", "label": "Message", "default": "Hi JVLI! I have a question." },
       { "type": "text", "id": "jvli_whatsapp_product_message", "label": "Message on product pages", "default": "Hi JVLI! I have a question about [product]:", "info": "[product] becomes the product name, and the product link is added after the message." },
-      { "type": "color", "id": "jvli_whatsapp_color", "label": "Button colour", "default": "#25d366" }
+      { "type": "color", "id": "jvli_whatsapp_color", "label": "Button colour", "default": "#652c28" }
     ]
   }
 ]
