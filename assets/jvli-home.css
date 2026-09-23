@@ -1811,6 +1811,37 @@ a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
   border-top: 0;
 }
 
+/* "Let's stay in touch": Sense's newsletter signup, centred, with the social
+   icons below it instead of beside it. */
+.shopify-section-group-footer-group .footer-block--newsletter {
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  margin-top: 4rem;
+}
+
+.shopify-section-group-footer-group .footer-block__newsletter,
+.shopify-section-group-footer-group .footer-block__newsletter:not(:only-child) {
+  width: 100%;
+  max-width: 44rem;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.shopify-section-group-footer-group .footer-block__newsletter:not(:only-child) .footer__newsletter {
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.shopify-section-group-footer-group .footer__list-social.list-social {
+  justify-content: center;
+}
+
+.shopify-section-group-footer-group .footer__follow-on-shop {
+  justify-content: center;
+  margin: 0;
+}
+
 .shopify-section-group-footer-group .footer::before {
   content: "";
   position: absolute;
