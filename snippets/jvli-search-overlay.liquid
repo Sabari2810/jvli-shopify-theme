@@ -1,0 +1,50 @@
+{%- comment -%}
+  Search overlay (rendered by sections/jvli-header). Opened by any element
+  with data-jvli-search-open; jvli-home.js (initSearch) shows suggestions as
+  you type from Shopify's predictive search. Pressing Enter, or "See all
+  results", goes to the full search page. Without JavaScript the search
+  icon is a plain link to /search.
+  Params: links (suggestions shown before typing), placeholder.
+{%- endcomment -%}
+<dialog class="jvli jvli-search" data-jvli-search aria-label="Search">
+  <div class="jvli-search__panel" data-jvli-search-panel>
+    <form class="jvli-search__form" action="{{ routes.search_url }}" method="get" role="search">
+      <input type="hidden" name="options[prefix]" value="last">
+      <span class="jvli-search__icon" aria-hidden="true">{%- render 'jvli-icon', icon: 'search' -%}</span>
+      <input
+        class="jvli-search__input"
+        type="search"
+        name="q"
+        placeholder="{{ placeholder | default: 'Search' | escape }}"
+        autocomplete="off"
+        autocorrect="off"
+        autocapitalize="off"
+        spellcheck="false"
+        enterkeyhint="search"
+        aria-label="Search"
+        aria-controls="JvliSearchResults"
+        data-jvli-search-input
+      >
+      <button type="button" class="jvli-search__clear" data-jvli-search-clear hidden>Clear</button>
+      <button type="button" class="jvli-header__icon jvli-search__close" data-jvli-search-close aria-label="Close search">
+        {%- render 'jvli-icon', icon: 'close' -%}
+      </button>
+    </form>
+
+    <div class="jvli-search__body" data-jvli-search-body>
+      <div class="jvli-search__inner">
+        {%- if links != blank -%}
+          <div class="jvli-search__start" data-jvli-search-start>
+            <p class="jvli-eyebrow jvli-search__label">Popular</p>
+            <div class="jvli-search__chips">
+              {%- for link in links -%}
+                <a href="{{ link.url }}" class="jvli-search__chip">{{ link.title }}</a>
+              {%- endfor -%}
+            </div>
+          </div>
+        {%- endif -%}
+        <div class="jvli-search__results" id="JvliSearchResults" data-jvli-search-results aria-live="polite"></div>
+      </div>
+    </div>
+  </div>
+</dialog>

@@ -38,7 +38,7 @@
     </nav>
 
     <div class="jvli-header__actions">
-      <a href="{{ routes.search_url }}" class="jvli-header__icon jvli-header__icon--search" aria-label="Search">
+      <a href="{{ routes.search_url }}" class="jvli-header__icon jvli-header__icon--search" aria-label="Search" data-jvli-search-open>
         {%- render 'jvli-icon', icon: 'search' -%}
       </a>
       {%- if shop.customer_accounts_enabled -%}
@@ -76,7 +76,7 @@
             {%- endfor -%}
           </nav>
           <div class="jvli-menu__footer">
-            <a href="{{ routes.search_url }}">Search</a>
+            <a href="{{ routes.search_url }}" data-jvli-search-open>Search</a>
             {%- if shop.customer_accounts_enabled -%}<a href="{{ routes.account_url }}">Account</a>{%- endif -%}
             <a href="{{ routes.cart_url }}">Bag</a>
           </div>
@@ -85,6 +85,14 @@
     </div>
   </div>
 </header>
+
+{%- liquid
+  assign jvli_search_links = section.settings.search_menu.links
+  if jvli_search_links == blank
+    assign jvli_search_links = section.settings.menu.links
+  endif
+-%}
+{%- render 'jvli-search-overlay', links: jvli_search_links, placeholder: section.settings.search_placeholder -%}
 
 {% schema %}
 {
@@ -101,7 +109,10 @@
     { "type": "link_list", "id": "menu", "label": "Menu", "default": "main-menu" },
     { "type": "checkbox", "id": "transparent_on_home", "label": "Transparent over the home page hero", "default": true },
     { "type": "checkbox", "id": "show_favorites", "label": "Show favorites icon", "default": true },
-    { "type": "url", "id": "favorites_link", "label": "Favorites link", "info": "Defaults to /pages/favorites." }
+    { "type": "url", "id": "favorites_link", "label": "Favorites link", "info": "Defaults to /pages/favorites." },
+    { "type": "header", "content": "Search" },
+    { "type": "text", "id": "search_placeholder", "label": "Search box text", "default": "Search kurtis, fabrics, collections" },
+    { "type": "link_list", "id": "search_menu", "label": "Suggestions", "info": "Links shown when search opens, before typing. Uses the main menu if empty." }
   ],
   "enabled_on": { "groups": ["header"] }
 }

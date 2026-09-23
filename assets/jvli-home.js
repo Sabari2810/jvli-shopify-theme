@@ -313,6 +313,269 @@
     });
   }
 
+  /* ---------- Search overlay ----------
+     Opens over the page (a native <dialog>, so Escape, focus and screen
+     readers are handled) and shows products, collections and pages as you
+     type, from Shopify's predictive search. Enter or "See all results" goes
+     to the full search page. */
+
+  var SEARCH_MIN_CHARS = 2;
+  var ARROW_ICON =
+    '<svg class="jvli-icon jvli-icon--arrow" viewBox="0 0 24 12" aria-hidden="true" focusable="false">' +
+    '<path d="M1 6h21M17 1.5 22 6l-5 4.5"/></svg>';
+
+  function searchRoot() {
+    return (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+  }
+
+  function formatPrice(amount) {
+    var value = parseFloat(amount);
+    if (!isFinite(value)) return '';
+    var currency = (window.Shopify && window.Shopify.currency && window.Shopify.currency.active) || 'INR';
+    try {
+      return new Intl.NumberFormat('en-IN', {
+        style: 'currency',
+        currency: currency,
+        minimumFractionDigits: value % 1 ? 2 : 0,
+        maximumFractionDigits: 2,
+      }).format(value);
+    } catch (error) {
+      return value.toFixed(0);
+    }
+  }
+
+  function sizedImage(url, width) {
+    if (!url) return '';
+    return url + (url.indexOf('?') === -1 ? '?' : '&') + 'width=' + width;
+  }
+
+  function searchPageUrl(query) {
+    return searchRoot() + 'search?q=' + encodeURIComponent(query) + '&options%5Bprefix%5D=last';
+  }
+
+  function renderSearchResults(container, query, data) {
+    var results = (data && data.resources && data.resources.results) || {};
+    var products = results.products || [];
+    var collections = results.collections || [];
+    var pages = results.pages || [];
+    container.replaceChildren();
+
+    if (!products.length && !collections.length && !pages.length) {
+      var empty = el('div', 'jvli-search__empty');
+      empty.appendChild(el('p', 'jvli-search__empty-title', 'No results for “' + query + '”'));
+      empty.appendChild(el('p', 'jvli-search__empty-text', 'Check the spelling or try a simpler word, like “kurti” or “cotton”.'));
+      container.appendChild(empty);
+      return;
+    }
+
+    if (products.length) {
+      container.appendChild(el('p', 'jvli-eyebrow jvli-search__label', 'Products'));
+      var list = el('ul', 'jvli-search__products');
+      list.setAttribute('role', 'list');
+      products.forEach(function (product) {
+        var item = el('li');
+        var link = el('a', 'jvli-search__product');
+        link.href = product.url;
+        var media = el('span', 'jvli-search__product-media');
+        var src = product.image || (product.featured_image && product.featured_image.url);
+        if (src) {
+          var img = el('img');
+          img.src = sizedImage(src, 360);
+          img.alt = '';
+          img.loading = 'lazy';
+          img.addEventListener('error', function () {
+            img.remove();
+          });
+          media.appendChild(img);
+        }
+        link.appendChild(media);
+        var text = el('span', 'jvli-search__product-text');
+        text.appendChild(el('span', 'jvli-search__product-title', product.title));
+        var price = el('span', 'jvli-search__product-price', formatPrice(product.price));
+        if (product.available === false) price.appendChild(el('span', 'jvli-search__sold-out', 'Sold out'));
+        text.appendChild(price);
+        link.appendChild(text);
+        item.appendChild(link);
+        list.appendChild(item);
+      });
+      container.appendChild(list);
+    }
+
+    var others = collections
+      .map(function (c) {
+        return { title: c.title, url: c.url, kind: 'Collection' };
+      })
+      .concat(
+        pages.map(function (p) {
+          return { title: p.title, url: p.url, kind: 'Page' };
+        }),
+      );
+    if (others.length) {
+      container.appendChild(el('p', 'jvli-eyebrow jvli-search__label', 'Collections & pages'));
+      var links = el('ul', 'jvli-search__links');
+      links.setAttribute('role', 'list');
+      others.forEach(function (other) {
+        var item = el('li');
+        var link = el('a', 'jvli-search__link');
+        link.href = other.url;
+        link.appendChild(el('span', '', other.title));
+        link.appendChild(el('span', 'jvli-search__kind', other.kind));
+        item.appendChild(link);
+        links.appendChild(item);
+      });
+      container.appendChild(links);
+    }
+
+    var all = el('a', 'jvli-search__all', 'See all results for “' + query + '”');
+    all.href = searchPageUrl(query);
+    all.insertAdjacentHTML('beforeend', ARROW_ICON);
+    container.appendChild(all);
+  }
+
+  function initSearch() {
+    var dialog = document.querySelector('[data-jvli-search]');
+    if (!dialog || dialog.dataset.jvliReady) return;
+    dialog.dataset.jvliReady = 'true';
+    // Browsers without <dialog> keep the plain link to the search page.
+    if (typeof dialog.showModal !== 'function') return;
+
+    var panel = dialog.querySelector('[data-jvli-search-panel]');
+    var input = dialog.querySelector('[data-jvli-search-input]');
+    var clear = dialog.querySelector('[data-jvli-search-clear]');
+    var body = dialog.querySelector('[data-jvli-search-body]');
+    var start = dialog.querySelector('[data-jvli-search-start]');
+    var results = dialog.querySelector('[data-jvli-search-results]');
+    var controller = null;
+    var timer = null;
+    var shown = '';
+
+    function showStart() {
+      if (controller) controller.abort();
+      shown = '';
+      results.replaceChildren();
+      dialog.removeAttribute('data-loading');
+      if (start) start.hidden = false;
+    }
+
+    function search(query) {
+      if (query === shown) return;
+      if (controller) controller.abort();
+      controller = typeof AbortController === 'function' ? new AbortController() : null;
+      dialog.setAttribute('data-loading', '');
+      var url =
+        searchRoot() +
+        'search/suggest.json?q=' +
+        encodeURIComponent(query) +
+        '&resources%5Btype%5D=product,collection,page' +
+        '&resources%5Blimit%5D=8' +
+        '&resources%5Blimit_scope%5D=each' +
+        '&resources%5Boptions%5D%5Bunavailable_products%5D=last';
+      fetch(url, { headers: { Accept: 'application/json' }, signal: controller ? controller.signal : undefined })
+        .then(function (response) {
+          if (!response.ok) throw new Error('Search failed');
+          return response.json();
+        })
+        .then(function (data) {
+          if (input.value.trim() !== query) return;
+          shown = query;
+          if (start) start.hidden = true;
+          renderSearchResults(results, query, data);
+          dialog.removeAttribute('data-loading');
+        })
+        .catch(function (error) {
+          if (error && error.name === 'AbortError') return;
+          dialog.removeAttribute('data-loading');
+          // Suggestions unavailable: Enter still searches the full page.
+          results.replaceChildren();
+          var all = el('a', 'jvli-search__all', 'Search for “' + query + '”');
+          all.href = searchPageUrl(query);
+          all.insertAdjacentHTML('beforeend', ARROW_ICON);
+          results.appendChild(all);
+          if (start) start.hidden = true;
+        });
+    }
+
+    function onInput() {
+      var query = input.value.trim();
+      clear.hidden = input.value === '';
+      clearTimeout(timer);
+      if (query.length < SEARCH_MIN_CHARS) {
+        showStart();
+        return;
+      }
+      timer = setTimeout(function () {
+        search(query);
+      }, 180);
+    }
+
+    function open(event) {
+      if (event) event.preventDefault();
+      // Close the phone menu if search was opened from it.
+      document.querySelectorAll('[data-jvli-menu][open]').forEach(function (menu) {
+        menu.open = false;
+      });
+      if (dialog.open) return;
+      dialog.showModal();
+      document.documentElement.classList.add('jvli-search-open');
+      input.focus();
+      if (input.value) input.select();
+    }
+
+    function close() {
+      if (dialog.open) dialog.close();
+    }
+
+    dialog.addEventListener('close', function () {
+      document.documentElement.classList.remove('jvli-search-open');
+      panel.style.transform = '';
+    });
+
+    document.addEventListener('click', function (event) {
+      var trigger = event.target.closest('[data-jvli-search-open]');
+      if (trigger) open(event);
+    });
+    dialog.querySelector('[data-jvli-search-close]').addEventListener('click', close);
+    // A click on the dimmed area outside the panel closes it.
+    dialog.addEventListener('click', function (event) {
+      if (event.target === dialog) close();
+    });
+    clear.addEventListener('click', function () {
+      input.value = '';
+      onInput();
+      input.focus();
+    });
+    input.addEventListener('input', onInput);
+    dialog.querySelector('form').addEventListener('submit', function (event) {
+      if (!input.value.trim()) event.preventDefault();
+    });
+
+    // Phones: swipe down from the top of the results to close.
+    var touchStartY = null;
+    panel.addEventListener(
+      'touchstart',
+      function (event) {
+        touchStartY = body.scrollTop <= 0 ? event.touches[0].clientY : null;
+      },
+      { passive: true },
+    );
+    panel.addEventListener(
+      'touchmove',
+      function (event) {
+        if (touchStartY === null) return;
+        var dy = event.touches[0].clientY - touchStartY;
+        panel.style.transform = dy > 0 ? 'translateY(' + Math.min(dy, 160) * 0.6 + 'px)' : '';
+      },
+      { passive: true },
+    );
+    panel.addEventListener('touchend', function (event) {
+      if (touchStartY === null) return;
+      var dy = event.changedTouches[0].clientY - touchStartY;
+      touchStartY = null;
+      panel.style.transform = '';
+      if (dy > 110) close();
+    });
+  }
+
   /* ---------- Product page ---------- */
 
   function initProduct(scope) {
@@ -598,6 +861,7 @@
     initHeader(scope);
     initHero(scope);
     initReels(scope);
+    initSearch();
     initProduct(scope);
     initRelated(scope);
     initCollection(scope);

@@ -304,6 +304,17 @@ engine.registerFilter("money_without_trailing_zeros", (cents) => {
 // Shopify divides as floats when either side is a float (e.g. `divided_by: 100.0`).
 engine.registerFilter("divided_by", (a, b) => Number(a) / Number(b));
 
+function sampleSearch(terms) {
+  if (terms === "none") return { performed: false, terms: "", results: [], results_count: 0 };
+  if (terms === "empty") return { performed: true, terms: "silk", results: [], results_count: 0 };
+  const results = [
+    ...sampleProducts.map((p) => ({ ...p, object_type: "product" })),
+    { object_type: "page", title: "Our Fabrics", url: "/pages/our-fabrics" },
+    { object_type: "article", title: "How we choose our cotton", url: "/blogs/journal/cotton" },
+  ];
+  return { performed: true, terms, results, results_count: results.length };
+}
+
 const globals = {
   routes: {
     root_url: "/",
@@ -322,6 +333,10 @@ const globals = {
   request: { page_type: (process.env.TEMPLATE || "index").split(".")[0] },
   product: sampleProductPage(),
   collection: sampleCollectionPage(),
+  // /search: SEARCH_TERMS=<words> (default "cotton"), "empty" for no
+  // results, or "none" for the page before searching.
+  search: sampleSearch(process.env.SEARCH_TERMS || "cotton"),
+  linklists: menus,
   // /collections: a few collections, including a tax one that should be hidden.
   collections: [
     { title: "New In", handle: "new-in", url: "/collections/new-in", all_products_count: 5, featured_image: standin("jvli_categories.cat_new.image"), products: sampleProducts, published_at: "2026-09-01" },

@@ -1,0 +1,129 @@
+{%- render 'jvli-assets' -%}
+{%- comment -%}
+  JVLI search results page: search box, product results as JVLI cards, other
+  results (pages, articles) as a list, and pagination. Reuses the collection
+  page styles.
+{%- endcomment -%}
+{%- paginate search.results by section.settings.results_per_page -%}
+  {%- liquid
+    assign product_results = search.results | where: 'object_type', 'product'
+    assign suggestion_links = section.settings.suggestions.links
+    if suggestion_links == blank
+      assign suggestion_links = linklists['main-menu'].links
+    endif
+  -%}
+  <section class="jvli jvli-collection jvli-search-page">
+    <div class="jvli-container">
+      <header class="jvli-collection__head jvli-search-page__head">
+        <h1 class="jvli-collection__title">
+          {%- if search.performed -%}Results for “{{ search.terms | escape }}”{%- else -%}Search{%- endif -%}
+        </h1>
+        <form action="{{ routes.search_url }}" method="get" role="search" class="jvli-search-page__form">
+          <input type="hidden" name="options[prefix]" value="last">
+          <input
+            class="jvli-search-page__input"
+            type="search"
+            name="q"
+            value="{{ search.terms | escape }}"
+            placeholder="{{ section.settings.placeholder | escape }}"
+            aria-label="Search"
+            autocomplete="off"
+            enterkeyhint="search"
+          >
+          <button type="submit" class="jvli-header__icon" aria-label="Search">
+            {%- render 'jvli-icon', icon: 'search' -%}
+          </button>
+        </form>
+        {%- if search.performed -%}
+          <p class="jvli-collection__count">
+            {{ search.results_count }} {% if search.results_count == 1 %}result{% else %}results{% endif %}
+          </p>
+        {%- endif -%}
+      </header>
+
+      {%- if search.performed and search.results_count > 0 -%}
+        {%- if product_results.size > 0 -%}
+          <div class="jvli-collection__grid">
+            {%- for product in product_results -%}
+              {%- liquid
+                assign card_loading = 'lazy'
+                if forloop.index <= 4
+                  assign card_loading = 'eager'
+                endif
+              -%}
+              {%- render 'jvli-product-card',
+                product: product,
+                add_text: 'Add to bag',
+                sizes: '(max-width: 749px) 50vw, (max-width: 1100px) 33vw, 25vw',
+                loading: card_loading
+              -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+
+        {%- assign page_results = search.results | where: 'object_type', 'page' -%}
+        {%- assign article_results = search.results | where: 'object_type', 'article' -%}
+        {%- if page_results.size > 0 or article_results.size > 0 -%}
+          <div class="jvli-search-page__others">
+            <p class="jvli-eyebrow">Pages &amp; stories</p>
+            <ul class="jvli-search__links" role="list">
+              {%- for item in page_results -%}
+                <li><a href="{{ item.url }}" class="jvli-search__link"><span>{{ item.title }}</span><span class="jvli-search__kind">Page</span></a></li>
+              {%- endfor -%}
+              {%- for item in article_results -%}
+                <li><a href="{{ item.url }}" class="jvli-search__link"><span>{{ item.title }}</span><span class="jvli-search__kind">Story</span></a></li>
+              {%- endfor -%}
+            </ul>
+          </div>
+        {%- endif -%}
+
+        {%- if paginate.pages > 1 -%}
+          <nav class="jvli-pagination" aria-label="Pages">
+            {%- if paginate.previous -%}
+              <a href="{{ paginate.previous.url }}" class="jvli-pagination__arrow" aria-label="Previous page">{%- render 'jvli-icon', icon: 'arrow' -%}</a>
+            {%- endif -%}
+            {%- for part in paginate.parts -%}
+              {%- if part.is_link -%}
+                <a href="{{ part.url }}" class="jvli-pagination__page">{{ part.title }}</a>
+              {%- elsif part.title == paginate.current_page -%}
+                <span class="jvli-pagination__page is-current" aria-current="page">{{ part.title }}</span>
+              {%- else -%}
+                <span class="jvli-pagination__gap">{{ part.title }}</span>
+              {%- endif -%}
+            {%- endfor -%}
+            {%- if paginate.next -%}
+              <a href="{{ paginate.next.url }}" class="jvli-pagination__arrow" aria-label="Next page">{%- render 'jvli-icon', icon: 'arrow' -%}</a>
+            {%- endif -%}
+          </nav>
+        {%- endif -%}
+      {%- else -%}
+        <div class="jvli-search-page__empty">
+          {%- if search.performed -%}
+            <p class="jvli-search-page__empty-title">Nothing found for “{{ search.terms | escape }}”.</p>
+            <p>Check the spelling or try a simpler word, like “kurti” or “cotton”.</p>
+          {%- endif -%}
+          {%- if suggestion_links != blank -%}
+            <p class="jvli-eyebrow">Popular</p>
+            <div class="jvli-search__chips">
+              {%- for link in suggestion_links -%}
+                <a href="{{ link.url }}" class="jvli-search__chip">{{ link.title }}</a>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+        </div>
+      {%- endif -%}
+    </div>
+  </section>
+{%- endpaginate -%}
+
+{% schema %}
+{
+  "name": "JVLI Search results",
+  "class": "jvli-section-search",
+  "settings": [
+    { "type": "range", "id": "results_per_page", "label": "Results per page", "min": 8, "max": 48, "step": 4, "default": 24 },
+    { "type": "text", "id": "placeholder", "label": "Search box text", "default": "Search kurtis, fabrics, collections" },
+    { "type": "link_list", "id": "suggestions", "label": "Suggestions", "info": "Shown before searching and when nothing is found. Uses the main menu if empty." }
+  ]
+}
+{% endschema %}
