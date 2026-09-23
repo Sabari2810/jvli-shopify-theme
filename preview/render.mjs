@@ -182,7 +182,7 @@ function resolveSettings(defs, values, standinKey) {
     } else if (def.type === "page") {
       // Preview a size chart page so the pop-up can be checked.
       value = def.id === "size_chart_page"
-        ? { title: "Size guide", content: "<table><tr><th>Size</th><th>Bust (in)</th><th>Length (in)</th></tr><tr><td>XS</td><td>34</td><td>38</td></tr><tr><td>S</td><td>36</td><td>38</td></tr><tr><td>M</td><td>38</td><td>39</td></tr><tr><td>L</td><td>40</td><td>39</td></tr><tr><td>XL</td><td>42</td><td>40</td></tr></table><p>Measurements are of the garment, laid flat.</p>" }
+        ? { title: "Size guide", content: '<p class="jvli-size-guide__sub">அளவு வழிகாட்டி</p><table><thead><tr><th>Size</th><th>Chest</th><th>Waist</th><th>Hip</th></tr></thead><tbody><tr><td>XXS</td><td>32</td><td>28</td><td>35</td></tr><tr><td>XS</td><td>34</td><td>30</td><td>37</td></tr><tr><td>S</td><td>36</td><td>32</td><td>39</td></tr><tr><td>M</td><td>38</td><td>34</td><td>41</td></tr><tr><td>L</td><td>40</td><td>36</td><td>43</td></tr></tbody></table><p><em>All measurements are in inches.</em></p><h3>Fit notes</h3><p>If you prefer a relaxed fit, choose one size up.</p><p>For a comfortable fit, refer to the size guide before ordering.</p>' }
         : null;
     } else if (def.type === "url" && typeof value === "string") {
       value = value.replace(/^shopify:\/\/(collections|pages|products)\//, "/$1/");

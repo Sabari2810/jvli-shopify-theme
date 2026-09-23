@@ -11,7 +11,9 @@
   "sections": {
     "jvli_product": {
       "type": "jvli-product",
-      "settings": {}
+      "settings": {
+        "size_chart_page": "size-guide"
+      }
     },
     "jvli_related": {
       "type": "jvli-related",
