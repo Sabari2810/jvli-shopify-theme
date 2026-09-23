@@ -1,3 +1,12 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
 {
   "sections": {
     "jvli_hero_L9Wtwp": {
@@ -35,13 +44,14 @@
       "type": "jvli-story",
       "settings": {
         "image": "shopify://shop_images/jvli-story-fabric.webp",
-        "polaroid_image": "shopify://shop_images/jvli-story-banana-leaves.webp",
+        "image_alt": "Printed cotton fabric with jasmine flowers",
         "eyebrow": "The JVLI way",
-        "heading": "Clothes that\nfeel like you.",
+        "heading": "Clothes that\nfeel like you…",
         "text": "<p>Easy silhouettes, comfortable fabrics, and everyday pieces that work from morning to evening.</p>",
         "button_label": "Our Story",
         "button_link": "/pages/our-story",
         "show_polaroid": true,
+        "polaroid_image": "shopify://shop_images/jvli-story-banana-leaves.webp",
         "polaroid_caption": "Everyday\nis a story"
       }
     },
@@ -53,6 +63,7 @@
           "settings": {
             "collection": "new-in",
             "title": "New In",
+            "link": "",
             "link_label": "Shop now"
           }
         }
@@ -68,40 +79,82 @@
       "type": "jvli-banner",
       "settings": {
         "image": "shopify://shop_images/jvli-banner-temple.webp",
+        "image_alt": "Temple gopuram between palm trees in Tamil Nadu",
+        "image_position": "center center",
         "heading": "Rooted\nin Tamil Nadu.",
         "text": "From its streets, homes, fabrics and people, Tamil Nadu is at the heart of everything we do.",
         "link_label": "Our Story",
         "link": "/pages/our-story",
-        "image_position": "center center",
         "overlay_opacity": 55
       }
     },
     "jvli_fabric": {
       "type": "jvli-fabric",
       "settings": {
-        "image": "shopify://shop_images/jvli-fabric-block-print.webp",
-        "polaroid_image": "shopify://shop_images/jvli-fabric-cotton.webp",
         "heading": "It starts\nwith the fabric.",
         "text": "<p>Every piece begins with the fabric. The colours, textures and prints influence what the garment becomes.</p>",
         "button_label": "Our Fabrics",
         "button_link": "/pages/our-story",
+        "image": "shopify://shop_images/jvli-fabric-block-print.webp",
+        "image_alt": "Folds of cream cotton with a red floral block print",
+        "polaroid_image": "shopify://shop_images/jvli-fabric-cotton.webp",
         "note": "Cotton\nfor brighter\ndays"
       }
     },
     "jvli_gallery": {
       "type": "jvli-gallery",
       "blocks": {
-        "photo_1": { "type": "photo", "settings": {} },
-        "photo_2": { "type": "photo", "settings": {} },
-        "photo_3": { "type": "photo", "settings": {} },
-        "photo_4": { "type": "photo", "settings": {} },
-        "photo_5": { "type": "photo", "settings": {} }
+        "photo_1": {
+          "type": "photo",
+          "settings": {
+            "alt": "",
+            "link": ""
+          }
+        },
+        "photo_2": {
+          "type": "photo",
+          "settings": {
+            "alt": "",
+            "link": ""
+          }
+        },
+        "photo_3": {
+          "type": "photo",
+          "settings": {
+            "alt": "",
+            "link": ""
+          }
+        },
+        "photo_4": {
+          "type": "photo",
+          "settings": {
+            "alt": "",
+            "link": ""
+          }
+        },
+        "photo_5": {
+          "type": "photo",
+          "settings": {
+            "alt": "",
+            "link": ""
+          }
+        }
       },
-      "block_order": ["photo_1", "photo_2", "photo_3", "photo_4", "photo_5"],
+      "block_order": [
+        "photo_1",
+        "photo_2",
+        "photo_3",
+        "photo_4",
+        "photo_5"
+      ],
       "settings": {
         "heading": "JVLI in real life",
         "follow_text": "Follow us @jvli.store",
         "follow_link": "https://www.instagram.com/jvli.store/",
+        "instagram_feed_url": "https://jvli-shopify-instagram.thejvlistore.workers.dev/reels",
+        "reels_count": 4,
+        "reels_display": "post",
+        "instagram_handle": "jvli.store",
         "instagram_avatar": "shopify://shop_images/Logo_-_PNG_449da485-77c3-42b0-bdfb-2ff4dd939744.png"
       }
     },
@@ -109,25 +162,64 @@
       "type": "featured-collection",
       "disabled": true,
       "settings": {
-        "collection": "all", "products_to_show": 4, "title": "Featured products", "heading_size": "h2", "description": "",
-        "show_description": false, "description_style": "body", "columns_desktop": 4, "enable_desktop_slider": false,
-        "full_width": false, "show_view_all": true, "view_all_style": "solid", "color_scheme": "scheme-1", "image_ratio": "adapt",
-        "image_shape": "default", "show_secondary_image": true, "show_vendor": false, "show_rating": true, "quick_add": "none",
-        "columns_mobile": "2", "swipe_on_mobile": false, "padding_top": 0, "padding_bottom": 0
+        "collection": "all",
+        "products_to_show": 4,
+        "title": "Featured products",
+        "heading_size": "h2",
+        "description": "",
+        "show_description": false,
+        "description_style": "body",
+        "columns_desktop": 4,
+        "enable_desktop_slider": false,
+        "full_width": false,
+        "show_view_all": true,
+        "view_all_style": "solid",
+        "color_scheme": "scheme-1",
+        "image_ratio": "adapt",
+        "image_shape": "default",
+        "show_secondary_image": true,
+        "show_vendor": false,
+        "show_rating": true,
+        "quick_add": "none",
+        "columns_mobile": "2",
+        "swipe_on_mobile": false,
+        "padding_top": 0,
+        "padding_bottom": 0
       }
     },
     "collection_list_XfHFAM": {
       "type": "collection-list",
-      "disabled": true,
       "blocks": {
-        "featured_collection_GJYRNA": { "type": "featured_collection", "settings": { "collection": "mangalagiri" } },
-        "featured_collection_CHP64V": { "type": "featured_collection", "settings": { "collection": "kodai" } }
+        "featured_collection_GJYRNA": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "mangalagiri"
+          }
+        },
+        "featured_collection_CHP64V": {
+          "type": "featured_collection",
+          "settings": {
+            "collection": "kodai"
+          }
+        }
       },
-      "block_order": ["featured_collection_GJYRNA", "featured_collection_CHP64V"],
+      "block_order": [
+        "featured_collection_GJYRNA",
+        "featured_collection_CHP64V"
+      ],
+      "disabled": true,
       "name": "t:sections.collection-list.presets.name",
       "settings": {
-        "title": "Collections", "heading_size": "h2", "image_ratio": "portrait", "columns_desktop": 3, "color_scheme": "",
-        "show_view_all": false, "columns_mobile": "1", "swipe_on_mobile": true, "padding_top": 0, "padding_bottom": 32
+        "title": "Collections",
+        "heading_size": "h2",
+        "image_ratio": "portrait",
+        "columns_desktop": 3,
+        "color_scheme": "",
+        "show_view_all": false,
+        "columns_mobile": "1",
+        "swipe_on_mobile": true,
+        "padding_top": 0,
+        "padding_bottom": 32
       }
     }
   },
