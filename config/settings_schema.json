@@ -1475,5 +1475,15 @@
       },
       { "type": "checkbox", "id": "jvli_intro_enabled", "label": "Show the kolam loading screen", "default": true }
     ]
+  },
+  {
+    "name": "Kolam thread",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "On the home page, a single kolam line draws itself down the page as visitors scroll, weaving around a row of dots between sections. It runs under photos and text."
+      },
+      { "type": "checkbox", "id": "jvli_thread_enabled", "label": "Show the kolam thread on the home page", "default": true }
+    ]
   }
 ]

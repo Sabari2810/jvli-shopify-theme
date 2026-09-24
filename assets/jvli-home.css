@@ -4352,3 +4352,47 @@ html.jvli-search-open {
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ---------- Kolam thread (home page, jvli-home.js initThread) ---------- */
+
+main[data-jvli-thread] {
+  position: relative;
+}
+
+.jvli-thread {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.jvli-thread__line {
+  fill: none;
+  stroke: #763530;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  opacity: 0.8;
+}
+
+.jvli-thread__dots circle {
+  fill: #763530;
+  opacity: 0;
+  transform: scale(0.2);
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.jvli-thread__dots circle.is-on {
+  opacity: 0.85;
+  transform: none;
+}
+
+@media screen and (max-width: 749px) {
+  .jvli-thread__line {
+    stroke-width: 1.2;
+  }
+}

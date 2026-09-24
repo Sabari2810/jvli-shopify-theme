@@ -994,6 +994,234 @@
       });
   }
 
+  /* ---------- Kolam thread (home page) ----------
+     One maroon line runs down the page and draws itself as you scroll. It
+     keeps to the side gutters and, between sections, crosses the page as a
+     kolam border: the line weaves over and under a row of dots. It lies on the
+     paper, under everything else: photos, text and buttons mask it out. A
+     crossing may pass behind a photo but never through text or buttons.
+     Only when layout/theme.liquid marks <main data-jvli-thread> (home page,
+     Theme settings > Kolam thread). With reduced motion it is drawn in full. */
+
+  var SVG_NS = 'http://www.w3.org/2000/svg';
+  var THREAD_COVERS =
+    'img, video, iframe, picture, svg, h1, h2, h3, h4, p, a, button, input, select, textarea, label, dl, [data-jvli-thread-under]';
+  var THREAD_MEDIA = 'img, video, iframe, picture, svg, [data-jvli-thread-under]';
+
+  function initThread() {
+    var main = document.querySelector('main[data-jvli-thread]');
+    if (!main || main.dataset.jvliThreadReady) return;
+    main.dataset.jvliThreadReady = 'true';
+
+    var still = window.matchMedia('(prefers-reduced-motion: reduce)');
+    var svg = document.createElementNS(SVG_NS, 'svg');
+    svg.setAttribute('class', 'jvli-thread');
+    svg.setAttribute('aria-hidden', 'true');
+    svg.setAttribute('focusable', 'false');
+    svg.innerHTML =
+      '<defs><mask id="JvliThreadMask" maskUnits="userSpaceOnUse"></mask></defs>' +
+      '<g mask="url(#JvliThreadMask)"><path class="jvli-thread__line"/><g class="jvli-thread__dots"></g></g>';
+    main.appendChild(svg);
+
+    var mask = svg.querySelector('mask');
+    var line = svg.querySelector('.jvli-thread__line');
+    var dotGroup = svg.querySelector('.jvli-thread__dots');
+    var state = null;
+    var frame = 0;
+
+    function rectsOf(mainBox) {
+      var rects = [];
+      main.querySelectorAll(THREAD_COVERS).forEach(function (el) {
+        if (el === svg || svg.contains(el)) return;
+        var box = el.getBoundingClientRect();
+        if (box.width < 1 || box.height < 1) return;
+        var text = !el.matches(THREAD_MEDIA) && !el.querySelector(THREAD_MEDIA);
+        var pad = text ? 6 : 2;
+        rects.push({
+          x: Math.round(box.left - mainBox.left - pad),
+          y: Math.round(box.top - mainBox.top - pad),
+          w: Math.round(box.width + 2 * pad),
+          h: Math.round(box.height + 2 * pad),
+          text: text
+        });
+      });
+      return rects;
+    }
+
+    function bandIsClear(rects, y, half, x1, x2, textOnly) {
+      for (var i = 0; i < rects.length; i++) {
+        var r = rects[i];
+        if ((r.text || !textOnly) && r.y < y + half && r.y + r.h > y - half && r.x < x2 && r.x + r.w > x1) return false;
+      }
+      return true;
+    }
+
+    /* Nearest height to a section boundary where a full-width band is free of
+       content, or failing that free of text (the crossing then runs partly
+       behind a photo). Null when neither is close by. */
+    function crossingNear(rects, boundary, half, x1, x2) {
+      for (var pass = 0; pass < 2; pass++) {
+        for (var offset = 0; offset <= 48; offset += 2) {
+          if (bandIsClear(rects, boundary + offset, half, x1, x2, pass)) return boundary + offset;
+          if (offset && bandIsClear(rects, boundary - offset, half, x1, x2, pass)) return boundary - offset;
+        }
+      }
+      return null;
+    }
+
+    function build() {
+      var mainBox = main.getBoundingClientRect();
+      var sections = Array.prototype.filter.call(main.children, function (el) {
+        return el !== svg && el.offsetHeight > 0;
+      });
+      if (!sections.length) return;
+
+      var width = main.clientWidth;
+      var height = Math.round(sections[sections.length - 1].getBoundingClientRect().bottom - mainBox.top);
+      var phone = width < 750;
+      var gutter = Math.min(96, Math.max(20, width * 0.054));
+      var d = phone ? 8 : 11; // dots sit 2d apart; the line weaves around them at radius d
+      var sides = [gutter / 2, width - gutter / 2];
+      var rects = rectsOf(mainBox);
+      var under = sections.map(function (el) {
+        return !!el.querySelector('[data-jvli-thread-under]');
+      });
+
+      var cmds = [];
+      var knots = [];
+      var dots = [];
+      var len = 0;
+      var side = 0;
+      var x = sides[0];
+      var y = 0;
+      var quarter = (Math.PI * d) / 2;
+
+      function down(toY) {
+        if (toY <= y) return;
+        cmds.push('L' + x + ' ' + toY);
+        len += toY - y;
+        y = toY;
+      }
+      function across(toX) {
+        cmds.push('L' + toX + ' ' + y);
+        len += Math.abs(toX - x);
+        x = toX;
+      }
+      function arc(toX, toY, sweep, arcLen) {
+        cmds.push('A' + d + ' ' + d + ' 0 0 ' + sweep + ' ' + toX + ' ' + toY);
+        len += arcLen;
+        x = toX;
+        y = toY;
+      }
+
+      cmds.push('M' + x + ' 0');
+      knots.push([0, 0]);
+
+      for (var i = 0; i < sections.length - 1; i++) {
+        if (under[i] || under[i + 1]) continue;
+        var boundary = sections[i + 1].getBoundingClientRect().top - mainBox.top;
+        var at = crossingNear(rects, boundary, d + 4, sides[0] - d, sides[1] + d);
+        if (at === null || at - d < y + 60) continue;
+
+        var to = sides[1 - side];
+        var dir = to > x ? 1 : -1;
+        var count = Math.max(1, Math.floor((Math.abs(to - x) - 4 * d) / (2 * d)) - 2);
+        if (count % 2 === 0) count -= 1; // odd, so a dot sits in the middle
+        var span = Math.min(260, Math.max(120, Math.abs(to - x) * 0.3));
+
+        down(at - d);
+        knots.push([at - span / 2, len - (span / 2 - d)]);
+        arc(x + dir * d, at, dir > 0 ? 0 : 1, quarter);
+        across((x + to) / 2 - dir * count * d);
+        for (var k = 0; k < count; k++) {
+          var cx = x + dir * d;
+          dots.push({ x: cx, y: at, len: len + (Math.PI * d) / 2 });
+          arc(cx + dir * d, at, (k % 2 === 0) === dir > 0 ? 1 : 0, Math.PI * d);
+        }
+        across(to - dir * d);
+        arc(to, at + d, dir > 0 ? 1 : 0, quarter);
+        knots.push([at + span / 2, len + (span / 2 - d)]);
+        side = 1 - side;
+      }
+
+      // Finish by looping once around a last dot.
+      var endY = height - 40;
+      if (endY - d > y + 60) {
+        down(endY - d);
+        knots.push([endY - d, len]);
+        cmds.push('A' + d + ' ' + d + ' 0 1 1 ' + x + ' ' + (endY + d));
+        cmds.push('A' + d + ' ' + d + ' 0 1 1 ' + x + ' ' + (endY - d));
+        dots.push({ x: x, y: endY, len: len + Math.PI * d });
+        len += 2 * Math.PI * d;
+        knots.push([endY + 2 * d, len]);
+      }
+
+      svg.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
+      svg.setAttribute('width', width);
+      svg.setAttribute('height', height);
+      mask.innerHTML =
+        '<rect width="' + width + '" height="' + height + '" fill="#fff"/>' +
+        rects
+          .map(function (r) {
+            return '<rect x="' + r.x + '" y="' + r.y + '" width="' + r.w + '" height="' + r.h + '"/>';
+          })
+          .join('');
+      line.setAttribute('d', cmds.join(' '));
+      line.style.strokeDasharray = len + ' ' + (len + 1);
+      dotGroup.innerHTML = dots
+        .map(function (dot) {
+          return '<circle cx="' + dot.x + '" cy="' + dot.y + '" r="' + (phone ? 1.8 : 2.4) + '"/>';
+        })
+        .join('');
+
+      state = { knots: knots, dots: dots, len: len, circles: dotGroup.children };
+      draw();
+    }
+
+    function lengthAt(penY) {
+      var knots = state.knots;
+      if (penY <= knots[0][0]) return 0;
+      for (var i = 1; i < knots.length; i++) {
+        var a = knots[i - 1];
+        var b = knots[i];
+        if (penY <= b[0]) return a[1] + ((b[1] - a[1]) * (penY - a[0])) / Math.max(1, b[0] - a[0]);
+      }
+      return state.len;
+    }
+
+    function draw() {
+      frame = 0;
+      if (!state) return;
+      var drawn = state.len;
+      if (!still.matches) {
+        var atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
+        drawn = atBottom ? state.len : lengthAt(window.innerHeight * 0.72 - main.getBoundingClientRect().top);
+      }
+      line.style.strokeDashoffset = state.len - drawn;
+      for (var i = 0; i < state.dots.length; i++) {
+        state.circles[i].classList.toggle('is-on', state.dots[i].len <= drawn);
+      }
+    }
+
+    function schedule() {
+      if (!frame) frame = requestAnimationFrame(draw);
+    }
+
+    var rebuildTimer = 0;
+    function rebuild() {
+      clearTimeout(rebuildTimer);
+      rebuildTimer = setTimeout(build, 150);
+    }
+
+    build();
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', rebuild);
+    window.addEventListener('load', rebuild);
+    main.addEventListener('scroll', rebuild, true); // sideways product rows move what covers the line
+    if (window.ResizeObserver) new ResizeObserver(rebuild).observe(main);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(rebuild);
+  }
+
   /* ---------- Init ---------- */
 
   function init(scope) {
@@ -1005,6 +1233,7 @@
     initProduct(scope);
     initRelated(scope);
     initCollection(scope);
+    initThread();
   }
 
   document.addEventListener('submit', onAddSubmit);

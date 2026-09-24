@@ -1,5 +1,5 @@
 {%- render 'jvli-assets' -%}
-<section class="jvli jvli-banner" style="--jvli-overlay: {{ section.settings.overlay_opacity | divided_by: 100.0 }};">
+<section class="jvli jvli-banner" data-jvli-thread-under style="--jvli-overlay: {{ section.settings.overlay_opacity | divided_by: 100.0 }};">
   <picture class="jvli-banner__media">
     {%- if section.settings.mobile_image != blank -%}
       <source
