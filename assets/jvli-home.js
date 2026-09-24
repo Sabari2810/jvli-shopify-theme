@@ -576,6 +576,145 @@
     });
   }
 
+  /* ---------- Cart page ----------
+     Quantity steppers and Remove update the bag in place through
+     /cart/change.js, which also returns this section re-rendered; the new
+     HTML replaces the old. The form still works without JavaScript. */
+
+  var cartBusy = false;
+
+  function cartSection() {
+    return document.querySelector('[data-jvli-cart]');
+  }
+
+  function showCartError(message) {
+    var section = cartSection();
+    var box = section && section.querySelector('[data-jvli-cart-error]');
+    if (!box) return;
+    box.textContent = message;
+    box.hidden = !message;
+  }
+
+  function changeCartLine(line, quantity) {
+    var section = cartSection();
+    if (!section || cartBusy) return;
+    cartBusy = true;
+    section.classList.add('is-updating');
+    var sectionId = section.dataset.sectionId;
+    var focusLine = line;
+    fetch(root + 'cart/change.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ line: line, quantity: quantity, sections: [sectionId], sections_url: window.location.pathname }),
+    })
+      .then(function (response) {
+        return response.json().then(function (data) {
+          if (!response.ok) throw new Error(data.description || data.message || 'Could not update your bag.');
+          return data;
+        });
+      })
+      .then(function (cart) {
+        var html = cart.sections && cart.sections[sectionId];
+        var fresh = null;
+        if (html) {
+          var template = document.createElement('template');
+          template.innerHTML = html;
+          fresh = template.content.querySelector('[data-jvli-cart]');
+        }
+        if (!fresh) {
+          window.location.reload();
+          return;
+        }
+        section.replaceWith(fresh);
+        document.querySelectorAll('[data-jvli-cart-count]').forEach(function (el) {
+          el.textContent = cart.item_count;
+          el.hidden = cart.item_count === 0;
+        });
+        document.dispatchEvent(new CustomEvent('jvli:cart:updated', { detail: { cart: cart } }));
+        // Keep keyboard users where they were.
+        var input = fresh.querySelector('[data-jvli-cart-line="' + focusLine + '"] [data-jvli-cart-qty]');
+        if (input && quantity > 0) input.focus();
+      })
+      .catch(function (error) {
+        section.classList.remove('is-updating');
+        showCartError(error.message);
+        // Put the quantities back to what the bag really holds.
+        fetch(root + 'cart.js', { headers: { Accept: 'application/json' } })
+          .then(function (response) {
+            return response.json();
+          })
+          .then(function (cart) {
+            section.querySelectorAll('[data-jvli-cart-line]').forEach(function (row) {
+              var item = cart.items[Number(row.dataset.jvliCartLine) - 1];
+              var input = row.querySelector('[data-jvli-cart-qty]');
+              if (item && input) input.value = item.quantity;
+            });
+          })
+          .catch(function () {});
+      })
+      .then(function () {
+        cartBusy = false;
+      });
+  }
+
+  var cartTimer = null;
+
+  function initCart() {
+    if (document.documentElement.dataset.jvliCartReady) return;
+    document.documentElement.dataset.jvliCartReady = 'true';
+
+    document.addEventListener('click', function (event) {
+      var section = event.target.closest('[data-jvli-cart]');
+      if (!section) return;
+      var row = event.target.closest('[data-jvli-cart-line]');
+      if (!row) return;
+      var line = Number(row.dataset.jvliCartLine);
+
+      if (event.target.closest('[data-jvli-cart-remove]')) {
+        event.preventDefault();
+        changeCartLine(line, 0);
+        return;
+      }
+      var step = event.target.closest('[data-jvli-cart-step]');
+      if (step) {
+        var input = row.querySelector('[data-jvli-cart-qty]');
+        var max = input.max ? Number(input.max) : Infinity;
+        var next = Math.min(max, Math.max(0, (Number(input.value) || 0) + Number(step.dataset.jvliCartStep)));
+        if (next === Number(input.value)) return;
+        input.value = next;
+        clearTimeout(cartTimer);
+        // A short pause lets several taps become one update.
+        cartTimer = setTimeout(function () {
+          changeCartLine(line, next);
+        }, 350);
+      }
+    });
+
+    document.addEventListener('change', function (event) {
+      if (!event.target.closest('[data-jvli-cart]')) return;
+      if (event.target.matches('[data-jvli-cart-qty]')) {
+        var row = event.target.closest('[data-jvli-cart-line]');
+        var quantity = Math.max(0, Math.floor(Number(event.target.value) || 0));
+        clearTimeout(cartTimer);
+        changeCartLine(Number(row.dataset.jvliCartLine), quantity);
+      } else if (event.target.matches('[data-jvli-cart-note]')) {
+        fetch(root + 'cart/update.js', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+          body: JSON.stringify({ note: event.target.value }),
+        }).catch(function () {});
+      }
+    });
+
+    // Enter in a quantity box updates that line instead of submitting the
+    // whole form to checkout.
+    document.addEventListener('keydown', function (event) {
+      if (event.key !== 'Enter' || !event.target.matches('[data-jvli-cart] [data-jvli-cart-qty]')) return;
+      event.preventDefault();
+      event.target.blur();
+    });
+  }
+
   /* ---------- Product page ---------- */
 
   function initProduct(scope) {
@@ -862,6 +1001,7 @@
     initHero(scope);
     initReels(scope);
     initSearch();
+    initCart();
     initProduct(scope);
     initRelated(scope);
     initCollection(scope);

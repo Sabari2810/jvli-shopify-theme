@@ -1,0 +1,174 @@
+{%- render 'jvli-assets' -%}
+{%- comment -%}
+  JVLI cart page: line items (photo, name, options, price, quantity stepper,
+  remove) and an order summary (subtotal, discounts, total, tax note, order
+  note, checkout and express checkout buttons).
+
+  Without JavaScript it is a plain form: quantities post as updates[] and
+  "Update bag" / "Checkout" submit it. jvli-home.js (initCart) changes
+  quantities and removes items in place through /cart/change.js, re-rendering
+  this section from the response.
+{%- endcomment -%}
+<section class="jvli jvli-cart" data-jvli-cart data-section-id="{{ section.id }}">
+  <div class="jvli-container">
+    <header class="jvli-cart__head">
+      <div>
+        <h1 class="jvli-cart__title">{{ section.settings.heading | default: 'Your bag' }}</h1>
+        {%- if cart.item_count > 0 -%}
+          <p class="jvli-cart__count">
+            {{ cart.item_count }} {% if cart.item_count == 1 %}item{% else %}items{% endif %}
+          </p>
+        {%- endif -%}
+      </div>
+      {%- if cart.item_count > 0 -%}
+        <a href="{{ section.settings.continue_link | default: routes.all_products_collection_url }}" class="jvli-link-caps">
+          Continue shopping
+          {%- render 'jvli-icon', icon: 'arrow' -%}
+        </a>
+      {%- endif -%}
+    </header>
+
+    {%- if cart.item_count == 0 -%}
+      <div class="jvli-cart__empty">
+        <p class="jvli-cart__empty-title">Your bag is empty.</p>
+        <p class="jvli-cart__empty-text">{{ section.settings.empty_text }}</p>
+        <a href="{{ section.settings.continue_link | default: routes.all_products_collection_url }}" class="jvli-button jvli-button--dark">
+          {{- section.settings.empty_button | default: 'Start shopping' -}}
+          {%- render 'jvli-icon', icon: 'arrow' -%}
+        </a>
+      </div>
+    {%- else -%}
+      <form action="{{ routes.cart_url }}" method="post" class="jvli-cart__layout" novalidate data-jvli-cart-form>
+        <div class="jvli-cart__main">
+          <p class="jvli-cart__error" role="alert" data-jvli-cart-error hidden></p>
+          <ul class="jvli-cart__items" role="list">
+            {%- for item in cart.items -%}
+              <li class="jvli-cart__item" data-jvli-cart-line="{{ forloop.index }}">
+                <a href="{{ item.url }}" class="jvli-cart__media" tabindex="-1" aria-hidden="true">
+                  {%- render 'jvli-media', image: item.image, alt: '', sizes: '(max-width: 749px) 96px, 140px', class: 'jvli-cover', placeholder: 'product-apparel-1' -%}
+                </a>
+
+                <div class="jvli-cart__details">
+                  <div class="jvli-cart__top">
+                    <div class="jvli-cart__info">
+                      <a href="{{ item.url }}" class="jvli-cart__name">{{ item.product.title }}</a>
+                      {%- unless item.product.has_only_default_variant -%}
+                        <p class="jvli-cart__variant">
+                          {%- for option in item.options_with_values -%}
+                            {{ option.name }}: {{ option.value }}{% unless forloop.last %} · {% endunless %}
+                          {%- endfor -%}
+                        </p>
+                      {%- endunless -%}
+                      {%- for property in item.properties -%}
+                        {%- assign first_char = property.first | slice: 0 -%}
+                        {%- if property.last != blank and first_char != '_' -%}
+                          <p class="jvli-cart__variant">{{ property.first }}: {{ property.last }}</p>
+                        {%- endif -%}
+                      {%- endfor -%}
+                      {%- if item.selling_plan_allocation -%}
+                        <p class="jvli-cart__variant">{{ item.selling_plan_allocation.selling_plan.name }}</p>
+                      {%- endif -%}
+                      {%- for allocation in item.line_level_discount_allocations -%}
+                        <p class="jvli-cart__discount">{{ allocation.discount_application.title }} (−{{ allocation.amount | money }})</p>
+                      {%- endfor -%}
+                    </div>
+                    <p class="jvli-cart__price">
+                      {%- if item.original_line_price != item.final_line_price -%}
+                        <s>{{ item.original_line_price | money }}</s>
+                      {%- endif -%}
+                      <span>{{ item.final_line_price | money }}</span>
+                    </p>
+                  </div>
+
+                  <div class="jvli-cart__controls">
+                    <div class="jvli-product__qty jvli-cart__qty">
+                      <button type="button" data-jvli-cart-step="-1" aria-label="Decrease quantity of {{ item.product.title | escape }}">−</button>
+                      <input
+                        type="number"
+                        name="updates[]"
+                        value="{{ item.quantity }}"
+                        min="0"
+                        {% if item.variant.inventory_management == 'shopify' and item.variant.inventory_policy == 'deny' %}max="{{ item.variant.inventory_quantity }}"{% endif %}
+                        inputmode="numeric"
+                        aria-label="Quantity of {{ item.product.title | escape }}"
+                        data-jvli-cart-qty
+                      >
+                      <button type="button" data-jvli-cart-step="1" aria-label="Increase quantity of {{ item.product.title | escape }}">+</button>
+                    </div>
+                    <a href="{{ item.url_to_remove }}" class="jvli-cart__remove" data-jvli-cart-remove>Remove</a>
+                  </div>
+                </div>
+              </li>
+            {%- endfor -%}
+          </ul>
+          <noscript>
+            <button type="submit" name="update" class="jvli-button jvli-button--outline-dark jvli-cart__update">Update bag</button>
+          </noscript>
+        </div>
+
+        <aside class="jvli-cart__summary" aria-label="Order summary">
+          <h2 class="jvli-cart__summary-title">Order summary</h2>
+          <dl class="jvli-cart__totals">
+            <div>
+              <dt>Subtotal</dt>
+              <dd>{{ cart.items_subtotal_price | money }}</dd>
+            </div>
+            {%- for discount in cart.cart_level_discount_applications -%}
+              <div class="jvli-cart__totals-discount">
+                <dt>{{ discount.title }}</dt>
+                <dd>−{{ discount.total_allocated_amount | money }}</dd>
+              </div>
+            {%- endfor -%}
+            <div>
+              <dt>Shipping</dt>
+              <dd>At checkout</dd>
+            </div>
+            <div class="jvli-cart__total">
+              <dt>Total</dt>
+              <dd>{{ cart.total_price | money_with_currency }}</dd>
+            </div>
+          </dl>
+          <p class="jvli-cart__tax">
+            {%- if cart.taxes_included -%}Prices include GST.{%- else -%}Taxes calculated at checkout.{%- endif %}
+            Shipping is added at checkout.
+          </p>
+
+          {%- if settings.show_cart_note -%}
+            <details class="jvli-cart__note"{% if cart.note != blank %} open{% endif %}>
+              <summary>Add a note to your order</summary>
+              <textarea name="note" rows="3" placeholder="Gift message, delivery instructions…" data-jvli-cart-note>{{ cart.note }}</textarea>
+            </details>
+          {%- endif -%}
+
+          <button type="submit" name="checkout" class="jvli-card__add jvli-product__add jvli-cart__checkout">
+            Checkout
+          </button>
+
+          {%- if additional_checkout_buttons and section.settings.show_express -%}
+            <div class="jvli-cart__express">{{ content_for_additional_checkout_buttons }}</div>
+          {%- endif -%}
+
+          {%- if section.settings.reassurance != blank -%}
+            <p class="jvli-cart__reassure">{{ section.settings.reassurance }}</p>
+          {%- endif -%}
+        </aside>
+      </form>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "JVLI Cart",
+  "class": "jvli-section-cart",
+  "settings": [
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Your bag" },
+    { "type": "url", "id": "continue_link", "label": "Continue shopping link", "info": "Defaults to all products." },
+    { "type": "text", "id": "reassurance", "label": "Line under the checkout button", "default": "Secure checkout · Ships across India" },
+    { "type": "checkbox", "id": "show_express", "label": "Show express checkout buttons", "default": true, "info": "Buy it now style buttons from your payment providers, when available." },
+    { "type": "header", "content": "Empty bag" },
+    { "type": "text", "id": "empty_text", "label": "Text", "default": "Find something you'll love wearing every day." },
+    { "type": "text", "id": "empty_button", "label": "Button", "default": "Start shopping" }
+  ]
+}
+{% endschema %}

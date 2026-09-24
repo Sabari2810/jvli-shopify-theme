@@ -259,6 +259,10 @@ engine.registerFilter("payment_button", () =>
 );
 engine.registerFilter("metafield_tag", (value) => value);
 engine.registerFilter("money_without_currency", (cents) => String(Number(cents) / 100));
+// Shopify's rupee format: "₹1,234.00".
+const rupees = (cents) => "₹" + (Number(cents) / 100).toLocaleString("en-IN", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+engine.registerFilter("money", rupees);
+engine.registerFilter("money_with_currency", (cents) => rupees(cents) + " INR");
 
 // {% paginate collection.products by N %}: exposes a two-page `paginate`.
 engine.registerTag("paginate", {
@@ -304,6 +308,35 @@ engine.registerFilter("money_without_trailing_zeros", (cents) => {
 // Shopify divides as floats when either side is a float (e.g. `divided_by: 100.0`).
 engine.registerFilter("divided_by", (a, b) => Number(a) / Number(b));
 
+function sampleCart() {
+  const line = (p, size, qty, discount = 0) => ({
+    key: `${p.id}:${size}`,
+    url: `${p.url}?variant=1`,
+    image: p.featured_media && p.featured_media.preview_image,
+    title: `${p.title} - ${size}`,
+    product: { title: p.title, has_only_default_variant: false },
+    options_with_values: [{ name: "Size", value: size }],
+    properties: {},
+    line_level_discount_allocations: discount ? [{ amount: discount, discount_application: { title: "WELCOME10" } }] : [],
+    quantity: qty,
+    original_line_price: p.price * qty,
+    final_line_price: p.price * qty - discount,
+    url_to_remove: "/cart/change?line=1&quantity=0",
+    variant: { inventory_management: "shopify", inventory_policy: "deny", inventory_quantity: 5 },
+  });
+  const items = [line(sampleProducts[0], "M", 1), line(sampleProducts[1], "S", 2, 17980), line(sampleProducts[3], "L", 1)];
+  const subtotal = items.reduce((sum, item) => sum + item.final_line_price, 0);
+  return {
+    items,
+    item_count: items.reduce((n, item) => n + item.quantity, 0),
+    items_subtotal_price: subtotal,
+    total_price: subtotal,
+    taxes_included: true,
+    cart_level_discount_applications: [],
+    note: "",
+  };
+}
+
 function sampleSearch(terms) {
   if (terms === "none") return { performed: false, terms: "", results: [], results_count: 0 };
   if (terms === "empty") return { performed: true, terms: "silk", results: [], results_count: 0 };
@@ -329,7 +362,9 @@ const globals = {
   },
   shop: { name: "JVLI", customer_accounts_enabled: true },
   customer: process.env.LOGGED_IN ? { id: 1, first_name: "Test" } : null,
-  cart: { item_count: 0 },
+  // /cart: CART=empty for an empty bag; otherwise three sample lines.
+  cart: process.env.TEMPLATE === "cart" && process.env.CART !== "empty" ? sampleCart() : { item_count: 0, items: [] },
+  settings: { show_cart_note: true },
   request: { page_type: (process.env.TEMPLATE || "index").split(".")[0] },
   product: sampleProductPage(),
   collection: sampleCollectionPage(),
