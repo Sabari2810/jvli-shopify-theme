@@ -1,0 +1,130 @@
+{%- comment -%}
+  Kolam loading screen, shown once per visit (the first page opened in a
+  browser tab session) and only when Theme settings > Loading screen is on.
+  Rendered first thing in <body> by layout/theme.liquid, with its own styles
+  and script so it appears before the page does. A single line (a 3 x 4 dot
+  sikku kolam) is drawn around the dots, then "JVLI" fades in; it leaves once
+  the drawing is done and the page is ready (at most 3 seconds). Tapping or
+  any key skips it. Not shown in the theme editor or to visitors who prefer
+  reduced motion.
+{%- endcomment -%}
+{%- if settings.jvli_intro_enabled and request.design_mode != true -%}
+  <div class="jvli-intro" id="JvliIntro" aria-hidden="true" hidden>
+    <div class="jvli-intro__inner">
+      <svg class="jvli-intro__kolam" viewBox="-14 -14 148 188" focusable="false">
+        <path class="jvli-intro__line" pathLength="1" d="M 20.00 40.00 L 40.00 60.00 L 60.00 80.00 L 80.00 100.00 L 100.00 120.00 A 20 20 0 1 1 80.00 140.00 L 60.00 120.00 L 40.00 100.00 L 20.00 80.00 A 20 20 0 0 1 20.00 40.00 L 40.00 20.00 A 20 20 0 0 1 80.00 20.00 L 100.00 40.00 A 20 20 0 0 1 100.00 80.00 L 80.00 100.00 L 60.00 120.00 L 40.00 140.00 A 20 20 0 1 1 20.00 120.00 L 40.00 100.00 L 60.00 80.00 L 80.00 60.00 L 100.00 40.00 A 20 20 0 1 0 80.00 20.00 L 60.00 40.00 L 40.00 60.00 L 20.00 80.00 A 20 20 0 0 0 20.00 120.00 L 40.00 140.00 A 20 20 0 0 0 80.00 140.00 L 100.00 120.00 A 20 20 0 0 0 100.00 80.00 L 80.00 60.00 L 60.00 40.00 L 40.00 20.00 A 20 20 0 1 0 20.00 40.00 Z"/>
+        <g class="jvli-intro__dots">
+      <circle cx="20" cy="20" r="3" style="--i:0"/>
+      <circle cx="60" cy="20" r="3" style="--i:1"/>
+      <circle cx="100" cy="20" r="3" style="--i:2"/>
+      <circle cx="20" cy="60" r="3" style="--i:3"/>
+      <circle cx="60" cy="60" r="3" style="--i:4"/>
+      <circle cx="100" cy="60" r="3" style="--i:5"/>
+      <circle cx="20" cy="100" r="3" style="--i:6"/>
+      <circle cx="60" cy="100" r="3" style="--i:7"/>
+      <circle cx="100" cy="100" r="3" style="--i:8"/>
+      <circle cx="20" cy="140" r="3" style="--i:9"/>
+      <circle cx="60" cy="140" r="3" style="--i:10"/>
+      <circle cx="100" cy="140" r="3" style="--i:11"/>
+        </g>
+      </svg>
+      <p class="jvli-intro__mark">{{ shop.name | default: 'JVLI' | escape }}</p>
+    </div>
+  </div>
+  <style>
+    .jvli-intro {
+      position: fixed;
+      inset: 0;
+      z-index: 2147483000;
+      display: grid;
+      place-items: center;
+      background: #f5f1ea;
+      cursor: pointer;
+      transition: opacity 0.45s ease, visibility 0.45s ease;
+    }
+    .jvli-intro[hidden] { display: none; }
+    .jvli-intro.is-leaving { opacity: 0; visibility: hidden; }
+    .jvli-intro__inner {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 22px;
+    }
+    .jvli-intro__kolam {
+      width: clamp(96px, 22vw, 132px);
+      height: auto;
+      overflow: visible;
+    }
+    .jvli-intro__line {
+      fill: none;
+      stroke: #763530;
+      stroke-width: 2.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: jvli-intro-draw 1.25s cubic-bezier(0.45, 0, 0.3, 1) 0.3s forwards;
+    }
+    .jvli-intro__dots circle {
+      fill: #b08c60;
+      opacity: 0;
+      transform-box: fill-box;
+      transform-origin: center;
+      animation: jvli-intro-dot 0.3s ease calc(var(--i) * 0.025s) forwards;
+    }
+    .jvli-intro__mark {
+      margin: 0;
+      color: #b0894f;
+      font-family: "Newsreader", "Iowan Old Style", Georgia, serif;
+      font-size: 26px;
+      letter-spacing: 0.32em;
+      text-indent: 0.32em;
+      opacity: 0;
+      animation: jvli-intro-fade 0.45s ease 1.2s forwards;
+    }
+    @keyframes jvli-intro-draw { to { stroke-dashoffset: 0; } }
+    @keyframes jvli-intro-dot {
+      from { opacity: 0; transform: scale(0.2); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes jvli-intro-fade {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: none; }
+    }
+  </style>
+  <script>
+    (function () {
+      var intro = document.getElementById('JvliIntro');
+      if (!intro) return;
+      try {
+        if (window.sessionStorage.getItem('jvli:intro')) return intro.remove();
+        window.sessionStorage.setItem('jvli:intro', '1');
+      } catch (error) {
+        return intro.remove();
+      }
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return intro.remove();
+
+      intro.hidden = false;
+      var started = Date.now();
+      var DRAWN_MS = 1800; // dots, line and wordmark
+      var MAX_MS = 3000;
+      var done = false;
+      function hide() {
+        if (done) return;
+        done = true;
+        intro.classList.add('is-leaving');
+        setTimeout(function () {
+          intro.remove();
+        }, 500);
+      }
+      function whenReady() {
+        setTimeout(hide, Math.max(0, DRAWN_MS - (Date.now() - started)));
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', whenReady);
+      else whenReady();
+      setTimeout(hide, MAX_MS);
+      intro.addEventListener('click', hide);
+      document.addEventListener('keydown', hide, { once: true });
+    })();
+  </script>
+{%- endif -%}

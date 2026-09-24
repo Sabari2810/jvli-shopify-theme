@@ -1465,5 +1465,15 @@
       { "type": "text", "id": "jvli_whatsapp_product_message", "label": "Message on product pages", "default": "Hi JVLI! I have a question about [product]:", "info": "[product] becomes the product name, and the product link is added after the message." },
       { "type": "color", "id": "jvli_whatsapp_color", "label": "Button colour", "default": "#652c28" }
     ]
+  },
+  {
+    "name": "Loading screen",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "A kolam drawn in one line, with JVLI underneath, shown once per visit on the first page someone opens (about 2 seconds, tap to skip). Not shown in the theme editor."
+      },
+      { "type": "checkbox", "id": "jvli_intro_enabled", "label": "Show the kolam loading screen", "default": true }
+    ]
   }
 ]
