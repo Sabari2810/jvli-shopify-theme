@@ -3,9 +3,8 @@
   browser tab session) and only when Theme settings > Loading screen is on.
   Rendered first thing in <body> by layout/theme.liquid, with its own styles
   and script so it appears before the page does. A single line (a 3 x 4 dot
-  sikku kolam) is drawn around the dots, then "JVLI" fades in; it leaves once
-  the drawing is done and the page is ready (at most 3 seconds). Tapping or
-  any key skips it. Not shown in the theme editor or to visitors who prefer
+  sikku kolam) is drawn around the dots, then "JVLI" fades in; it always
+  lasts 3 seconds, however fast the page loads. Tapping or any key skips it. Not shown in the theme editor or to visitors who prefer
   reduced motion.
 {%- endcomment -%}
 {%- if settings.jvli_intro_enabled and request.design_mode != true -%}
@@ -63,14 +62,14 @@
       stroke-linejoin: round;
       stroke-dasharray: 1;
       stroke-dashoffset: 1;
-      animation: jvli-intro-draw 1.25s cubic-bezier(0.45, 0, 0.3, 1) 0.3s forwards;
+      animation: jvli-intro-draw 1.9s cubic-bezier(0.45, 0, 0.3, 1) 0.45s forwards;
     }
     .jvli-intro__dots circle {
       fill: #b08c60;
       opacity: 0;
       transform-box: fill-box;
       transform-origin: center;
-      animation: jvli-intro-dot 0.3s ease calc(var(--i) * 0.025s) forwards;
+      animation: jvli-intro-dot 0.35s ease calc(var(--i) * 0.04s) forwards;
     }
     .jvli-intro__mark {
       margin: 0;
@@ -80,7 +79,7 @@
       letter-spacing: 0.32em;
       text-indent: 0.32em;
       opacity: 0;
-      animation: jvli-intro-fade 0.45s ease 1.2s forwards;
+      animation: jvli-intro-fade 0.5s ease 2.2s forwards;
     }
     @keyframes jvli-intro-draw { to { stroke-dashoffset: 0; } }
     @keyframes jvli-intro-dot {
@@ -105,9 +104,7 @@
       if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return intro.remove();
 
       intro.hidden = false;
-      var started = Date.now();
-      var DRAWN_MS = 1800; // dots, line and wordmark
-      var MAX_MS = 3000;
+      var SHOW_MS = 3000; // dots, line and wordmark, then it fades away
       var done = false;
       function hide() {
         if (done) return;
@@ -117,12 +114,7 @@
           intro.remove();
         }, 500);
       }
-      function whenReady() {
-        setTimeout(hide, Math.max(0, DRAWN_MS - (Date.now() - started)));
-      }
-      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', whenReady);
-      else whenReady();
-      setTimeout(hide, MAX_MS);
+      setTimeout(hide, SHOW_MS);
       intro.addEventListener('click', hide);
       document.addEventListener('keydown', hide, { once: true });
     })();

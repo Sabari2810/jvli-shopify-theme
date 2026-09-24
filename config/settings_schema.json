@@ -1471,7 +1471,7 @@
     "settings": [
       {
         "type": "paragraph",
-        "content": "A kolam drawn in one line, with JVLI underneath, shown once per visit on the first page someone opens (about 2 seconds, tap to skip). Not shown in the theme editor."
+        "content": "A kolam drawn in one line, with JVLI underneath, shown once per visit on the first page someone opens (3 seconds, tap to skip). Not shown in the theme editor."
       },
       { "type": "checkbox", "id": "jvli_intro_enabled", "label": "Show the kolam loading screen", "default": true }
     ]
