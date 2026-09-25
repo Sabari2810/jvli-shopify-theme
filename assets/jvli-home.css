@@ -5012,22 +5012,3 @@ main[data-jvli-thread] {
     mask-position: 0 0;
   }
 }
-
-/* Over photos the thread turns cream, like rice-flour kolam, with a faint
-   shadow so it holds on light photos too. */
-.jvli-thread__line--light {
-  stroke: #f6eddd;
-  stroke-width: 2;
-  opacity: 0.95;
-  filter: drop-shadow(0 0 1.5px rgba(30, 16, 8, 0.55));
-}
-
-.jvli-thread__dot--light {
-  fill: #f6eddd;
-}
-
-@media screen and (max-width: 749px) {
-  .jvli-thread__line--light {
-    stroke-width: 1.7;
-  }
-}
