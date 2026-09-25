@@ -1,0 +1,25 @@
+{%- render 'jvli-assets' -%}
+{{ 'jvli-x.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'jvli-x.js' | asset_url }}" defer></script>
+{%- comment -%}
+  JVLI Exhibition, world 06: the ink. An empty stretch of paper. Moving the
+  cursor here (or scrolling through it on a phone) drops a speck of madder
+  ink that feeds on the movement and blooms into an enormous block-print
+  flower, then dries to a faint stain. No text, no button: it just happens.
+  jvli-x.js draws it on the canvas.
+{%- endcomment -%}
+<section class="jvli-x jvli-x-ink" data-jvli-x-ink aria-hidden="true" style="--jvli-x-ink-color: {{ section.settings.ink }};">
+  <canvas class="jvli-x-ink__canvas"></canvas>
+</section>
+
+{% schema %}
+{
+  "name": "Exhibition: ink",
+  "class": "jvli-x-section-ink",
+  "settings": [
+    { "type": "paragraph", "content": "An empty stretch of paper. Move the cursor across it (or scroll through it on a phone)." },
+    { "type": "color", "id": "ink", "label": "Ink colour", "default": "#8e2f26" }
+  ],
+  "presets": [{ "name": "Exhibition: ink" }]
+}
+{% endschema %}

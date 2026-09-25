@@ -1,0 +1,49 @@
+{%- render 'jvli-assets' -%}
+{{ 'jvli-x.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'jvli-x.js' | asset_url }}" defer></script>
+{%- comment -%}
+  JVLI Exhibition, world 05: found objects. The collection's products, one
+  at a time, each hanging on a thread in open space. As one reaches the
+  middle of the screen it sharpens, straightens and its label appears. The
+  card is the site's own product card (jvli-product-card), so sizes, Add to
+  bag, the bag animation and favourites all work as everywhere else.
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+  assign found = s.collection.products
+-%}
+<section class="jvli-x jvli-x-found" data-jvli-x-found>
+  <p class="jvli-x-meta jvli-x-found__intro">{{ s.intro }}</p>
+  <ol class="jvli-x-found__list" role="list">
+    {%- for product in found limit: s.count -%}
+      <li class="jvli-x-found__item{% cycle '', ' is-right' %}" data-jvli-x-found-item>
+        <span class="jvli-x-found__thread" aria-hidden="true"></span>
+        <p class="jvli-x-meta jvli-x-found__no" aria-hidden="true">No. {{ forloop.index | prepend: '0' | slice: -2, 2 }}</p>
+        {%- render 'jvli-product-card', product: product, add_text: 'Add to bag', sizes: '(max-width: 749px) 78vw, 30vw' -%}
+      </li>
+    {%- else -%}
+      <li class="jvli-x-found__empty">
+        <p class="jvli-x-meta">Choose a collection for this section in the theme editor.</p>
+      </li>
+    {%- endfor -%}
+  </ol>
+  {%- if s.collection != blank -%}
+    <p class="jvli-x-found__all">
+      <a href="{{ s.collection.url }}" class="jvli-x-meta">{{ s.all_label }}</a>
+    </p>
+  {%- endif -%}
+</section>
+
+{% schema %}
+{
+  "name": "Exhibition: found objects",
+  "class": "jvli-x-section-found",
+  "settings": [
+    { "type": "collection", "id": "collection", "label": "Collection" },
+    { "type": "range", "id": "count", "label": "Products", "min": 2, "max": 12, "step": 1, "default": 6 },
+    { "type": "text", "id": "intro", "label": "Small heading", "default": "Found in the studio" },
+    { "type": "text", "id": "all_label", "label": "Link to the collection", "default": "See everything" }
+  ],
+  "presets": [{ "name": "Exhibition: found objects" }]
+}
+{% endschema %}

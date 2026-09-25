@@ -126,6 +126,8 @@
     "cart_type": "notification",
     "show_vendor": false,
     "show_cart_note": false,
+    "jvli_intro_enabled": false,
+    "jvli_thread_enabled": false,
     "cart_drawer_collection": "",
     "cart_color_scheme": "scheme-1",
     "sections": {

@@ -1,0 +1,84 @@
+{%- render 'jvli-assets' -%}
+{{ 'jvli-x.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'jvli-x.js' | asset_url }}" defer></script>
+{%- comment -%}
+  JVLI Exhibition, worlds 01 to 03, in one pinned frame:
+  01 The Cloth: "JVLI" printed on a sheet of cloth (WebGL) that dents and
+     ripples under the cursor or finger.
+  02 The Turn: scrolling curls the sheet over; its underside is the first
+     photograph, which settles exactly where print A hangs.
+  03 The Exhibition: prints hung at different depths among giant words; the
+     camera walks forward with scroll and turns a little with the mouse.
+  jvli-x.js drives it. Without WebGL, or with reduced motion, the cloth is a
+  still wordmark and the prints are simply laid out.
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+-%}
+<section
+  class="jvli-x jvli-x-journey"
+  data-jvli-x-journey
+  data-back="{% if s.back_image != blank %}{{ s.back_image | image_url: width: 1800 }}{% endif %}"
+  data-word="{{ s.wordmark | default: 'JVLI' | escape }}"
+>
+  <div class="jvli-x-journey__frame">
+    {%- comment -%} 03: the exhibition space (behind the cloth until it turns) {%- endcomment -%}
+    <div class="jvli-x-stage" data-jvli-x-stage>
+      <div class="jvli-x-world" data-jvli-x-world>
+        <p class="jvli-x-giant jvli-x-giant--one" style="--z: -2200px;" aria-hidden="true">{{ s.word_one }}</p>
+        <p class="jvli-x-giant jvli-x-giant--two" style="--z: -3600px;" aria-hidden="true">{{ s.word_two }}</p>
+
+        <figure class="jvli-x-print jvli-x-print--a" data-jvli-x-print-a style="--z: 0px;">
+          {%- render 'jvli-media', image: s.back_image, alt: s.caption_a, sizes: '(max-width: 749px) 60vw, 40vh', class: 'jvli-cover', loading: 'eager', placeholder: 'lifestyle-1' -%}
+          <figcaption>{{ s.caption_a }}</figcaption>
+        </figure>
+        <figure class="jvli-x-print jvli-x-print--b" style="--z: -800px;">
+          {%- render 'jvli-media', image: s.image_b, alt: s.caption_b, sizes: '(max-width: 749px) 70vw, 50vh', class: 'jvli-cover', placeholder: 'lifestyle-2' -%}
+          <figcaption>{{ s.caption_b }}</figcaption>
+        </figure>
+        <figure class="jvli-x-print jvli-x-print--c" style="--z: -1700px;">
+          {%- render 'jvli-media', image: s.image_c, alt: s.caption_c, sizes: '(max-width: 749px) 80vw, 70vh', class: 'jvli-cover', placeholder: 'lifestyle-1' -%}
+          <figcaption>{{ s.caption_c }}</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    {%- comment -%} 01 and 02: the cloth. The heading is the accessible, no-WebGL wordmark. {%- endcomment -%}
+    <div class="jvli-x-cloth" data-jvli-x-cloth>
+      <h1 class="jvli-x-cloth__word">{{ s.wordmark | default: 'JVLI' }}</h1>
+      <canvas class="jvli-x-cloth__canvas" aria-hidden="true"></canvas>
+    </div>
+
+    <div class="jvli-x-labels" data-jvli-x-labels aria-hidden="true">
+      <span class="jvli-x-label jvli-x-label--tl">{{ s.label_tl }}</span>
+      <span class="jvli-x-label jvli-x-label--tr">{{ s.label_tr }}</span>
+      <span class="jvli-x-label jvli-x-label--bl">{{ s.label_bl }}</span>
+      <span class="jvli-x-label jvli-x-label--br">{{ s.label_br }}</span>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Exhibition: cloth and prints",
+  "class": "jvli-x-section-journey",
+  "settings": [
+    { "type": "header", "content": "01 The cloth" },
+    { "type": "text", "id": "wordmark", "label": "Wordmark", "default": "JVLI" },
+    { "type": "text", "id": "label_tl", "label": "Top left label", "default": "JVLI / Tamil Nadu" },
+    { "type": "text", "id": "label_tr", "label": "Top right label", "default": "Ordinary days" },
+    { "type": "text", "id": "label_bl", "label": "Bottom left label", "default": "Clothes for real life" },
+    { "type": "text", "id": "label_br", "label": "Bottom right label", "default": "Scroll" },
+    { "type": "header", "content": "02 The turn and 03 the prints" },
+    { "type": "image_picker", "id": "back_image", "label": "Underside of the cloth (print 1)", "info": "Portrait works best. It is the photograph revealed when the cloth turns over." },
+    { "type": "text", "id": "caption_a", "label": "Print 1 caption", "default": "No. 01 / Doorway / Block printed cotton" },
+    { "type": "image_picker", "id": "image_b", "label": "Print 2" },
+    { "type": "text", "id": "caption_b", "label": "Print 2 caption", "default": "No. 02 / The fabric / Hand block print" },
+    { "type": "image_picker", "id": "image_c", "label": "Print 3" },
+    { "type": "text", "id": "caption_c", "label": "Print 3 caption", "default": "No. 03 / Afternoon / Mul cotton" },
+    { "type": "text", "id": "word_one", "label": "Giant word 1", "default": "ORDINARY" },
+    { "type": "text", "id": "word_two", "label": "Giant word 2", "default": "DAYS" }
+  ],
+  "presets": [{ "name": "Exhibition: cloth and prints" }]
+}
+{% endschema %}

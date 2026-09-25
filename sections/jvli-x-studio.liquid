@@ -1,0 +1,68 @@
+{%- render 'jvli-assets' -%}
+{{ 'jvli-x.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'jvli-x.js' | asset_url }}" defer></script>
+{%- comment -%}
+  JVLI Exhibition, world 04: the studio. A room in CSS 3D (floor, back wall,
+  a pool of window light) with a few objects: a print hanging from a rail
+  (sways), a standing letter with its shadow (still), a fabric swatch
+  floating above the floor (floats), a photograph leaning on the wall
+  (still). Scroll walks the camera along the room; the light follows the
+  mouse. jvli-x.js drives it.
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+-%}
+<section class="jvli-x jvli-x-studio" data-jvli-x-studio aria-label="{{ s.label | escape }}">
+  <div class="jvli-x-studio__frame">
+    <div class="jvli-x-room">
+      <div class="jvli-x-space" data-jvli-x-space>
+        <div class="jvli-x-wall" aria-hidden="true"></div>
+        <div class="jvli-x-floor" data-jvli-x-floor aria-hidden="true"></div>
+
+        <div class="jvli-x-obj jvli-x-rail">
+          <span class="jvli-x-rail__bar" aria-hidden="true"></span>
+          <figure class="jvli-x-hang" data-jvli-x-sway>
+            <span class="jvli-x-hang__string jvli-x-hang__string--l" aria-hidden="true"></span>
+            <span class="jvli-x-hang__string jvli-x-hang__string--r" aria-hidden="true"></span>
+            {%- render 'jvli-media', image: s.hanging_image, alt: s.hanging_alt, sizes: '(max-width: 749px) 50vw, 26vw', class: 'jvli-cover', placeholder: 'lifestyle-1' -%}
+          </figure>
+        </div>
+
+        <div class="jvli-x-obj jvli-x-letter" aria-hidden="true">
+          <span class="jvli-x-letter__shadow">{{ s.letter }}</span>
+          <span class="jvli-x-letter__glyph">{{ s.letter }}</span>
+        </div>
+
+        <div class="jvli-x-obj jvli-x-swatch" data-jvli-x-float aria-hidden="true">
+          <span class="jvli-x-swatch__shadow"></span>
+          <span class="jvli-x-swatch__cloth">
+            {%- render 'jvli-media', image: s.swatch_image, alt: '', sizes: '30vw', class: 'jvli-cover', placeholder: 'image' -%}
+          </span>
+        </div>
+
+        <figure class="jvli-x-obj jvli-x-lean">
+          {%- render 'jvli-media', image: s.lean_image, alt: s.lean_alt, sizes: '(max-width: 749px) 40vw, 18vw', class: 'jvli-cover', placeholder: 'lifestyle-2' -%}
+        </figure>
+      </div>
+    </div>
+    <p class="jvli-x-meta jvli-x-studio__caption">{{ s.caption }}</p>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Exhibition: studio",
+  "class": "jvli-x-section-studio",
+  "settings": [
+    { "type": "text", "id": "label", "label": "Name (for screen readers)", "default": "The studio" },
+    { "type": "image_picker", "id": "hanging_image", "label": "Hanging print", "info": "Portrait" },
+    { "type": "text", "id": "hanging_alt", "label": "Hanging print description", "default": "Clothes drying on a line" },
+    { "type": "text", "id": "letter", "label": "Standing letter", "default": "J" },
+    { "type": "image_picker", "id": "swatch_image", "label": "Fabric swatch" },
+    { "type": "image_picker", "id": "lean_image", "label": "Leaning photograph" },
+    { "type": "text", "id": "lean_alt", "label": "Leaning photograph description", "default": "A chair against a sunlit wall" },
+    { "type": "text", "id": "caption", "label": "Caption", "default": "Studio / Chennai / Afternoon light" }
+  ],
+  "presets": [{ "name": "Exhibition: studio" }]
+}
+{% endschema %}

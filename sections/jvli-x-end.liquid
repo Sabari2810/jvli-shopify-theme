@@ -1,0 +1,40 @@
+{%- render 'jvli-assets' -%}
+{{ 'jvli-x.css' | asset_url | stylesheet_tag }}
+{%- comment -%}
+  JVLI Exhibition, world 07: the quiet end. Almost nothing: a small
+  wordmark, one line and four links. Nothing moves.
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+-%}
+<section class="jvli-x jvli-x-end">
+  <p class="jvli-x-end__mark">{{ s.mark | default: shop.name }}</p>
+  <p class="jvli-x-meta jvli-x-end__line">{{ s.line }}</p>
+  <nav class="jvli-x-end__links" aria-label="More from JVLI">
+    {%- if s.link_1 != blank -%}<a class="jvli-x-meta" href="{{ s.link_1 }}">{{ s.label_1 }}</a>{%- endif -%}
+    {%- if s.link_2 != blank -%}<a class="jvli-x-meta" href="{{ s.link_2 }}" target="_blank" rel="noopener">{{ s.label_2 }}</a>{%- endif -%}
+    {%- if s.link_3 != blank -%}<a class="jvli-x-meta" href="{{ s.link_3 }}">{{ s.label_3 }}</a>{%- endif -%}
+    {%- if s.link_4 != blank -%}<a class="jvli-x-meta" href="{{ s.link_4 }}">{{ s.label_4 }}</a>{%- endif -%}
+  </nav>
+  <p class="jvli-x-meta jvli-x-end__small">&copy; {{ 'now' | date: '%Y' }} {{ shop.name }}</p>
+</section>
+
+{% schema %}
+{
+  "name": "Exhibition: quiet end",
+  "class": "jvli-x-section-end",
+  "settings": [
+    { "type": "text", "id": "mark", "label": "Wordmark", "default": "JVLI" },
+    { "type": "text", "id": "line", "label": "Line", "default": "Made for ordinary days." },
+    { "type": "text", "id": "label_1", "label": "Link 1", "default": "Shop" },
+    { "type": "url", "id": "link_1", "label": "Link 1 URL", "default": "/collections/all" },
+    { "type": "text", "id": "label_2", "label": "Link 2", "default": "Instagram" },
+    { "type": "url", "id": "link_2", "label": "Link 2 URL" },
+    { "type": "text", "id": "label_3", "label": "Link 3", "default": "About" },
+    { "type": "url", "id": "link_3", "label": "Link 3 URL" },
+    { "type": "text", "id": "label_4", "label": "Link 4", "default": "Contact" },
+    { "type": "url", "id": "link_4", "label": "Link 4 URL" }
+  ],
+  "presets": [{ "name": "Exhibition: quiet end" }]
+}
+{% endschema %}

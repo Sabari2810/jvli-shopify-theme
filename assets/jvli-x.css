@@ -1,0 +1,736 @@
+/* JVLI Exhibition (experimental home page). See jvli-x.js. */
+
+:root {
+  --jvli-x-paper: #f1ebe1;
+  --jvli-x-room: #e8e0d4;
+  --jvli-x-ink: #1f1814;
+  --jvli-x-soft: #6d6259;
+  --jvli-x-wall: #ded3c4;
+  --jvli-x-madder: #8e2f26;
+  --jvli-x-settle: cubic-bezier(0.22, 1, 0.36, 1);
+  --jvli-x-vh: 1vh;
+}
+
+.jvli-x {
+  position: relative;
+  color: var(--jvli-x-ink);
+  font-family: var(--jvli-sans);
+}
+
+.jvli-x p,
+.jvli-x h1,
+.jvli-x h2,
+.jvli-x figure {
+  margin: 0;
+}
+
+/* Tiny metadata: labels, captions. */
+.jvli-x-label,
+.jvli-x-print figcaption,
+.jvli-x-meta {
+  font-family: var(--jvli-caps);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.22em;
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+
+/* ---------- Home page chrome ---------- */
+
+/* The header waits until the cloth has turned, then slides in, small. */
+body.jvli-x-home .shopify-section-group-header-group {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 40;
+  transform: translateY(-110%);
+  transition: transform 0.9s var(--jvli-x-settle);
+}
+
+body.jvli-x-home.jvli-x-header-in .shopify-section-group-header-group {
+  transform: none;
+}
+
+body.jvli-x-home .shopify-section-group-header-group .jvli-announcement,
+body.jvli-x-home [class*="jvli-announcement"] {
+  display: none;
+}
+
+body.jvli-x-home {
+  background: var(--jvli-x-paper);
+}
+
+/* ---------- 01-03 Journey ---------- */
+
+.jvli-x-journey {
+  height: calc(var(--jvli-x-vh) * 540);
+  background: var(--jvli-x-room);
+}
+
+.jvli-x-journey__frame {
+  position: sticky;
+  top: 0;
+  height: calc(var(--jvli-x-vh) * 100);
+  overflow: hidden;
+}
+
+.jvli-x-stage {
+  position: absolute;
+  inset: 0;
+  perspective: 1400px;
+  perspective-origin: 50% 48%;
+  background:
+    radial-gradient(ellipse 60% 45% at 30% 20%, rgba(255, 251, 243, 0.55), transparent 70%),
+    radial-gradient(ellipse 50% 60% at 85% 90%, rgba(120, 96, 70, 0.1), transparent 70%),
+    var(--jvli-x-room);
+}
+
+.jvli-x-world {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.jvli-x-world > * {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) translate3d(var(--x, 0px), var(--y, 0px), var(--z, 0px));
+  backface-visibility: hidden;
+}
+
+.jvli-x-giant {
+  font-family: var(--jvli-serif);
+  font-weight: 300;
+  line-height: 0.8;
+  letter-spacing: -0.04em;
+  color: var(--jvli-x-wall);
+  white-space: nowrap;
+  pointer-events: none;
+  user-select: none;
+}
+
+.jvli-x-giant--one {
+  --x: 20vw;
+  --y: -10vh;
+  font-size: 52vw;
+}
+
+.jvli-x-giant--two {
+  --x: -10vw;
+  --y: 6vh;
+  font-size: 90vw;
+}
+
+.jvli-x-print {
+  box-shadow: 0 30px 60px -30px rgba(40, 26, 16, 0.45), 0 6px 14px rgba(40, 26, 16, 0.12);
+  background: #d8cebf;
+}
+
+.jvli-x-print img,
+.jvli-x-print .jvli-placeholder {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.jvli-x-print figcaption {
+  position: absolute;
+  top: calc(100% + 14px);
+  left: 0;
+  width: 100%;
+  color: var(--jvli-x-soft);
+  white-space: nowrap;
+}
+
+.jvli-x-print--a {
+  --x: -19vw;
+  --y: 2vh;
+  height: calc(var(--jvli-x-vh) * 64);
+  aspect-ratio: 0.625;
+}
+
+.jvli-x-print--b {
+  --x: 58vw;
+  --y: -12vh;
+  height: calc(var(--jvli-x-vh) * 64);
+  aspect-ratio: 4 / 5;
+}
+
+.jvli-x-print--c {
+  --x: -30vw;
+  --y: 6vh;
+  height: calc(var(--jvli-x-vh) * 112);
+  aspect-ratio: 4 / 5;
+}
+
+.jvli-x-print--c figcaption {
+  font-size: 18px;
+}
+
+/* The cloth sits over the exhibition until it has turned. */
+.jvli-x-cloth {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  transition: opacity 0.25s linear;
+}
+
+.jvli-x-cloth__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  touch-action: pan-y;
+}
+
+/* The wordmark as text: shown until the cloth is drawn, and for screen
+   readers after. */
+.jvli-x-cloth__word {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding-top: 12vh;
+  background: var(--jvli-x-paper);
+  font-family: var(--jvli-serif);
+  font-size: 30vw;
+  font-weight: 300;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--jvli-x-ink);
+}
+
+.jvli-x-journey.is-live .jvli-x-cloth__word {
+  clip-path: inset(50%);
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.jvli-x-labels {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  pointer-events: none;
+  color: var(--jvli-x-soft);
+}
+
+.jvli-x-label {
+  position: absolute;
+}
+
+.jvli-x-label--tl { top: 28px; left: 32px; }
+.jvli-x-label--tr { top: 28px; right: 32px; }
+.jvli-x-label--bl { bottom: 26px; left: 32px; }
+.jvli-x-label--br { bottom: 26px; right: 32px; }
+
+@media screen and (max-width: 749px) {
+  .jvli-x-label--tl { top: 20px; left: 18px; }
+  .jvli-x-label--tr { top: 20px; right: 18px; }
+  .jvli-x-label--bl { bottom: 20px; left: 18px; }
+  .jvli-x-label--br { bottom: 20px; right: 18px; }
+
+  .jvli-x-print--a { --x: 0vw; --y: 2vh; }
+  .jvli-x-print--b { --x: 78vw; --y: -16vh; height: calc(var(--jvli-x-vh) * 50); }
+  .jvli-x-print--c { --x: -80vw; --y: 6vh; height: calc(var(--jvli-x-vh) * 90); }
+  .jvli-x-giant--one { font-size: 34vw; --y: -24vh; }
+  .jvli-x-giant--two { font-size: 64vw; }
+
+  .jvli-x-print figcaption {
+    font-size: 8px;
+    white-space: normal;
+  }
+}
+
+/* Still version (reduced motion, or no WebGL): a poster, then the prints. */
+.jvli-x-journey.is-static {
+  height: auto;
+}
+
+.jvli-x-journey.is-static .jvli-x-journey__frame {
+  position: relative;
+  height: auto;
+  overflow: visible;
+}
+
+.jvli-x-journey.is-static .jvli-x-cloth {
+  position: relative;
+  height: calc(var(--jvli-x-vh) * 100);
+}
+
+.jvli-x-journey.is-static .jvli-x-cloth__canvas {
+  display: none;
+}
+
+.jvli-x-journey.is-static .jvli-x-labels {
+  height: calc(var(--jvli-x-vh) * 100);
+  bottom: auto;
+}
+
+.jvli-x-journey.is-static .jvli-x-stage {
+  position: relative;
+  perspective: none;
+  padding: 12vh 8vw 16vh;
+}
+
+.jvli-x-journey.is-static .jvli-x-world {
+  position: relative;
+  display: grid;
+  gap: 14vh;
+  justify-items: center;
+  transform: none !important;
+}
+
+.jvli-x-journey.is-static .jvli-x-world > * {
+  position: relative;
+  top: auto;
+  left: auto;
+  transform: none;
+  opacity: 1 !important;
+}
+
+.jvli-x-journey.is-static .jvli-x-print {
+  height: auto;
+  width: min(80vw, 520px);
+  aspect-ratio: 4 / 5;
+}
+
+.jvli-x-journey.is-static .jvli-x-giant {
+  font-size: 18vw;
+}
+
+/* ---------- 04 The studio ---------- */
+
+.jvli-x-studio {
+  height: calc(var(--jvli-x-vh) * 260);
+  background: var(--jvli-x-room);
+}
+
+.jvli-x-studio__frame {
+  position: sticky;
+  top: 0;
+  height: calc(var(--jvli-x-vh) * 100);
+  overflow: hidden;
+}
+
+.jvli-x-room {
+  position: absolute;
+  inset: 0;
+  perspective: 1100px;
+  perspective-origin: 50% 40%;
+  background: #ebe3d7;
+}
+
+.jvli-x-space {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.jvli-x-wall,
+.jvli-x-floor,
+.jvli-x-obj {
+  position: absolute;
+  left: 50%;
+}
+
+.jvli-x-wall {
+  top: 50%;
+  width: 520vw;
+  height: 420vh;
+  transform: translate(-50%, -80%) translateZ(-1300px);
+  background: linear-gradient(180deg, #f3ede3 0%, #eee6da 78%, #e3d9ca 100%);
+}
+
+/* The floor: a horizontal plane at the level of the objects' feet. */
+.jvli-x-floor {
+  top: calc(50% + 26vh);
+  width: 420vw;
+  height: 3600px;
+  transform: translate(-50%, -50%) translateZ(-1200px) rotateX(90deg);
+  background:
+    radial-gradient(ellipse 7% 9% at var(--jvli-x-lx, 48%) var(--jvli-x-ly, 52%), rgba(255, 244, 222, 0.9), rgba(255, 244, 222, 0.35) 45%, rgba(255, 244, 222, 0) 100%),
+    linear-gradient(0deg, #ddd0bc 0%, #d2c4ae 60%, #c9baa2 100%);
+}
+
+.jvli-x-obj {
+  bottom: calc(50% - 26vh);
+  transform: translate3d(calc(-50% + var(--x, 0px)), 0, var(--z, 0px));
+  transform-style: preserve-3d;
+}
+
+/* Where things stand in the room (x across, z into the room). */
+.jvli-x-rail { --x: -24vw; --z: -420px; }
+.jvli-x-letter { --x: 12vw; --z: -640px; }
+.jvli-x-swatch { --x: -2vw; --z: -120px; }
+.jvli-x-lean { --x: 44vw; --z: -860px; }
+
+@media screen and (max-width: 749px) {
+  .jvli-x-rail { --x: -40vw; --z: -380px; }
+  .jvli-x-letter { --x: 22vw; --z: -700px; }
+  .jvli-x-swatch { --x: -4vw; --z: -60px; }
+  .jvli-x-lean { --x: 82vw; --z: -900px; }
+}
+
+/* A rail with a print hanging from it. */
+.jvli-x-rail {
+  width: 26vw;
+  height: 74vh;
+  border-left: 1px solid rgba(31, 24, 20, 0.55);
+  border-right: 1px solid rgba(31, 24, 20, 0.55);
+}
+
+.jvli-x-rail__bar {
+  position: absolute;
+  top: 0;
+  left: -3vw;
+  right: -3vw;
+  height: 2px;
+  background: #2a211b;
+}
+
+.jvli-x-hang {
+  position: absolute;
+  top: 7vh;
+  left: 15%;
+  width: 70%;
+  aspect-ratio: 3 / 4;
+  transform-origin: 50% -7vh;
+  transform: rotate(var(--jvli-x-sway, 0deg));
+  box-shadow: 0 26px 40px -24px rgba(40, 26, 16, 0.55);
+  background: #d8cebf;
+}
+
+.jvli-x-hang__string {
+  position: absolute;
+  bottom: 100%;
+  width: 1px;
+  height: 7vh;
+  background: rgba(31, 24, 20, 0.5);
+}
+
+.jvli-x-hang__string--l { left: 12%; }
+.jvli-x-hang__string--r { right: 12%; }
+
+.jvli-x-hang img,
+.jvli-x-lean img,
+.jvli-x-swatch__cloth img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* A standing letter and its shadow along the floor. */
+.jvli-x-letter {
+  font-family: var(--jvli-serif);
+  font-size: calc(var(--jvli-x-vh) * 62);
+  font-weight: 300;
+  line-height: 0.74;
+}
+
+.jvli-x-letter__glyph {
+  position: relative;
+  display: block;
+  color: var(--jvli-x-ink);
+}
+
+.jvli-x-letter__shadow {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  color: rgba(40, 26, 16, 0.2);
+  transform-origin: 50% 100%;
+  transform: scaleY(-0.34) skewX(-46deg);
+  filter: blur(5px);
+}
+
+/* A fabric swatch floating just above the floor. */
+.jvli-x-swatch {
+  width: 20vw;
+  height: 20vw;
+}
+
+.jvli-x-swatch__cloth {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  transform-origin: 50% 100%;
+  transform: translateY(calc(-1 * var(--jvli-x-lift, 8px))) rotateX(74deg);
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+}
+
+.jvli-x-swatch__shadow {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: -2%;
+  height: 12%;
+  border-radius: 50%;
+  background: rgba(40, 26, 16, 0.3);
+  filter: blur(calc(4px + var(--jvli-x-lift, 8px)));
+  opacity: calc(1 - var(--jvli-x-lift-n, 0.5) * 0.5);
+}
+
+/* A photograph leaning against the wall. */
+.jvli-x-lean {
+  width: 17vw;
+  aspect-ratio: 4 / 5;
+  margin: 0;
+  transform-origin: 50% 100%;
+  transform: translate3d(calc(-50% + var(--x, 0px)), 0, var(--z, 0px)) rotateX(-8deg);
+  box-shadow: 0 30px 50px -30px rgba(40, 26, 16, 0.5);
+  background: #d8cebf;
+}
+
+.jvli-x-studio__caption {
+  position: absolute;
+  left: 32px;
+  bottom: 26px;
+  color: var(--jvli-x-soft);
+}
+
+@media screen and (max-width: 749px) {
+  .jvli-x-rail { width: 58vw; height: 60vh; }
+  .jvli-x-swatch { width: 44vw; height: 44vw; }
+  .jvli-x-lean { width: 40vw; }
+  .jvli-x-letter { font-size: calc(var(--jvli-x-vh) * 44); }
+  .jvli-x-studio__caption { left: 18px; bottom: 20px; }
+}
+
+/* ---------- 05 Found objects ---------- */
+
+.jvli-x-found {
+  padding: calc(var(--jvli-x-vh) * 16) 0 calc(var(--jvli-x-vh) * 10);
+  background: var(--jvli-x-paper);
+}
+
+.jvli-x-found__intro {
+  text-align: center;
+  color: var(--jvli-x-soft);
+}
+
+.jvli-x-found__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.jvli-x-found__item {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  align-items: start;
+  min-height: calc(var(--jvli-x-vh) * 100);
+  padding: calc(var(--jvli-x-vh) * 14) 0 calc(var(--jvli-x-vh) * 8);
+}
+
+.jvli-x-found__thread {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 1px;
+  height: calc(var(--jvli-x-vh) * 14);
+  background: rgba(31, 24, 20, 0.3);
+}
+
+.jvli-x-found__no {
+  position: absolute;
+  top: calc(var(--jvli-x-vh) * 6);
+  left: calc(50% + 14px);
+  color: var(--jvli-x-soft);
+}
+
+.jvli-x-found .jvli-card {
+  position: relative;
+  width: min(30vw, 440px);
+}
+
+.jvli-x-found .jvli-card__media {
+  transform-origin: 50% calc(var(--jvli-x-vh) * -14);
+  transform: rotate(var(--jvli-x-rot, 0deg)) scale(var(--jvli-x-scale, 1));
+  filter: blur(var(--jvli-x-blur, 0px)) saturate(var(--jvli-x-sat, 1));
+  box-shadow: 0 40px 60px -40px rgba(40, 26, 16, 0.55);
+  will-change: transform, filter;
+}
+
+/* The label and buying controls sit beside the garment, shown as it arrives. */
+.jvli-x-found .jvli-card__info {
+  position: absolute;
+  left: calc(100% + clamp(28px, 5vw, 90px));
+  bottom: 6%;
+  width: min(22vw, 300px);
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.6s var(--jvli-x-settle), transform 0.6s var(--jvli-x-settle);
+}
+
+.jvli-x-found__item.is-right .jvli-card__info {
+  left: auto;
+  right: calc(100% + clamp(28px, 5vw, 90px));
+  text-align: right;
+}
+
+.jvli-x-found__item.is-right .jvli-card__sizes {
+  justify-content: flex-end;
+}
+
+.jvli-x-found__item.is-near .jvli-card__info,
+.jvli-x-found .jvli-card:focus-within .jvli-card__info {
+  opacity: 1;
+  transform: none;
+}
+
+.jvli-x-found .jvli-card__info::before {
+  content: "JVLI";
+  display: block;
+  margin-bottom: 10px;
+  font-family: var(--jvli-caps);
+  font-size: 9px;
+  letter-spacing: 0.3em;
+  color: var(--jvli-x-soft);
+}
+
+.jvli-x-found .jvli-card__title {
+  display: block;
+  font-family: var(--jvli-serif);
+  font-size: clamp(28px, 2.8vw, 42px);
+  font-weight: 300;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--jvli-x-ink);
+  text-decoration: none;
+}
+
+.jvli-x-found .jvli-card__price {
+  margin-top: 10px;
+  font-family: var(--jvli-caps);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+}
+
+.jvli-x-found .jvli-card .jvli-card__sizes {
+  justify-content: flex-start;
+}
+
+.jvli-x-found__all {
+  margin-top: calc(var(--jvli-x-vh) * 6);
+  text-align: center;
+}
+
+.jvli-x-found__all a {
+  color: var(--jvli-x-ink);
+  text-underline-offset: 6px;
+}
+
+@media screen and (max-width: 749px) {
+  .jvli-x-found__item {
+    min-height: auto;
+    padding: calc(var(--jvli-x-vh) * 12) 0 calc(var(--jvli-x-vh) * 6);
+  }
+
+  .jvli-x-found .jvli-card {
+    width: 78vw;
+  }
+
+  .jvli-x-found .jvli-card__info,
+  .jvli-x-found__item.is-right .jvli-card__info {
+    position: static;
+    width: auto;
+    margin-top: 22px;
+    text-align: left;
+  }
+
+  .jvli-x-found__item.is-right .jvli-card__sizes {
+    justify-content: flex-start;
+  }
+}
+
+/* ---------- 06 The ink ---------- */
+
+.jvli-x-ink {
+  height: calc(var(--jvli-x-vh) * 120);
+  background: var(--jvli-x-paper);
+  overflow: hidden;
+}
+
+.jvli-x-ink__canvas {
+  position: sticky;
+  top: 0;
+  display: block;
+  width: 100%;
+  height: calc(var(--jvli-x-vh) * 100);
+  pointer-events: none;
+}
+
+/* ---------- 07 The quiet end ---------- */
+
+.jvli-x-end {
+  display: grid;
+  align-content: center;
+  justify-items: center;
+  gap: 18px;
+  min-height: calc(var(--jvli-x-vh) * 72);
+  padding: 10vh 24px 6vh;
+  background: var(--jvli-x-paper);
+  text-align: center;
+}
+
+.jvli-x-end__mark {
+  font-family: var(--jvli-serif);
+  font-size: 28px;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+}
+
+.jvli-x-end__line {
+  color: var(--jvli-x-ink);
+  letter-spacing: 0.3em;
+}
+
+.jvli-x-end__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 30px;
+  margin-top: 26px;
+}
+
+.jvli-x-end__links a {
+  color: var(--jvli-x-ink);
+  text-decoration: none;
+}
+
+.jvli-x-end__links a:hover {
+  text-decoration: underline;
+  text-underline-offset: 6px;
+}
+
+.jvli-x-end__small {
+  margin-top: 8vh;
+  color: var(--jvli-x-soft);
+  font-size: 9px;
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .jvli-x-studio {
+    height: auto;
+  }
+
+  .jvli-x-studio__frame {
+    position: relative;
+  }
+
+  .jvli-x-found .jvli-card__info {
+    opacity: 1;
+    transform: none;
+  }
+}
