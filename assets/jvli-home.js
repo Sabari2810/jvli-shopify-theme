@@ -1773,6 +1773,8 @@
 
       var lens = el('div', 'jvli-loupe');
       lens.setAttribute('aria-hidden', 'true');
+      // Sense hides empty divs (div:empty { display: none }), so give it a child.
+      lens.appendChild(el('span', 'jvli-loupe__glass'));
       document.body.appendChild(lens);
       var current = null;
       var loaded = {};

@@ -3,7 +3,7 @@
 // data. Output: out/index.html (+ assets). Screenshot with screenshot.mjs.
 //
 // Environment:
-//   SENSE_BASE_CSS  path to Sense's assets/base.css (optional, for realism)
+//   SENSE_BASE_CSS  path to Sense's base.css (default: the theme's own assets/base.css)
 //   STANDINS_DIR    folder of stand-in photos named <section>.<setting>.jpg,
 //                   <section>.<block>.jpg or product-<n>.jpg (optional)
 //   TEMPLATE        template to render, e.g. page.favorites (default: index)
@@ -414,8 +414,9 @@ for (const file of readdirSync(join(theme, "assets"))) {
   cpSync(join(theme, "assets", file), join(out, "assets", file));
 }
 let senseCss = "";
-if (process.env.SENSE_BASE_CSS && existsSync(process.env.SENSE_BASE_CSS)) {
-  cpSync(process.env.SENSE_BASE_CSS, join(out, "assets", "base.css"));
+const senseBase = process.env.SENSE_BASE_CSS ?? join(theme, "assets", "base.css");
+if (senseBase && existsSync(senseBase)) {
+  cpSync(senseBase, join(out, "assets", "base.css"));
   senseCss = '<link rel="stylesheet" href="assets/base.css">';
 }
 

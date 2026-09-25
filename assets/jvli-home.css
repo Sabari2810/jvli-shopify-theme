@@ -5015,6 +5015,10 @@ main[data-jvli-thread] {
 
 /* ---------- Weave loupe (jvli-home.js initLoupe) ---------- */
 
+div.jvli-loupe {
+  display: block;
+}
+
 .jvli-loupe {
   position: fixed;
   top: 0;
