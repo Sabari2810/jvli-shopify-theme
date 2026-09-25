@@ -929,10 +929,17 @@
 
   /* ---------- Add to bag ---------- */
 
-  function updateCartCount() {
+  // Refreshes the bag count. With `after`, the new count shows once that
+  // promise settles (the add to bag photo landing on the bag).
+  function updateCartCount(after) {
     return fetch(root + 'cart.js', { headers: { Accept: 'application/json' } })
       .then(function (response) {
         return response.json();
+      })
+      .then(function (cart) {
+        return Promise.resolve(after).then(function () {
+          return cart;
+        });
       })
       .then(function (cart) {
         document.querySelectorAll('[data-jvli-cart-count]').forEach(function (el) {
@@ -942,6 +949,93 @@
         document.dispatchEvent(new CustomEvent('jvli:cart:updated', { detail: { cart: cart } }));
       })
       .catch(function () {});
+  }
+
+  /* ---------- Add to bag animation ----------
+     A round cut of the product photo flies up into the header bag, which
+     gives a small bounce as the new count appears. Skipped with reduced
+     motion, or when neither the photo nor the bag is on screen. */
+
+  function visibleArea(el) {
+    var box = el.getBoundingClientRect();
+    var w = Math.min(box.right, window.innerWidth) - Math.max(box.left, 0);
+    var h = Math.min(box.bottom, window.innerHeight) - Math.max(box.top, 0);
+    return w > 0 && h > 0 ? w * h : 0;
+  }
+
+  // The most visible of the elements matching `selector` in `scope`.
+  function mostVisible(scope, selector) {
+    var best = null;
+    var bestArea = 0;
+    scope.querySelectorAll(selector).forEach(function (el) {
+      var area = visibleArea(el);
+      if (area > bestArea) {
+        best = el;
+        bestArea = area;
+      }
+    });
+    return best;
+  }
+
+  function bumpBag() {
+    document.querySelectorAll('.jvli-header__icon--bag').forEach(function (bag) {
+      bag.classList.remove('is-bumped');
+      void bag.offsetWidth; // restart the animation
+      bag.classList.add('is-bumped');
+    });
+  }
+
+  // Resolves when the photo has landed (straight away when it can't fly).
+  function flyToBag(form) {
+    var scope = form.closest('[data-jvli-card], [data-jvli-product]');
+    var photo = scope && mostVisible(scope, 'img');
+    var bag = mostVisible(document, '.jvli-header__icon--bag');
+    if (!photo || !bag || !photo.currentSrc || !document.body.animate) return Promise.resolve();
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return Promise.resolve();
+
+    var from = photo.getBoundingClientRect();
+    var to = bag.getBoundingClientRect();
+    var size = Math.min(from.width, from.height, 260);
+    var left = from.left + (from.width - size) / 2;
+    var top = from.top + (from.height - size) / 2;
+    var dx = to.left + to.width / 2 - (left + size / 2);
+    var dy = to.top + to.height / 2 - (top + size / 2);
+    var end = 22 / size;
+
+    var fly = document.createElement('div');
+    fly.className = 'jvli-fly';
+    fly.setAttribute('aria-hidden', 'true');
+    fly.style.cssText = 'left:' + left + 'px;top:' + top + 'px;width:' + size + 'px;height:' + size + 'px;';
+    var img = document.createElement('img');
+    img.src = photo.currentSrc;
+    img.alt = '';
+    fly.appendChild(img);
+    document.body.appendChild(fly);
+
+    var animation = fly.animate(
+      [
+        { transform: 'translate(0, 0) scale(1)', borderRadius: '2px', opacity: 1 },
+        { transform: 'translate(0, -10px) scale(0.86)', borderRadius: '50%', opacity: 1, offset: 0.18 },
+        {
+          transform: 'translate(' + dx * 0.55 + 'px, ' + (dy * 0.55 - 40) + 'px) scale(' + (0.86 + end) / 3 + ')',
+          borderRadius: '50%',
+          opacity: 1,
+          offset: 0.6
+        },
+        { transform: 'translate(' + dx + 'px, ' + dy + 'px) scale(' + end + ')', borderRadius: '50%', opacity: 0.5 }
+      ],
+      { duration: 820, easing: 'cubic-bezier(0.45, 0, 0.3, 1)', fill: 'forwards' }
+    );
+
+    return new Promise(function (resolve) {
+      function done() {
+        fly.remove();
+        bumpBag();
+        resolve();
+      }
+      animation.onfinish = done;
+      animation.oncancel = done;
+    });
   }
 
   function onAddSubmit(event) {
@@ -980,7 +1074,7 @@
       .then(function () {
         button.textContent = 'Added';
         if (added) added.hidden = false;
-        return updateCartCount();
+        return updateCartCount(flyToBag(form));
       })
       .catch(function (error) {
         if (message) message.textContent = error.message;
