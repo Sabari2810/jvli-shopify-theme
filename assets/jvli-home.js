@@ -1248,9 +1248,11 @@
      One maroon line runs down the page and draws itself as you scroll. It
      keeps to the side gutters and, between sections, crosses the page as a
      kolam border: the line weaves over and under a row of dots. It lies on the
-     paper, under everything else: wherever a photo, text or button sits, the
-     line is simply left out. A crossing may pass behind a photo but never
-     through text or buttons.
+     paper, under text, buttons, polaroids and product cards (left out where
+     they sit). Over photos it either carries on in cream, like rice-flour
+     kolam (<main data-jvli-thread="over">, Theme settings > Kolam thread), or
+     is left out too. A crossing may pass over a photo but never through text
+     or buttons.
 
      For smooth scrolling the line is split into its visible pieces (no SVG
      mask to repaint), only the piece being drawn changes each frame, and the
@@ -1263,7 +1265,11 @@
 
   var SVG_NS = 'http://www.w3.org/2000/svg';
   var THREAD_COVERS =
-    'img, video, iframe, picture, svg, h1, h2, h3, h4, p, a, button, input, select, textarea, label, dl, [data-jvli-thread-under]';
+    'img, video, iframe, picture, svg, h1, h2, h3, h4, p, a, button, input, select, textarea, label, dl, figcaption, [data-jvli-thread-under], .jvli-polaroid, [data-jvli-card]';
+  var THREAD_SOLID = '.jvli-polaroid, [data-jvli-card]'; // objects on the page: the line always goes under
+  var OVER_NONE = 0;
+  var OVER_PHOTO = 1;
+  var OVER_SOLID = 2;
   var THREAD_MEDIA = 'img, video, iframe, picture, svg, [data-jvli-thread-under]';
   var THREAD_STEP = 2; // px between the points the line is measured at
 
@@ -1279,6 +1285,7 @@
     svg.setAttribute('focusable', 'false');
     main.appendChild(svg);
 
+    var overPhotos = main.getAttribute('data-jvli-thread') === 'over';
     var state = null;
     var shown = 0; // drawn length on screen, easing toward the scroll position
     var frame = 0;
@@ -1291,24 +1298,32 @@
         var box = el.getBoundingClientRect();
         if (box.width < 1 || box.height < 1) return;
         var text = !el.matches(THREAD_MEDIA) && !el.querySelector(THREAD_MEDIA);
+        var solid = text || !!el.closest(THREAD_SOLID) || !overPhotos;
         var pad = text ? 6 : 2;
         rects.push({
           x1: box.left - mainBox.left - pad,
           y1: box.top - mainBox.top - pad,
           x2: box.right - mainBox.left + pad,
           y2: box.bottom - mainBox.top + pad,
-          text: text
+          text: text || !!el.closest(THREAD_SOLID),
+          kind: solid ? OVER_SOLID : OVER_PHOTO
         });
       });
       return rects;
     }
 
+    // What the line would be over at this point: paper, a photo, or
+    // something it goes under.
     function covered(rects, x, y) {
+      var kind = OVER_NONE;
       for (var i = 0; i < rects.length; i++) {
         var r = rects[i];
-        if (x > r.x1 && x < r.x2 && y > r.y1 && y < r.y2) return true;
+        if (x > r.x1 && x < r.x2 && y > r.y1 && y < r.y2) {
+          if (r.kind === OVER_SOLID) return OVER_SOLID;
+          kind = OVER_PHOTO;
+        }
       }
-      return false;
+      return kind;
     }
 
     function bandIsClear(rects, y, half, x1, x2, textOnly) {
@@ -1424,15 +1439,22 @@
         knots.push([endY + 2 * d, len]);
       }
 
-      // Split into the stretches that aren't under anything.
+      // Split into stretches over paper and over photos; leave out the rest.
       var pieces = [];
       var run = null;
       points.forEach(function (p) {
-        if (covered(rects, p[0], p[1])) {
+        var kind = covered(rects, p[0], p[1]);
+        if (kind === OVER_SOLID) {
           run = null;
           return;
         }
-        if (!run) pieces.push((run = []));
+        if (!run || run.kind !== kind) {
+          // Start where the last stretch ended so the line stays unbroken.
+          var last = run && run[run.length - 1];
+          run = last ? [last] : [];
+          run.kind = kind;
+          pieces.push(run);
+        }
         run.push(p);
       });
 
@@ -1447,7 +1469,7 @@
         var start = run[0][2];
         var length = run[run.length - 1][2] - start;
         var path = document.createElementNS(SVG_NS, 'path');
-        path.setAttribute('class', 'jvli-thread__line');
+        path.setAttribute('class', run.kind === OVER_PHOTO ? 'jvli-thread__line jvli-thread__line--light' : 'jvli-thread__line');
         path.setAttribute(
           'd',
           'M' +
@@ -1465,9 +1487,10 @@
 
       var circles = [];
       dots.forEach(function (dot) {
-        if (covered(rects, dot.x, dot.y)) return;
+        var kind = covered(rects, dot.x, dot.y);
+        if (kind === OVER_SOLID) return;
         var circle = document.createElementNS(SVG_NS, 'circle');
-        circle.setAttribute('class', 'jvli-thread__dot');
+        circle.setAttribute('class', kind === OVER_PHOTO ? 'jvli-thread__dot jvli-thread__dot--light' : 'jvli-thread__dot');
         circle.setAttribute('cx', dot.x.toFixed(1));
         circle.setAttribute('cy', dot.y.toFixed(1));
         circle.setAttribute('r', phone ? 1.8 : 2.4);

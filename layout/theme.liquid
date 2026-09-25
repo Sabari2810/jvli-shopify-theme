@@ -358,7 +358,7 @@
       role="main"
       tabindex="-1"
       data-template="{{ template.name }}"
-      {% if template.name == 'index' and settings.jvli_thread_enabled %}data-jvli-thread{% endif %}
+      {% if template.name == 'index' and settings.jvli_thread_enabled %}data-jvli-thread="{% if settings.jvli_thread_over_photos %}over{% else %}under{% endif %}"{% endif %}
     >
       {{ content_for_layout }}
     </main>

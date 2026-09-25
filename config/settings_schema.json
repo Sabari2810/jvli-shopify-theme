@@ -1483,7 +1483,8 @@
         "type": "paragraph",
         "content": "On the home page, a single kolam line draws itself down the page as visitors scroll, weaving around a row of dots between sections. It runs under photos and text."
       },
-      { "type": "checkbox", "id": "jvli_thread_enabled", "label": "Show the kolam thread on the home page", "default": true }
+      { "type": "checkbox", "id": "jvli_thread_enabled", "label": "Show the kolam thread on the home page", "default": true },
+      { "type": "checkbox", "id": "jvli_thread_over_photos", "label": "Draw it over photos in cream", "default": true, "info": "Off: the line goes behind photos and comes out below them." }
     ]
   },
   {
