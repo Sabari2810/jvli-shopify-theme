@@ -1,6 +1,0 @@
-{%- comment -%}
-  Alternate product view used by the favorites page:
-  /products/<handle>?view=jvli-card returns just this product's JVLI card.
-{%- endcomment -%}
-{%- layout none -%}
-{%- render 'jvli-product-card', product: product, add_text: 'Add to bag', sizes: '(max-width: 749px) 50vw, 25vw' -%}

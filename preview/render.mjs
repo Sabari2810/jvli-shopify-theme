@@ -404,7 +404,7 @@ for (const id of index.order) {
   main += await renderSection(id, index.sections[id]);
 }
 
-// Product card views, as /products/<handle>?view=jvli-card returns them.
+// Product card views, as /products/<handle>?view=favorites-internal-do-not-use returns them.
 mkdirSync(join(out, "products"), { recursive: true });
 for (const product of sampleProducts) {
   writeFileSync(join(out, "products", product.handle), await engine.renderFile("jvli-product-card", { ...globals, product }));

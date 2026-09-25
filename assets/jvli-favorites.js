@@ -285,7 +285,7 @@
 
   function fetchCard(product) {
     if (!product.handle) return Promise.resolve(null);
-    var url = (window.Shopify && window.Shopify.routes ? window.Shopify.routes.root : '/') + 'products/' + encodeURIComponent(product.handle) + '?view=jvli-card';
+    var url = (window.Shopify && window.Shopify.routes ? window.Shopify.routes.root : '/') + 'products/' + encodeURIComponent(product.handle) + '?view=favorites-internal-do-not-use';
     return fetch(url, { credentials: 'same-origin' })
       .then(function (response) {
         return response.ok ? response.text() : null;

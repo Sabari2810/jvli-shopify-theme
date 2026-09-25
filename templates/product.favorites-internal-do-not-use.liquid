@@ -1,0 +1,7 @@
+{%- comment -%}
+  Alternate product view used by the favorites page (not a page to assign
+  to products: it has no header, gallery or footer):
+  /products/<handle>?view=favorites-internal-do-not-use returns just this product's JVLI card.
+{%- endcomment -%}
+{%- layout none -%}
+{%- render 'jvli-product-card', product: product, add_text: 'Add to bag', sizes: '(max-width: 749px) 50vw, 25vw' -%}
