@@ -4443,3 +4443,322 @@ main[data-jvli-thread] {
     animation: none;
   }
 }
+
+/* ---------- Size guide board (jvli-home.js buildSizeBoard) ----------
+   A pallanguzhi board on sunlit sand: the measurements sit in carved pits,
+   with seed trays at each end. */
+
+.jvli-product__dialog--board {
+  width: min(960px, calc(100vw - 32px));
+  padding: clamp(22px, 3.4vw, 44px) clamp(18px, 3.6vw, 48px) clamp(22px, 3vw, 36px);
+  background:
+    radial-gradient(ellipse 60% 45% at 78% 12%, rgba(255, 250, 236, 0.75), transparent 70%),
+    radial-gradient(ellipse 50% 40% at 20% 85%, rgba(255, 246, 228, 0.55), transparent 70%),
+    radial-gradient(ellipse 45% 60% at 95% 70%, rgba(150, 105, 60, 0.12), transparent 70%),
+    radial-gradient(ellipse 40% 50% at 4% 20%, rgba(150, 105, 60, 0.1), transparent 70%),
+    #ecdcc0;
+}
+
+.jvli-product__dialog--board .jvli-product__dialog-head {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  margin-bottom: clamp(20px, 3vw, 34px);
+}
+
+.jvli-product__dialog--board .jvli-product__dialog-head h2 {
+  grid-column: 1;
+  color: #3a2418;
+  font-size: clamp(34px, 4.6vw, 56px);
+  line-height: 1.05;
+}
+
+.jvli-product__dialog--board .jvli-product__dialog-head button {
+  grid-column: 2;
+  grid-row: 1;
+}
+
+.jvli-product__dialog .jvli-sizeboard__sub {
+  grid-column: 1;
+  margin: 6px 0 0;
+  color: #7a2a22;
+  font-size: clamp(17px, 2vw, 24px);
+  line-height: 1.3;
+}
+
+.jvli-sizeboard__board {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  gap: clamp(10px, 1.6vw, 20px);
+  padding: clamp(16px, 2.2vw, 26px) clamp(16px, 2.4vw, 30px);
+  border-radius: clamp(40px, 7vw, 90px);
+  background-color: #6a4027;
+  background-image:
+    repeating-linear-gradient(178.6deg, rgba(40, 20, 8, 0.1) 0 1px, transparent 1px 6px, rgba(255, 214, 170, 0.05) 6px 8px, transparent 8px 13px),
+    repeating-linear-gradient(181.2deg, transparent 0 22px, rgba(40, 20, 8, 0.08) 22px 24px, transparent 24px 41px),
+    linear-gradient(180deg, #7c4c2e 0%, #6a4027 45%, #56331f 100%);
+  box-shadow:
+    0 22px 34px -10px rgba(70, 40, 16, 0.45),
+    0 4px 8px rgba(70, 40, 16, 0.2),
+    inset 0 2px 1px rgba(255, 222, 186, 0.22),
+    inset 0 -5px 10px rgba(30, 14, 4, 0.35);
+}
+
+.jvli-sizeboard__scroll {
+  flex: 1;
+  min-width: 0;
+  overflow-x: auto;
+}
+
+.jvli-product__dialog .jvli-sizeboard__grid {
+  width: 100%;
+  margin: 0;
+  border: 0;
+  border-collapse: separate;
+  border-spacing: clamp(6px, 1.2vw, 14px) clamp(6px, 1vw, 10px);
+  table-layout: fixed;
+  box-shadow: none;
+  font-size: inherit;
+}
+
+.jvli-product__dialog .jvli-sizeboard__grid th,
+.jvli-product__dialog .jvli-sizeboard__grid td {
+  padding: 0;
+  border: 0;
+  text-align: center;
+  font: inherit;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
+.jvli-sizeboard__grid caption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* A carved pit: dark hollow, shadow from the top rim, light on the lower lip. */
+.jvli-sizeboard__pit {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: clamp(44px, 5.4vw, 62px);
+  padding: 0 6px;
+  border-radius: 50%;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 62%, rgba(120, 72, 40, 0.55), transparent 70%),
+    radial-gradient(ellipse at 50% 40%, #3b2213 0%, #472917 55%, #5a3520 100%);
+  box-shadow:
+    inset 0 7px 10px rgba(18, 8, 2, 0.6),
+    inset 0 -2px 3px rgba(255, 214, 170, 0.14),
+    0 1px 0 rgba(255, 222, 186, 0.22),
+    0 -1px 0 rgba(20, 10, 4, 0.35);
+  color: #f4e7d3;
+  font-family: var(--jvli-serif);
+  font-size: clamp(16px, 2.2vw, 26px);
+  font-weight: 400;
+  line-height: 1;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.4);
+}
+
+.jvli-sizeboard__pit--label {
+  font-size: clamp(11px, 1.45vw, 17px);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+/* Seed trays at each end. */
+.jvli-sizeboard__tray {
+  position: relative;
+  flex: 0 0 clamp(64px, 8.4vw, 104px);
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: center;
+  padding: 18px 14px 18px 18px;
+  border-radius: 999px;
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 60%, rgba(120, 72, 40, 0.5), transparent 70%),
+    radial-gradient(ellipse at 50% 40%, #3b2213 0%, #472917 60%, #5a3520 100%);
+  box-shadow:
+    inset 0 9px 14px rgba(18, 8, 2, 0.6),
+    inset 0 -2px 4px rgba(255, 214, 170, 0.14),
+    0 1px 0 rgba(255, 222, 186, 0.22);
+}
+
+.jvli-sizeboard__seed {
+  position: relative;
+  width: clamp(18px, 2.2vw, 25px);
+  height: clamp(21px, 2.6vw, 30px);
+  margin: -3px -4px 0 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fffaf0 0%, #efe3cc 55%, #cbb392 100%);
+  box-shadow: 0 2px 2px rgba(20, 10, 4, 0.45);
+}
+
+.jvli-sizeboard__seed:nth-child(3n) {
+  transform: rotate(38deg) translateY(3px);
+}
+
+.jvli-sizeboard__seed:nth-child(3n + 1) {
+  transform: rotate(-28deg);
+}
+
+.jvli-sizeboard__seed:nth-child(4n) {
+  transform: rotate(80deg) translateX(-2px);
+}
+
+/* The dark line of a manjadi/kalachi seed. */
+.jvli-sizeboard__seed::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 50%;
+  width: 5px;
+  margin-left: -2px;
+  border-left: 1.5px solid #8b4a26;
+  border-radius: 50%;
+}
+
+.jvli-sizeboard__tray--right .jvli-sizeboard__seed:nth-child(n + 9) {
+  display: none;
+}
+
+
+
+/* Jasmine in the right tray. */
+.jvli-sizeboard__flower {
+  position: absolute;
+  width: 38px;
+  height: 38px;
+  filter: drop-shadow(0 2px 2px rgba(20, 10, 4, 0.35));
+}
+
+.jvli-sizeboard__flower--1 {
+  top: 30%;
+  left: 18%;
+  transform: rotate(12deg);
+}
+
+.jvli-sizeboard__flower--2 {
+  bottom: 28%;
+  left: 38%;
+  transform: rotate(-20deg) scale(0.85);
+}
+
+.jvli-sizeboard__flower span {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 10px;
+  height: 18px;
+  margin: -18px 0 0 -5px;
+  border-radius: 50% 50% 45% 45%;
+  background: radial-gradient(ellipse at 50% 30%, #ffffff, #f3eee0 70%, #e2d8bf);
+  transform-origin: 50% 100%;
+}
+
+.jvli-sizeboard__flower span:nth-child(2) { transform: rotate(72deg); }
+.jvli-sizeboard__flower span:nth-child(3) { transform: rotate(144deg); }
+.jvli-sizeboard__flower span:nth-child(4) { transform: rotate(216deg); }
+.jvli-sizeboard__flower span:nth-child(5) { transform: rotate(288deg); }
+
+/* Fit notes | text | leaf | units */
+.jvli-sizeboard__notes {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: 0 clamp(16px, 2.4vw, 32px);
+  margin-top: clamp(24px, 3.4vw, 40px);
+  color: #3a2418;
+}
+
+.jvli-product__dialog .jvli-sizeboard__notes p {
+  margin: 0;
+  font-family: var(--jvli-serif);
+  font-size: clamp(15px, 1.5vw, 17px);
+  line-height: 1.5;
+}
+
+.jvli-product__dialog .jvli-sizeboard__notes .jvli-sizeboard__notes-label {
+  padding-right: clamp(16px, 2.4vw, 32px);
+  border-right: 1px solid rgba(58, 36, 24, 0.35);
+  font-family: var(--jvli-caps);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+}
+
+.jvli-sizeboard__mark svg {
+  display: block;
+  width: 26px;
+  height: 26px;
+  fill: none;
+  stroke: #7a2a22;
+  stroke-width: 1.3;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.jvli-product__dialog .jvli-sizeboard__notes .jvli-sizeboard__units {
+  max-width: 11em;
+  padding-left: clamp(16px, 2.4vw, 32px);
+  border-left: 1px solid rgba(58, 36, 24, 0.35);
+}
+
+@media screen and (max-width: 749px) {
+  .jvli-product__dialog--board {
+    max-height: calc(100vh - 32px);
+  }
+
+  .jvli-sizeboard__tray {
+    display: none;
+  }
+
+  .jvli-sizeboard__board {
+    padding: 12px 8px;
+    border-radius: 30px;
+  }
+
+  .jvli-sizeboard__pit {
+    min-width: 0;
+    height: 42px;
+    padding: 0 4px;
+  }
+
+  .jvli-sizeboard__pit--label {
+    font-size: 10px;
+    letter-spacing: 0.02em;
+  }
+
+  .jvli-sizeboard__notes {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+  }
+
+  .jvli-product__dialog .jvli-sizeboard__notes .jvli-sizeboard__notes-label {
+    padding: 0;
+    border: 0;
+  }
+
+  .jvli-sizeboard__mark {
+    display: none;
+  }
+
+  .jvli-product__dialog .jvli-sizeboard__notes .jvli-sizeboard__units {
+    max-width: none;
+    padding: 10px 0 0;
+    border: 0;
+    border-top: 1px solid rgba(58, 36, 24, 0.25);
+    font-style: italic;
+  }
+}

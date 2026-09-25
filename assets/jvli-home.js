@@ -840,6 +840,7 @@
 
       /* Size guide pop-up. */
       var dialog = section.querySelector('[data-jvli-size-guide]');
+      if (dialog) buildSizeBoard(dialog);
       if (dialog && dialog.showModal) {
         section.querySelectorAll('[data-jvli-size-guide-open]').forEach(function (button) {
           button.addEventListener('click', function () {
@@ -857,6 +858,116 @@
         });
       }
     });
+  }
+
+  /* ---------- Size guide board ----------
+     Turns the Size guide page (a table with sizes down the side, then a
+     paragraph in italics for units and paragraphs under a "Fit notes"
+     heading) into a pallanguzhi board: measurements carved into the pits,
+     sizes along the top, seed trays at each end. The page stays the place to
+     edit the numbers; without JavaScript it shows as the plain table. */
+
+  var SEEDS = 13;
+
+  function el(tag, className, text) {
+    var node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text != null) node.textContent = text;
+    return node;
+  }
+
+  function tray(side) {
+    var node = el('span', 'jvli-sizeboard__tray jvli-sizeboard__tray--' + side);
+    node.setAttribute('aria-hidden', 'true');
+    for (var i = 0; i < SEEDS; i++) node.appendChild(el('span', 'jvli-sizeboard__seed'));
+    if (side === 'right') {
+      for (var f = 0; f < 2; f++) {
+        var flower = el('span', 'jvli-sizeboard__flower jvli-sizeboard__flower--' + (f + 1));
+        for (var p = 0; p < 5; p++) flower.appendChild(el('span'));
+        node.appendChild(flower);
+      }
+    }
+    return node;
+  }
+
+  function buildSizeBoard(dialog) {
+    var rte = dialog.querySelector('.rte');
+    var table = rte && rte.querySelector('table');
+    if (!table || dialog.querySelector('.jvli-sizeboard')) return;
+
+    var rows = Array.prototype.map.call(table.rows, function (row) {
+      return Array.prototype.map.call(row.cells, function (cell) {
+        return cell.textContent.trim();
+      });
+    });
+    if (rows.length < 2) return;
+
+    // The page lists sizes down the side; the board lists them along the top.
+    var grid = el('table', 'jvli-sizeboard__grid');
+    var caption = el('caption', 'visually-hidden', 'Body measurements by size');
+    grid.appendChild(caption);
+    rows[0].forEach(function (heading, column) {
+      var row = grid.insertRow();
+      rows.forEach(function (sizeRow, index) {
+        var cell = document.createElement(index === 0 || column === 0 ? 'th' : 'td');
+        if (index === 0) cell.scope = 'row';
+        else if (column === 0) cell.scope = 'col';
+        cell.appendChild(el('span', index === 0 ? 'jvli-sizeboard__pit jvli-sizeboard__pit--label' : 'jvli-sizeboard__pit', sizeRow[column] || ''));
+        row.appendChild(cell);
+      });
+    });
+
+    var board = el('div', 'jvli-sizeboard__board');
+    board.appendChild(tray('left'));
+    var scroller = el('div', 'jvli-sizeboard__scroll');
+    scroller.appendChild(grid);
+    board.appendChild(scroller);
+    board.appendChild(tray('right'));
+
+    // Units (the italic line) and the fit notes under the heading.
+    var units = '';
+    var notes = [];
+    var heading = rte.querySelector('h2, h3, h4');
+    rte.querySelectorAll('p').forEach(function (paragraph) {
+      if (paragraph.classList.contains('jvli-size-guide__sub')) return;
+      if (heading && heading.compareDocumentPosition(paragraph) & Node.DOCUMENT_POSITION_FOLLOWING) {
+        notes.push(paragraph.textContent.trim());
+      } else if (paragraph.textContent.trim()) {
+        units = paragraph.textContent.trim();
+      }
+    });
+
+    var wrap = el('div', 'jvli-sizeboard');
+    wrap.appendChild(board);
+    if (notes.length || units) {
+      var foot = el('div', 'jvli-sizeboard__notes');
+      if (notes.length) {
+        foot.appendChild(el('p', 'jvli-sizeboard__notes-label', heading ? heading.textContent.trim() : 'Fit notes'));
+        var text = el('div', 'jvli-sizeboard__notes-text');
+        notes.forEach(function (note) {
+          if (note) text.appendChild(el('p', null, note));
+        });
+        foot.appendChild(text);
+      }
+      if (units) {
+        var mark = el('span', 'jvli-sizeboard__mark');
+        mark.setAttribute('aria-hidden', 'true');
+        mark.innerHTML =
+          '<svg viewBox="0 0 24 24" focusable="false"><path d="M12 21v-7M12 14c0-4-2.4-6.4-6-7 .2 3.8 2.4 6.4 6 7Zm0 0c0-4 2.4-6.4 6-7-.2 3.8-2.4 6.4-6 7Zm0-3c-1.6-1.6-1.6-4.4 0-7 1.6 2.6 1.6 5.4 0 7Z"/></svg>';
+        foot.appendChild(mark);
+        foot.appendChild(el('p', 'jvli-sizeboard__units', units));
+      }
+      wrap.appendChild(foot);
+    }
+
+    // The Tamil line sits under the title.
+    var sub = rte.querySelector('.jvli-size-guide__sub');
+    var title = dialog.querySelector('.jvli-product__dialog-head h2');
+    if (sub && title) title.insertAdjacentElement('afterend', el('p', 'jvli-sizeboard__sub', sub.textContent.trim()));
+
+    rte.hidden = true;
+    rte.insertAdjacentElement('afterend', wrap);
+    dialog.classList.add('jvli-product__dialog--board');
   }
 
   /* ---------- Collection filters and sorting ---------- */
