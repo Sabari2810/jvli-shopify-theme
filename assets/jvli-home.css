@@ -4927,3 +4927,42 @@ main[data-jvli-thread] {
   0%, 100% { opacity: 0; }
   30% { opacity: 1; }
 }
+
+/* The photographed board's pop-up sized to fit the screen's height, so it
+   opens without scrolling on laptops: title, spacing and board shrink with
+   the window height. */
+@media screen and (min-width: 750px) {
+  .jvli-product__dialog--board {
+    width: min(880px, calc(100vw - 32px));
+    max-height: calc(100vh - 32px);
+    padding: clamp(18px, 3.4vh, 36px) clamp(24px, 3.4vw, 44px) clamp(18px, 3vh, 30px);
+  }
+
+  .jvli-product__dialog--board .jvli-product__dialog-head {
+    margin-bottom: clamp(10px, 2.4vh, 26px);
+  }
+
+  .jvli-product__dialog--board .jvli-product__dialog-head h2 {
+    font-size: clamp(28px, min(4.2vw, 6.4vh), 50px);
+  }
+
+  .jvli-product__dialog .jvli-sizeboard__sub {
+    margin-top: 2px;
+    font-size: clamp(15px, min(2vw, 3vh), 22px);
+  }
+
+  /* Board height is a third of its width. */
+  .jvli-sizeboard__photo {
+    max-width: calc((100vh - 290px) * 2.99);
+    margin-inline: auto;
+  }
+
+  .jvli-sizeboard__notes {
+    margin-top: clamp(12px, 2.8vh, 32px);
+  }
+
+  .jvli-product__dialog .jvli-sizeboard__notes p {
+    font-size: clamp(14px, min(1.4vw, 2.3vh), 16px);
+    line-height: 1.45;
+  }
+}
