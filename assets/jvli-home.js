@@ -998,8 +998,16 @@
      One maroon line runs down the page and draws itself as you scroll. It
      keeps to the side gutters and, between sections, crosses the page as a
      kolam border: the line weaves over and under a row of dots. It lies on the
-     paper, under everything else: photos, text and buttons mask it out. A
-     crossing may pass behind a photo but never through text or buttons.
+     paper, under everything else: wherever a photo, text or button sits, the
+     line is simply left out. A crossing may pass behind a photo but never
+     through text or buttons.
+
+     For smooth scrolling the line is split into its visible pieces (no SVG
+     mask to repaint), only the piece being drawn changes each frame, and the
+     drawn length eases toward the scroll position. The layout is measured
+     again only when the page itself changes size, not when a phone's address
+     bar shows or hides.
+
      Only when layout/theme.liquid marks <main data-jvli-thread> (home page,
      Theme settings > Kolam thread). With reduced motion it is drawn in full. */
 
@@ -1007,6 +1015,7 @@
   var THREAD_COVERS =
     'img, video, iframe, picture, svg, h1, h2, h3, h4, p, a, button, input, select, textarea, label, dl, [data-jvli-thread-under]';
   var THREAD_MEDIA = 'img, video, iframe, picture, svg, [data-jvli-thread-under]';
+  var THREAD_STEP = 2; // px between the points the line is measured at
 
   function initThread() {
     var main = document.querySelector('main[data-jvli-thread]');
@@ -1018,16 +1027,12 @@
     svg.setAttribute('class', 'jvli-thread');
     svg.setAttribute('aria-hidden', 'true');
     svg.setAttribute('focusable', 'false');
-    svg.innerHTML =
-      '<defs><mask id="JvliThreadMask" maskUnits="userSpaceOnUse"></mask></defs>' +
-      '<g mask="url(#JvliThreadMask)"><path class="jvli-thread__line"/><g class="jvli-thread__dots"></g></g>';
     main.appendChild(svg);
 
-    var mask = svg.querySelector('mask');
-    var line = svg.querySelector('.jvli-thread__line');
-    var dotGroup = svg.querySelector('.jvli-thread__dots');
     var state = null;
+    var shown = 0; // drawn length on screen, easing toward the scroll position
     var frame = 0;
+    var size = '';
 
     function rectsOf(mainBox) {
       var rects = [];
@@ -1038,20 +1043,28 @@
         var text = !el.matches(THREAD_MEDIA) && !el.querySelector(THREAD_MEDIA);
         var pad = text ? 6 : 2;
         rects.push({
-          x: Math.round(box.left - mainBox.left - pad),
-          y: Math.round(box.top - mainBox.top - pad),
-          w: Math.round(box.width + 2 * pad),
-          h: Math.round(box.height + 2 * pad),
+          x1: box.left - mainBox.left - pad,
+          y1: box.top - mainBox.top - pad,
+          x2: box.right - mainBox.left + pad,
+          y2: box.bottom - mainBox.top + pad,
           text: text
         });
       });
       return rects;
     }
 
+    function covered(rects, x, y) {
+      for (var i = 0; i < rects.length; i++) {
+        var r = rects[i];
+        if (x > r.x1 && x < r.x2 && y > r.y1 && y < r.y2) return true;
+      }
+      return false;
+    }
+
     function bandIsClear(rects, y, half, x1, x2, textOnly) {
       for (var i = 0; i < rects.length; i++) {
         var r = rects[i];
-        if ((r.text || !textOnly) && r.y < y + half && r.y + r.h > y - half && r.x < x2 && r.x + r.w > x1) return false;
+        if ((r.text || !textOnly) && r.y1 < y + half && r.y2 > y - half && r.x1 < x2 && r.x2 > x1) return false;
       }
       return true;
     }
@@ -1078,6 +1091,7 @@
 
       var width = main.clientWidth;
       var height = Math.round(sections[sections.length - 1].getBoundingClientRect().bottom - mainBox.top);
+      size = width + 'x' + height;
       var phone = width < 750;
       var gutter = Math.min(96, Math.max(20, width * 0.054));
       var d = phone ? 8 : 11; // dots sit 2d apart; the line weaves around them at radius d
@@ -1087,35 +1101,35 @@
         return !!el.querySelector('[data-jvli-thread-under]');
       });
 
-      var cmds = [];
-      var knots = [];
+      // The line as points every THREAD_STEP px, each with its length so far.
+      var points = [];
+      var knots = [[0, 0]];
       var dots = [];
       var len = 0;
-      var side = 0;
       var x = sides[0];
       var y = 0;
-      var quarter = (Math.PI * d) / 2;
+      var side = 0;
+      points.push([x, y, 0]);
 
-      function down(toY) {
-        if (toY <= y) return;
-        cmds.push('L' + x + ' ' + toY);
-        len += toY - y;
-        y = toY;
+      function to(nx, ny) {
+        len += Math.sqrt((nx - x) * (nx - x) + (ny - y) * (ny - y));
+        x = nx;
+        y = ny;
+        points.push([x, y, len]);
       }
-      function across(toX) {
-        cmds.push('L' + toX + ' ' + y);
-        len += Math.abs(toX - x);
-        x = toX;
+      function line(nx, ny) {
+        var steps = Math.max(1, Math.ceil(Math.max(Math.abs(nx - x), Math.abs(ny - y)) / THREAD_STEP));
+        var x0 = x;
+        var y0 = y;
+        for (var s = 1; s <= steps; s++) to(x0 + ((nx - x0) * s) / steps, y0 + ((ny - y0) * s) / steps);
       }
-      function arc(toX, toY, sweep, arcLen) {
-        cmds.push('A' + d + ' ' + d + ' 0 0 ' + sweep + ' ' + toX + ' ' + toY);
-        len += arcLen;
-        x = toX;
-        y = toY;
+      function arc(cx, cy, a0, a1) {
+        var steps = Math.max(2, Math.ceil((Math.abs(a1 - a0) * d) / THREAD_STEP));
+        for (var s = 1; s <= steps; s++) {
+          var a = a0 + ((a1 - a0) * s) / steps;
+          to(cx + d * Math.cos(a), cy + d * Math.sin(a));
+        }
       }
-
-      cmds.push('M' + x + ' 0');
-      knots.push([0, 0]);
 
       for (var i = 0; i < sections.length - 1; i++) {
         if (under[i] || under[i + 1]) continue;
@@ -1123,23 +1137,29 @@
         var at = crossingNear(rects, boundary, d + 4, sides[0] - d, sides[1] + d);
         if (at === null || at - d < y + 60) continue;
 
-        var to = sides[1 - side];
-        var dir = to > x ? 1 : -1;
-        var count = Math.max(1, Math.floor((Math.abs(to - x) - 4 * d) / (2 * d)) - 2);
+        var target = sides[1 - side];
+        var dir = target > x ? 1 : -1;
+        var count = Math.max(1, Math.floor((Math.abs(target - x) - 4 * d) / (2 * d)) - 2);
         if (count % 2 === 0) count -= 1; // odd, so a dot sits in the middle
-        var span = Math.min(260, Math.max(120, Math.abs(to - x) * 0.3));
+        var span = Math.min(260, Math.max(120, Math.abs(target - x) * 0.3));
+        var PI = Math.PI;
 
-        down(at - d);
+        line(x, at - d);
         knots.push([at - span / 2, len - (span / 2 - d)]);
-        arc(x + dir * d, at, dir > 0 ? 0 : 1, quarter);
-        across((x + to) / 2 - dir * count * d);
+        // Turn from going down to going across.
+        arc(x + dir * d, at - d, dir > 0 ? PI : 0, PI / 2);
+        line((x + target) / 2 - dir * count * d, at);
+        // Weave over and under the row of dots.
         for (var k = 0; k < count; k++) {
           var cx = x + dir * d;
-          dots.push({ x: cx, y: at, len: len + (Math.PI * d) / 2 });
-          arc(cx + dir * d, at, (k % 2 === 0) === dir > 0 ? 1 : 0, Math.PI * d);
+          var start = dir > 0 ? PI : 0;
+          var over = k % 2 === 0;
+          dots.push({ x: cx, y: at, len: len + (PI * d) / 2 });
+          arc(cx, at, start, start + (over === dir > 0 ? PI : -PI));
         }
-        across(to - dir * d);
-        arc(to, at + d, dir > 0 ? 1 : 0, quarter);
+        line(target - dir * d, at);
+        // Turn from going across to going down.
+        arc(target - dir * d, at + d, -PI / 2, dir > 0 ? 0 : -PI);
         knots.push([at + span / 2, len + (span / 2 - d)]);
         side = 1 - side;
       }
@@ -1147,35 +1167,66 @@
       // Finish by looping once around a last dot.
       var endY = height - 40;
       if (endY - d > y + 60) {
-        down(endY - d);
+        line(x, endY - d);
         knots.push([endY - d, len]);
-        cmds.push('A' + d + ' ' + d + ' 0 1 1 ' + x + ' ' + (endY + d));
-        cmds.push('A' + d + ' ' + d + ' 0 1 1 ' + x + ' ' + (endY - d));
         dots.push({ x: x, y: endY, len: len + Math.PI * d });
-        len += 2 * Math.PI * d;
+        arc(x, endY, -Math.PI / 2, (3 * Math.PI) / 2);
         knots.push([endY + 2 * d, len]);
       }
+
+      // Split into the stretches that aren't under anything.
+      var pieces = [];
+      var run = null;
+      points.forEach(function (p) {
+        if (covered(rects, p[0], p[1])) {
+          run = null;
+          return;
+        }
+        if (!run) pieces.push((run = []));
+        run.push(p);
+      });
 
       svg.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
       svg.setAttribute('width', width);
       svg.setAttribute('height', height);
-      mask.innerHTML =
-        '<rect width="' + width + '" height="' + height + '" fill="#fff"/>' +
-        rects
-          .map(function (r) {
-            return '<rect x="' + r.x + '" y="' + r.y + '" width="' + r.w + '" height="' + r.h + '"/>';
-          })
-          .join('');
-      line.setAttribute('d', cmds.join(' '));
-      line.style.strokeDasharray = len + ' ' + (len + 1);
-      dotGroup.innerHTML = dots
-        .map(function (dot) {
-          return '<circle cx="' + dot.x + '" cy="' + dot.y + '" r="' + (phone ? 1.8 : 2.4) + '"/>';
-        })
-        .join('');
+      svg.textContent = '';
 
-      state = { knots: knots, dots: dots, len: len, circles: dotGroup.children };
-      draw();
+      var parts = [];
+      pieces.forEach(function (run) {
+        if (run.length < 2) return;
+        var start = run[0][2];
+        var length = run[run.length - 1][2] - start;
+        var path = document.createElementNS(SVG_NS, 'path');
+        path.setAttribute('class', 'jvli-thread__line');
+        path.setAttribute(
+          'd',
+          'M' +
+            run
+              .map(function (p) {
+                return p[0].toFixed(1) + ' ' + p[1].toFixed(1);
+              })
+              .join('L')
+        );
+        path.style.strokeDasharray = length + ' ' + (length + 1);
+        path.style.strokeDashoffset = length;
+        svg.appendChild(path);
+        parts.push({ el: path, start: start, length: length, drawn: 0 });
+      });
+
+      var circles = [];
+      dots.forEach(function (dot) {
+        if (covered(rects, dot.x, dot.y)) return;
+        var circle = document.createElementNS(SVG_NS, 'circle');
+        circle.setAttribute('class', 'jvli-thread__dot');
+        circle.setAttribute('cx', dot.x.toFixed(1));
+        circle.setAttribute('cy', dot.y.toFixed(1));
+        circle.setAttribute('r', phone ? 1.8 : 2.4);
+        svg.appendChild(circle);
+        circles.push({ el: circle, len: dot.len, on: false });
+      });
+
+      state = { knots: knots, len: len, parts: parts, circles: circles };
+      paint(shown);
     }
 
     function lengthAt(penY) {
@@ -1189,36 +1240,76 @@
       return state.len;
     }
 
-    function draw() {
+    // The length the scroll position asks for. Uses the layout viewport
+    // height, which stays put while a phone's address bar slides.
+    function wanted() {
+      if (still.matches) return state.len;
+      var view = document.documentElement.clientHeight;
+      if (window.scrollY + view >= document.documentElement.scrollHeight - 4) return state.len;
+      return Math.min(state.len, lengthAt(view * 0.72 - main.getBoundingClientRect().top));
+    }
+
+    // Only touches the pieces and dots whose state changed.
+    function paint(length) {
+      state.parts.forEach(function (part) {
+        var drawn = Math.max(0, Math.min(part.length, length - part.start));
+        if (drawn === part.drawn) return;
+        part.drawn = drawn;
+        part.el.style.strokeDashoffset = part.length - drawn;
+      });
+      state.circles.forEach(function (circle) {
+        var on = circle.len <= length;
+        if (on === circle.on) return;
+        circle.on = on;
+        circle.el.classList.toggle('is-on', on);
+      });
+    }
+
+    function tick() {
       frame = 0;
       if (!state) return;
-      var drawn = state.len;
-      if (!still.matches) {
-        var atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 4;
-        drawn = atBottom ? state.len : lengthAt(window.innerHeight * 0.72 - main.getBoundingClientRect().top);
-      }
-      line.style.strokeDashoffset = state.len - drawn;
-      for (var i = 0; i < state.dots.length; i++) {
-        state.circles[i].classList.toggle('is-on', state.dots[i].len <= drawn);
-      }
+      var goal = wanted();
+      var gap = goal - shown;
+      // Ease toward the goal; snap when close or when the jump is big (a
+      // jump link, or opening the page part way down).
+      shown = Math.abs(gap) < 1 || Math.abs(gap) > 2400 ? goal : shown + gap * 0.22;
+      paint(shown);
+      if (shown !== goal) frame = requestAnimationFrame(tick);
     }
 
     function schedule() {
-      if (!frame) frame = requestAnimationFrame(draw);
+      if (!frame) frame = requestAnimationFrame(tick);
     }
 
     var rebuildTimer = 0;
     function rebuild() {
       clearTimeout(rebuildTimer);
-      rebuildTimer = setTimeout(build, 150);
+      rebuildTimer = setTimeout(function () {
+        build();
+        schedule();
+      }, 150);
+    }
+
+    // Rebuild only when the page's own size changes (images and fonts
+    // loading, rotating, resizing a desktop window).
+    function rebuildIfResized() {
+      var sections = Array.prototype.filter.call(main.children, function (el) {
+        return el !== svg && el.offsetHeight > 0;
+      });
+      var last = sections[sections.length - 1];
+      var height = last ? Math.round(last.getBoundingClientRect().bottom - main.getBoundingClientRect().top) : 0;
+      if (main.clientWidth + 'x' + height !== size) rebuild();
     }
 
     build();
+    shown = wanted();
+    paint(shown);
     window.addEventListener('scroll', schedule, { passive: true });
-    window.addEventListener('resize', rebuild);
     window.addEventListener('load', rebuild);
-    main.addEventListener('scroll', rebuild, true); // sideways product rows move what covers the line
-    if (window.ResizeObserver) new ResizeObserver(rebuild).observe(main);
+    // Sideways product rows move what covers the line; measure once they settle.
+    main.addEventListener('scroll', rebuild, true);
+    if (window.ResizeObserver) new ResizeObserver(rebuildIfResized).observe(main);
+    else window.addEventListener('resize', rebuildIfResized);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(rebuild);
   }
 

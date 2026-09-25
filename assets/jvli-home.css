@@ -4377,7 +4377,7 @@ main[data-jvli-thread] {
   opacity: 0.8;
 }
 
-.jvli-thread__dots circle {
+.jvli-thread__dot {
   fill: #763530;
   opacity: 0;
   transform: scale(0.2);
@@ -4386,7 +4386,7 @@ main[data-jvli-thread] {
   transition: opacity 0.35s ease, transform 0.35s ease;
 }
 
-.jvli-thread__dots circle.is-on {
+.jvli-thread__dot.is-on {
   opacity: 0.85;
   transform: none;
 }

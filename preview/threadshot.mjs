@@ -29,8 +29,8 @@ for (const [name, width, height] of [["desktop", 1440, 900], ["phone", 390, 844]
   await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
   await page.waitForTimeout(600);
   const info = await page.evaluate(() => {
-    const p = document.querySelector(".jvli-thread__line");
-    return p ? { off: p.style.strokeDashoffset, dash: p.style.strokeDasharray, dots: document.querySelectorAll(".jvli-thread__dots circle").length } : null;
+    const p = document.querySelectorAll(".jvli-thread__line").length;
+    return p ? { pieces: p, dots: document.querySelectorAll(".jvli-thread__dot").length } : null;
   });
   console.log(name, info);
   // Full drawing, captured one screen at a time (a full-page capture resizes
