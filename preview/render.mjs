@@ -441,7 +441,7 @@ writeFileSync(
 </style>
 ${senseCss}
 </head>
-<body class="gradient">
+<body class="gradient"${process.env.NO_WRITE ? "" : " data-jvli-write"}>
 ${header}
 <main id="MainContent" class="content-for-layout" role="main"${process.env.NO_THREAD ? "" : " data-jvli-thread"}>
 ${main}

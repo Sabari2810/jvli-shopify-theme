@@ -319,9 +319,28 @@
         document.documentElement.classList.add('shopify-design-mode');
       }
     </script>
+
+    {%- comment -%}
+      Page turns: moving between pages fades through the paper colour
+      instead of flashing white (browsers with cross-document view
+      transitions; others simply load the page). Theme settings > Page
+      animations.
+    {%- endcomment -%}
+    <style>
+      html { background-color: #f5f1ea; }
+      {%- if settings.jvli_page_turns_enabled %}
+      @media (prefers-reduced-motion: no-preference) {
+        @view-transition { navigation: auto; }
+        ::view-transition-old(root) { animation: jvli-page-out 0.26s ease both; }
+        ::view-transition-new(root) { animation: jvli-page-in 0.46s cubic-bezier(0.2, 0.7, 0.2, 1) 0.08s both; }
+      }
+      @keyframes jvli-page-out { to { opacity: 0; } }
+      @keyframes jvli-page-in { from { opacity: 0; transform: translateY(10px); } }
+      {%- endif %}
+    </style>
   </head>
 
-  <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}">
+  <body class="gradient{% if settings.animations_hover_elements != 'none' %} animate--hover-{{ settings.animations_hover_elements }}{% endif %}"{% if settings.jvli_handwriting_enabled %} data-jvli-write{% endif %}>
     {%- render 'jvli-intro' -%}
     <a class="skip-to-content-link button visually-hidden" href="#MainContent">
       {{ 'accessibility.skip_to_text' | t }}

@@ -4966,3 +4966,49 @@ main[data-jvli-thread] {
     line-height: 1.45;
   }
 }
+
+/* ---------- Handwriting that writes itself (jvli-home.js initHandwriting) ----------
+   Notes are hidden until the script has split them into lines; if it never
+   runs they appear after a moment anyway. Each line is uncovered left to
+   right through a soft-edged mask, like ink following the pen. */
+
+@media (prefers-reduced-motion: no-preference) {
+  body[data-jvli-write] .jvli-handwriting:not(.jvli-write) {
+    animation: jvli-write-failsafe 0s 2.5s both;
+  }
+
+  .jvli-write__line {
+    display: inline-block;
+    margin: -0.25em -0.4em;
+    padding: 0.25em 0.4em;
+    text-indent: 0; /* the note's own indent still places each line */
+    -webkit-mask-image: linear-gradient(90deg, #000 45%, transparent 55%);
+    mask-image: linear-gradient(90deg, #000 45%, transparent 55%);
+    -webkit-mask-size: 220% 100%;
+    mask-size: 220% 100%;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+
+  .jvli-write.is-writing .jvli-write__line {
+    animation: jvli-write var(--jvli-write-duration, 900ms) cubic-bezier(0.45, 0.1, 0.55, 0.9) var(--jvli-write-delay, 0ms) forwards;
+  }
+}
+
+@keyframes jvli-write-failsafe {
+  from { visibility: hidden; }
+  to { visibility: visible; }
+}
+
+@keyframes jvli-write {
+  from {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+  to {
+    -webkit-mask-position: 0 0;
+    mask-position: 0 0;
+  }
+}

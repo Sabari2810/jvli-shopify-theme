@@ -1485,5 +1485,16 @@
       },
       { "type": "checkbox", "id": "jvli_thread_enabled", "label": "Show the kolam thread on the home page", "default": true }
     ]
+  },
+  {
+    "name": "Page animations",
+    "settings": [
+      {
+        "type": "paragraph",
+        "content": "Handwritten notes (polaroid captions and notes on Our Story and Our Fabrics) write themselves in when they scroll into view. Page turns fade between pages through the paper colour instead of a white flash."
+      },
+      { "type": "checkbox", "id": "jvli_handwriting_enabled", "label": "Write in handwritten notes", "default": true },
+      { "type": "checkbox", "id": "jvli_page_turns_enabled", "label": "Fade between pages", "default": true }
+    ]
   }
 ]

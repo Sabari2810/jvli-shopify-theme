@@ -1678,6 +1678,63 @@
     });
   }
 
+  /* ---------- Handwriting that writes itself ----------
+     Handwritten notes (.jvli-handwriting) are hidden until they scroll into
+     view, then each line is revealed left to right at a writing pace, one
+     line after another. Only when <body data-jvli-write> (Theme settings >
+     Page animations) and motion is welcome; the stylesheet shows the notes
+     anyway if this never runs. */
+
+  var writeObserver = null;
+
+  function initHandwriting(scope) {
+    if (!document.body.hasAttribute('data-jvli-write')) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches || !window.IntersectionObserver) return;
+    if (!writeObserver) {
+      writeObserver = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add('is-writing');
+            writeObserver.unobserve(entry.target);
+          });
+        },
+        { threshold: 0.6 }
+      );
+    }
+
+    scope.querySelectorAll('.jvli-handwriting').forEach(function (note) {
+      if (note.classList.contains('jvli-write')) return;
+      // Group the note's content into lines at each <br>.
+      var lines = [];
+      var line = null;
+      Array.prototype.slice.call(note.childNodes).forEach(function (node) {
+        if (node.nodeName === 'BR') {
+          line = null;
+          return;
+        }
+        if (!line) {
+          if (node.nodeType === 3 && !node.textContent.trim()) return;
+          line = el('span', 'jvli-write__line');
+          note.insertBefore(line, node);
+          lines.push(line);
+        }
+        line.appendChild(node);
+      });
+
+      var delay = 150;
+      lines.forEach(function (span) {
+        var length = span.textContent.trim().length;
+        var duration = Math.max(380, Math.min(1500, length * 70));
+        span.style.setProperty('--jvli-write-delay', delay + 'ms');
+        span.style.setProperty('--jvli-write-duration', duration + 'ms');
+        delay += duration + 90;
+      });
+      note.classList.add('jvli-write');
+      writeObserver.observe(note);
+    });
+  }
+
   /* ---------- Init ---------- */
 
   function init(scope) {
@@ -1691,6 +1748,7 @@
     initCollection(scope);
     initThread();
     initPolaroids(scope);
+    initHandwriting(scope);
   }
 
   document.addEventListener('submit', onAddSubmit);
