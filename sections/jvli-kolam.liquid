@@ -1,0 +1,63 @@
+{%- render 'jvli-assets' -%}
+{%- comment -%}
+  Draw a kolam: a board of dots on an earthen doorstep where visitors draw
+  with a rice-flour line (finger or mouse). "Show me" draws a sikku kolam
+  through the dots, "Clear" starts again and "Save" downloads the drawing
+  as an image with the JVLI mark. jvli-home.js (initKolam) does the drawing;
+  without JavaScript the board shows just the dots.
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+-%}
+<section class="jvli jvli-paper jvli-kolam">
+  <div class="jvli-container jvli-kolam__layout">
+    <div class="jvli-kolam__text">
+      {%- if s.eyebrow != blank -%}
+        <p class="jvli-eyebrow">{{ s.eyebrow }}</p>
+      {%- endif -%}
+      <h2 class="jvli-h2 jvli-kolam__heading">{{ s.heading }}</h2>
+      {%- if s.text != blank -%}
+        <div class="jvli-kolam__body">{{ s.text }}</div>
+      {%- endif -%}
+      <div class="jvli-kolam__actions">
+        <button type="button" class="jvli-button jvli-button--dark" data-jvli-kolam-demo>
+          {{- s.demo_label | default: 'Show me' -}}
+        </button>
+        <button type="button" class="jvli-link-caps" data-jvli-kolam-clear>{{ s.clear_label | default: 'Clear' }}</button>
+        <button type="button" class="jvli-link-caps" data-jvli-kolam-save>{{ s.save_label | default: 'Save' }}</button>
+      </div>
+    </div>
+
+    <div
+      class="jvli-kolam__board"
+      data-jvli-kolam
+      data-cols="{{ s.cols }}"
+      data-rows="{{ s.rows }}"
+      data-mark="{{ shop.name | default: 'JVLI' | escape }}"
+      data-site="{{ shop.domain | escape }}"
+      style="--jvli-kolam-cols: {{ s.cols }}; --jvli-kolam-rows: {{ s.rows }};"
+    >
+      <canvas class="jvli-kolam__canvas" role="img" aria-label="Kolam drawing board: draw with your finger or mouse"></canvas>
+      <p class="jvli-kolam__hint" data-jvli-kolam-hint>{{ s.hint }}</p>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "JVLI Draw a kolam",
+  "class": "jvli-section-kolam",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "Your turn" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Draw a kolam" },
+    { "type": "richtext", "id": "text", "label": "Text", "default": "<p>Every morning, doorsteps across Tamil Nadu get a fresh kolam, drawn in one flowing line around the dots. Try one with your finger.</p>" },
+    { "type": "text", "id": "hint", "label": "Hint on the board", "default": "Draw around the dots" },
+    { "type": "range", "id": "cols", "label": "Dots across", "min": 3, "max": 9, "step": 1, "default": 5 },
+    { "type": "range", "id": "rows", "label": "Dots down", "min": 3, "max": 9, "step": 1, "default": 6, "info": "Across and down with no common factor (like 5 and 6) make \"Show me\" draw one unbroken line." },
+    { "type": "text", "id": "demo_label", "label": "Show me button", "default": "Show me" },
+    { "type": "text", "id": "clear_label", "label": "Clear button", "default": "Clear" },
+    { "type": "text", "id": "save_label", "label": "Save button", "default": "Save" }
+  ],
+  "presets": [{ "name": "JVLI Draw a kolam" }]
+}
+{% endschema %}

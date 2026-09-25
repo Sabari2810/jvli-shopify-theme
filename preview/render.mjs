@@ -43,7 +43,7 @@ function standin(key) {
 
 /* ---------- Sample store data ---------- */
 
-const sizes = ["XS", "S", "M", "L", "XL"];
+const sizes = process.env.SIX_SIZES ? ["XXS", "XS", "S", "M", "L", "XL"] : ["XS", "S", "M", "L", "XL"];
 const sampleProducts = [
   ["Mei Short Kurti", 79900],
   ["Thendral Kurti", 89900],

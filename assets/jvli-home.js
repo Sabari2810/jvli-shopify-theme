@@ -1737,13 +1737,12 @@
 
   /* ---------- Weave loupe (product photos) ----------
      A round magnifier over the product photo shows the fabric up close:
-     following the cursor on desktop, or after pressing and holding on a
-     phone (then drag to move it; it sits above the finger). Uses the
+     following the cursor on desktop; on phones a tap brings it up (it sits
+     above the finger), dragging moves it and another tap puts it away. Uses the
      largest version of the photo so the weave is sharp. A small hint on the
      photo says how, until it has been used once. */
 
   var LOUPE_ZOOM = 2.8;
-  var LOUPE_HOLD_MS = 280;
 
   function largestSource(img) {
     var best = img.currentSrc || img.src;
@@ -1767,7 +1766,7 @@
 
       var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
       var gallery = slides.closest('.jvli-product__gallery') || slides;
-      var hint = el('p', 'jvli-loupe-hint', fine ? 'Hover to see the weave' : 'Press and hold to see the weave');
+      var hint = el('p', 'jvli-loupe-hint', 'Hover to see the weave');
       hint.setAttribute('aria-hidden', 'true');
       gallery.style.position = 'relative';
       gallery.appendChild(hint);
@@ -1832,61 +1831,374 @@
         if (event.pointerType === 'mouse') hide();
       });
 
-      // Phones: press and hold, then drag. Scrolling and swiping still work
-      // until the hold completes.
-      var hold = null;
+      // Phones: tap the photo to bring the loupe up, drag to move it (the
+      // photos don't swipe meanwhile), tap again to put it away. A tap
+      // doesn't compete with scrolling or with the phone's own long-press
+      // actions on images, so it works the same everywhere.
       var active = false;
-      slides.addEventListener(
-        'touchstart',
-        function (event) {
-          if (event.touches.length !== 1) return;
-          var touch = event.touches[0];
-          var img = photoAt(event.target);
-          if (!img) return;
-          var startX = touch.clientX;
-          var startY = touch.clientY;
-          clearTimeout(hold);
-          hold = setTimeout(function () {
-            active = true;
-            show(img, startX, startY, true);
-            used();
-            if (navigator.vibrate) navigator.vibrate(8);
-          }, LOUPE_HOLD_MS);
-          hold.startX = startX;
-          hold.startY = startY;
-        },
-        { passive: true }
-      );
-      slides.addEventListener(
-        'touchmove',
-        function (event) {
-          var touch = event.touches[0];
-          if (active) {
-            event.preventDefault();
-            var img = photoAt(document.elementFromPoint(touch.clientX, touch.clientY) || event.target) || current;
-            if (img) show(img, touch.clientX, touch.clientY, true);
+      var downAt = null;
+
+      function close() {
+        active = false;
+        gallery.classList.remove('is-loupe-touch');
+        hint.textContent = 'Tap to see the weave';
+        hide();
+      }
+
+      if (!fine) hint.textContent = 'Tap to see the weave';
+
+      slides.addEventListener('pointerdown', function (event) {
+        if (event.pointerType === 'mouse') return;
+        downAt = { x: event.clientX, y: event.clientY, t: event.timeStamp };
+        if (active) {
+          var img = photoAt(event.target) || current;
+          if (img) show(img, event.clientX, event.clientY, true);
+        }
+      });
+      slides.addEventListener('pointermove', function (event) {
+        if (event.pointerType === 'mouse' || !active) return;
+        event.preventDefault();
+        var img = photoAt(document.elementFromPoint(event.clientX, event.clientY) || event.target) || current;
+        if (img) show(img, event.clientX, event.clientY, true);
+      });
+      slides.addEventListener('pointerup', function (event) {
+        if (event.pointerType === 'mouse' || !downAt) return;
+        var tap = Math.hypot(event.clientX - downAt.x, event.clientY - downAt.y) < 10 && event.timeStamp - downAt.t < 400;
+        downAt = null;
+        if (!tap) return;
+        if (active) {
+          close();
+          return;
+        }
+        var img = photoAt(event.target);
+        if (!img) return;
+        active = true;
+        gallery.classList.add('is-loupe-touch');
+        hint.textContent = 'Drag to look closer \u00b7 tap to close';
+        hint.classList.remove('is-used');
+        show(img, event.clientX, event.clientY, true);
+      });
+      slides.addEventListener('pointercancel', function () {
+        downAt = null;
+      });
+      slides.addEventListener('contextmenu', function (event) {
+        if (active) event.preventDefault();
+      });
+      // Swiping to another photo or leaving the page puts it away.
+      slides.addEventListener('scroll', function () {
+        if (active) close();
+      }, { passive: true });
+    });
+  }
+
+  /* ---------- Draw a kolam (sections/jvli-kolam) ----------
+     A canvas doorstep with a grid of dots. Visitors draw with a smoothed
+     rice-flour line; "Show me" draws a sikku kolam through the dots (the
+     line bounces diagonally between the dots and loops round the border
+     ones); "Save" shares or downloads the drawing with the JVLI mark. */
+
+  // Sikku kolam loops for a cols x rows dot grid, in grid units: dots sit at
+  // odd coordinates in a 2*cols x 2*rows box and the line travels at 45
+  // degrees, rounding each bounce into a loop around the border dot.
+  function sikkuLoops(cols, rows) {
+    var W = 2 * cols;
+    var H = 2 * rows;
+    var seen = {};
+    var loops = [];
+    var starts = [];
+    for (var y = 1; y < H; y += 2) {
+      starts.push([0, y, 1, 1], [0, y, 1, -1]);
+    }
+    starts.forEach(function (start) {
+      var key = start.join(',');
+      if (seen[key]) return;
+      var x = start[0];
+      var yy = start[1];
+      var dx = start[2];
+      var dy = start[3];
+      var bounces = [];
+      for (var guard = 0; guard < 4 * W * H; guard++) {
+        var tx = dx > 0 ? W - x : x;
+        var ty = dy > 0 ? H - yy : yy;
+        var t = Math.min(tx, ty);
+        x += dx * t;
+        yy += dy * t;
+        var inX = dx;
+        var inY = dy;
+        if (t === tx) dx = -dx;
+        if (t === ty) dy = -dy;
+        var k = [x, yy, dx, dy].join(',');
+        bounces.push({ x: x, y: yy, ix: inX, iy: inY, ox: dx, oy: dy });
+        seen[k] = true;
+        if (k === key) break;
+      }
+      loops.push(bounces);
+    });
+    return loops.map(function (bounces) {
+      var points = [];
+      bounces.forEach(function (b) {
+        var cx = b.x + (b.ox - b.ix) / 2;
+        var cy = b.y + (b.oy - b.iy) / 2;
+        var a1 = Math.atan2(b.y - 0.5 * b.iy - cy, b.x - 0.5 * b.ix - cx);
+        var a2 = Math.atan2(b.y + 0.5 * b.oy - cy, b.x + 0.5 * b.ox - cx);
+        var delta = a2 - a1;
+        while (delta > Math.PI) delta -= 2 * Math.PI;
+        while (delta <= -Math.PI) delta += 2 * Math.PI;
+        var r = Math.SQRT1_2;
+        for (var i = 0; i <= 10; i++) {
+          var a = a1 + (delta * i) / 10;
+          points.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]);
+        }
+      });
+      points.push(points[0]);
+      // Straight runs between loops: add points along them for an even pace.
+      var even = [];
+      for (var i = 0; i < points.length - 1; i++) {
+        var p = points[i];
+        var q = points[i + 1];
+        var steps = Math.max(1, Math.round(Math.hypot(q[0] - p[0], q[1] - p[1]) / 0.12));
+        for (var s = 0; s < steps; s++) even.push([p[0] + ((q[0] - p[0]) * s) / steps, p[1] + ((q[1] - p[1]) * s) / steps]);
+      }
+      even.push(points[points.length - 1]);
+      return { points: even, size: [W, H] };
+    });
+  }
+
+  function initKolam(scope) {
+    scope.querySelectorAll('[data-jvli-kolam]').forEach(function (board) {
+      if (board.dataset.jvliReady) return;
+      board.dataset.jvliReady = 'true';
+      var section = board.closest('.jvli-kolam') || board;
+      var canvas = board.querySelector('canvas');
+      var ctx = canvas.getContext('2d');
+      var hint = board.querySelector('[data-jvli-kolam-hint]');
+      var cols = parseInt(board.dataset.cols, 10) || 5;
+      var rows = parseInt(board.dataset.rows, 10) || 6;
+      var strokes = []; // each: array of [x, y] in grid units (0..2*cols, 0..2*rows)
+      var drawing = null;
+      var demo = null;
+      var box = { w: 0, h: 0, unit: 1, ox: 0, oy: 0 };
+
+      function layout() {
+        var rect = canvas.getBoundingClientRect();
+        var dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+        canvas.width = Math.round(rect.width * dpr);
+        canvas.height = Math.round(rect.height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        var pad = 0.3; // grid units of margin around the loops
+        var unit = Math.min(rect.width / (2 * cols + 2 * pad), rect.height / (2 * rows + 2 * pad));
+        box = {
+          w: rect.width,
+          h: rect.height,
+          unit: unit,
+          ox: (rect.width - 2 * cols * unit) / 2,
+          oy: (rect.height - 2 * rows * unit) / 2
+        };
+        render();
+      }
+
+      function toPx(p) {
+        return [box.ox + p[0] * box.unit, box.oy + p[1] * box.unit];
+      }
+
+      function toGrid(x, y) {
+        return [(x - box.ox) / box.unit, (y - box.oy) / box.unit];
+      }
+
+      function paint(target, geometry, lineWidth) {
+        target.fillStyle = '#fbf6ec';
+        for (var i = 0; i < cols; i++) {
+          for (var j = 0; j < rows; j++) {
+            var d = geometry([2 * i + 1, 2 * j + 1]);
+            target.beginPath();
+            target.arc(d[0], d[1], Math.max(2.2, lineWidth * 0.62), 0, Math.PI * 2);
+            target.fill();
+          }
+        }
+        target.lineCap = 'round';
+        target.lineJoin = 'round';
+        target.strokeStyle = 'rgba(248, 242, 230, 0.94)';
+        target.lineWidth = lineWidth;
+        // A faint powdery edge, not a glow: rice flour is matte.
+        target.shadowColor = 'rgba(248, 242, 230, 0.25)';
+        target.shadowBlur = lineWidth * 0.35;
+        strokes.concat(demo ? [demo.drawn] : []).forEach(function (stroke) {
+          if (!stroke || stroke.length < 2) return;
+          target.beginPath();
+          var p = geometry(stroke[0]);
+          target.moveTo(p[0], p[1]);
+          for (var k = 1; k < stroke.length - 1; k++) {
+            var a = geometry(stroke[k]);
+            var b = geometry(stroke[k + 1]);
+            target.quadraticCurveTo(a[0], a[1], (a[0] + b[0]) / 2, (a[1] + b[1]) / 2);
+          }
+          var last = geometry(stroke[stroke.length - 1]);
+          target.lineTo(last[0], last[1]);
+          target.stroke();
+        });
+        target.shadowBlur = 0;
+      }
+
+      function render() {
+        ctx.clearRect(0, 0, box.w, box.h);
+        paint(ctx, toPx, Math.max(2.4, box.unit * 0.17));
+      }
+
+      function started() {
+        if (hint) hint.classList.add('is-hidden');
+      }
+
+      // Drawing, smoothed with a short "lazy" follow so lines come out flowing.
+      canvas.addEventListener('pointerdown', function (event) {
+        if (event.button > 0) return;
+        event.preventDefault();
+        canvas.setPointerCapture(event.pointerId);
+        stopDemo(true);
+        var rect = canvas.getBoundingClientRect();
+        var point = toGrid(event.clientX - rect.left, event.clientY - rect.top);
+        drawing = { stroke: [point], at: point };
+        strokes.push(drawing.stroke);
+        started();
+      });
+      canvas.addEventListener('pointermove', function (event) {
+        if (!drawing) return;
+        var rect = canvas.getBoundingClientRect();
+        var target = toGrid(event.clientX - rect.left, event.clientY - rect.top);
+        var at = drawing.at;
+        at = [at[0] + (target[0] - at[0]) * 0.55, at[1] + (target[1] - at[1]) * 0.55];
+        var last = drawing.stroke[drawing.stroke.length - 1];
+        if (Math.hypot(at[0] - last[0], at[1] - last[1]) * box.unit < 1.5) return;
+        drawing.at = at;
+        drawing.stroke.push(at);
+        render();
+      });
+      function end() {
+        if (!drawing) return;
+        if (drawing.stroke.length === 1) {
+          var p = drawing.stroke[0];
+          drawing.stroke.push([p[0] + 0.01, p[1]]);
+        }
+        drawing = null;
+        render();
+      }
+      canvas.addEventListener('pointerup', end);
+      canvas.addEventListener('pointercancel', end);
+
+      // "Show me": draw a sikku kolam, loop by loop.
+      function stopDemo(keep) {
+        if (!demo) return;
+        cancelAnimationFrame(demo.frame);
+        if (keep) strokes.push(demo.drawn);
+        demo = null;
+      }
+
+      function playDemo() {
+        stopDemo(false);
+        strokes = [];
+        started();
+        var loops = sikkuLoops(cols, rows);
+        var queue = [];
+        loops.forEach(function (loop) {
+          queue.push(loop.points);
+        });
+        var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (still) {
+          strokes = queue;
+          render();
+          return;
+        }
+        var total = queue.reduce(function (sum, points) {
+          return sum + points.length;
+        }, 0);
+        var perMs = total / Math.min(7000, 2200 + total * 3);
+        var loopIndex = 0;
+        var done = 0;
+        var t0 = performance.now();
+        demo = { drawn: [], frame: 0 };
+        function frame(now) {
+          var target = Math.min(total, Math.floor((now - t0) * perMs));
+          while (done < target && demo) {
+            var points = queue[loopIndex];
+            var local = done - queue.slice(0, loopIndex).reduce(function (s, p) { return s + p.length; }, 0);
+            if (local >= points.length) {
+              strokes.push(demo.drawn);
+              demo.drawn = [];
+              loopIndex++;
+              continue;
+            }
+            demo.drawn.push(points[local]);
+            done++;
+          }
+          render();
+          if (demo && done < total) demo.frame = requestAnimationFrame(frame);
+          else stopDemo(true);
+        }
+        demo.frame = requestAnimationFrame(frame);
+      }
+
+      function clear() {
+        stopDemo(false);
+        strokes = [];
+        render();
+      }
+
+      // Save: share the picture where the device can (phones), else download.
+      function save() {
+        var size = 1080;
+        var out = document.createElement('canvas');
+        var unit = size / (2 * cols + 2.6);
+        out.width = size;
+        out.height = Math.round(unit * (2 * rows + 2.6) + size * 0.16);
+        var o = out.getContext('2d');
+        var bg = o.createRadialGradient(out.width * 0.35, out.height * 0.3, 0, out.width * 0.5, out.height * 0.5, out.width * 0.9);
+        bg.addColorStop(0, '#6a4b3a');
+        bg.addColorStop(1, '#46322a');
+        o.fillStyle = bg;
+        o.fillRect(0, 0, out.width, out.height);
+        var ox = (size - 2 * cols * unit) / 2;
+        var oy = unit * 1.3;
+        paint(o, function (p) {
+          return [ox + p[0] * unit, oy + p[1] * unit];
+        }, unit * 0.17);
+        o.fillStyle = 'rgba(251, 246, 236, 0.92)';
+        o.textAlign = 'center';
+        o.font = '400 ' + Math.round(size * 0.06) + 'px Newsreader, Georgia, serif';
+        o.fillText(board.dataset.mark || 'JVLI', size / 2, out.height - size * 0.075);
+        o.font = '400 ' + Math.round(size * 0.022) + 'px Jost, Futura, sans-serif';
+        o.fillStyle = 'rgba(251, 246, 236, 0.7)';
+        o.fillText(('My kolam · ' + (board.dataset.site || '')).toUpperCase(), size / 2, out.height - size * 0.035);
+        out.toBlob(function (blob) {
+          if (!blob) return;
+          var file = new File([blob], 'my-jvli-kolam.png', { type: 'image/png' });
+          if (navigator.canShare && navigator.canShare({ files: [file] })) {
+            navigator.share({ files: [file], title: 'My kolam' }).catch(function () {});
             return;
           }
-          if (hold && Math.hypot(touch.clientX - hold.startX, touch.clientY - hold.startY) > 8) {
-            clearTimeout(hold);
-            hold = null;
-          }
-        },
-        { passive: false }
-      );
-      function release() {
-        clearTimeout(hold);
-        hold = null;
-        if (active) {
-          active = false;
-          hide();
-        }
+          var link = document.createElement('a');
+          link.href = URL.createObjectURL(blob);
+          link.download = 'my-jvli-kolam.png';
+          document.body.appendChild(link);
+          link.click();
+          setTimeout(function () {
+            URL.revokeObjectURL(link.href);
+            link.remove();
+          }, 1000);
+        }, 'image/png');
       }
-      slides.addEventListener('touchend', release);
-      slides.addEventListener('touchcancel', release);
-      slides.addEventListener('contextmenu', function (event) {
-        if (active || hold) event.preventDefault();
+
+      section.querySelectorAll('[data-jvli-kolam-demo]').forEach(function (button) {
+        button.addEventListener('click', playDemo);
       });
+      section.querySelectorAll('[data-jvli-kolam-clear]').forEach(function (button) {
+        button.addEventListener('click', clear);
+      });
+      section.querySelectorAll('[data-jvli-kolam-save]').forEach(function (button) {
+        button.addEventListener('click', save);
+      });
+
+      layout();
+      if (window.ResizeObserver) new ResizeObserver(layout).observe(canvas);
+      else window.addEventListener('resize', layout);
     });
   }
 
@@ -1900,6 +2212,7 @@
     initCart();
     initProduct(scope);
     initLoupe(scope);
+    initKolam(scope);
     initRelated(scope);
     initCollection(scope);
     initThread();
