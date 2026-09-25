@@ -955,9 +955,11 @@
 
     var board = photoBoard(dialog, rows);
     if (board) {
-      // The photo is for the eye; screen readers get the table.
-      grid.classList.add('jvli-sizeboard__grid--hidden');
-      board.appendChild(grid);
+      // The photo is for the eye; screen readers get the table. (A table
+      // can't be shrunk out of sight itself, so it goes in a wrapper.)
+      var readable = el('div', 'jvli-sizeboard__sr');
+      readable.appendChild(grid);
+      board.appendChild(readable);
     } else {
       board = el('div', 'jvli-sizeboard__board');
       board.appendChild(tray('left'));
@@ -1556,9 +1558,124 @@
     window.addEventListener('load', rebuild);
     // Sideways product rows move what covers the line; measure once they settle.
     main.addEventListener('scroll', rebuild, true);
+    document.addEventListener('jvli:layout', rebuild); // e.g. a polaroid moved
     if (window.ResizeObserver) new ResizeObserver(rebuildIfResized).observe(main);
     else window.addEventListener('resize', rebuildIfResized);
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(rebuild);
+  }
+
+  /* ---------- Touchable polaroids ----------
+     With a mouse, a polaroid leans toward the cursor with light sliding over
+     the photo, and can be picked up and moved: it swings with the movement
+     and stays where it's dropped (within a hand's reach of where it was). A
+     tap on a phone lifts it and lets it settle. Works through the individual
+     translate / rotate / scale properties, so each polaroid keeps its own
+     tilt from the stylesheet. Off with reduced motion. */
+
+  var POLAROID_REACH = 140; // px a polaroid can be moved from its place
+
+  function initPolaroids(scope) {
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    scope.querySelectorAll('.jvli-polaroid').forEach(function (card) {
+      if (card.dataset.jvliTouchable) return;
+      card.dataset.jvliTouchable = 'true';
+      card.classList.add('is-touchable');
+
+      var x = 0;
+      var y = 0;
+      var drag = null;
+
+      function set(name, value) {
+        card.style.setProperty(name, value);
+      }
+
+      // Past the reach, movement meets growing resistance.
+      function soften(value) {
+        var limit = POLAROID_REACH;
+        if (Math.abs(value) <= limit) return value;
+        var over = Math.abs(value) - limit;
+        return Math.sign(value) * (limit + over / (1 + over / 40));
+      }
+
+      function lean(event) {
+        var box = card.getBoundingClientRect();
+        var px = (event.clientX - box.left) / box.width;
+        var py = (event.clientY - box.top) / box.height;
+        set('--jvli-shine-x', px * 100 + '%');
+        set('--jvli-shine-y', py * 100 + '%');
+        set('--jvli-lean', (px - 0.5) * 5 + 'deg');
+      }
+
+      card.addEventListener('dragstart', function (event) {
+        event.preventDefault();
+      });
+
+      card.addEventListener('pointerenter', function (event) {
+        if (event.pointerType !== 'mouse') return;
+        card.classList.add('is-hovered');
+        lean(event);
+      });
+
+      card.addEventListener('pointerleave', function (event) {
+        if (event.pointerType !== 'mouse' || drag) return;
+        card.classList.remove('is-hovered');
+        set('--jvli-lean', '0deg');
+      });
+
+      card.addEventListener('pointerdown', function (event) {
+        if (event.pointerType !== 'mouse') {
+          // Phones: lift and settle, without getting in the way of scrolling.
+          card.classList.remove('is-tapped');
+          void card.offsetWidth;
+          card.classList.add('is-tapped');
+          return;
+        }
+        if (event.button !== 0) return;
+        event.preventDefault();
+        card.setPointerCapture(event.pointerId);
+        drag = { startX: event.clientX - x, startY: event.clientY - y, lastX: event.clientX, lastT: event.timeStamp, swing: 0 };
+        card.classList.add('is-lifted', 'is-dragging');
+      });
+
+      card.addEventListener('pointermove', function (event) {
+        if (event.pointerType !== 'mouse') return;
+        if (!drag) {
+          lean(event);
+          return;
+        }
+        x = soften(event.clientX - drag.startX);
+        y = soften(event.clientY - drag.startY);
+        // Swing with the movement, like a card held at the top.
+        var dt = Math.max(1, event.timeStamp - drag.lastT);
+        var speed = (event.clientX - drag.lastX) / dt;
+        drag.swing = drag.swing * 0.7 + Math.max(-14, Math.min(14, speed * 9)) * 0.3;
+        drag.lastX = event.clientX;
+        drag.lastT = event.timeStamp;
+        set('--jvli-x', x + 'px');
+        set('--jvli-y', y + 'px');
+        set('--jvli-lean', drag.swing + 'deg');
+      });
+
+      function drop() {
+        if (!drag) return;
+        drag = null;
+        x = Math.max(-POLAROID_REACH, Math.min(POLAROID_REACH, x));
+        y = Math.max(-POLAROID_REACH, Math.min(POLAROID_REACH, y));
+        set('--jvli-x', x + 'px');
+        set('--jvli-y', y + 'px');
+        set('--jvli-lean', '0deg');
+        card.classList.remove('is-lifted', 'is-dragging');
+        // The kolam thread goes around whatever sits on the page.
+        document.dispatchEvent(new CustomEvent('jvli:layout'));
+      }
+
+      card.addEventListener('pointerup', drop);
+      card.addEventListener('pointercancel', drop);
+      card.addEventListener('lostpointercapture', drop);
+      card.addEventListener('animationend', function () {
+        card.classList.remove('is-tapped');
+      });
+    });
   }
 
   /* ---------- Init ---------- */
@@ -1573,6 +1690,7 @@
     initRelated(scope);
     initCollection(scope);
     initThread();
+    initPolaroids(scope);
   }
 
   document.addEventListener('submit', onAddSubmit);
