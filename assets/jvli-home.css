@@ -4495,14 +4495,15 @@ main[data-jvli-thread] {
   border-radius: clamp(40px, 7vw, 90px);
   background-color: #6a4027;
   background-image:
-    repeating-linear-gradient(178.6deg, rgba(40, 20, 8, 0.1) 0 1px, transparent 1px 6px, rgba(255, 214, 170, 0.05) 6px 8px, transparent 8px 13px),
-    repeating-linear-gradient(181.2deg, transparent 0 22px, rgba(40, 20, 8, 0.08) 22px 24px, transparent 24px 41px),
-    linear-gradient(180deg, #7c4c2e 0%, #6a4027 45%, #56331f 100%);
+    linear-gradient(180deg, rgba(255, 220, 180, 0.08) 0%, transparent 30%, rgba(30, 12, 4, 0.22) 100%),
+    url("jvli-wood.webp");
+  background-position: center;
+  background-size: cover;
   box-shadow:
-    0 22px 34px -10px rgba(70, 40, 16, 0.45),
-    0 4px 8px rgba(70, 40, 16, 0.2),
-    inset 0 2px 1px rgba(255, 222, 186, 0.22),
-    inset 0 -5px 10px rgba(30, 14, 4, 0.35);
+    0 22px 34px -10px rgba(70, 40, 16, 0.5),
+    0 4px 8px rgba(70, 40, 16, 0.22),
+    inset 0 2px 1px rgba(255, 222, 186, 0.3),
+    inset 0 -6px 12px rgba(30, 14, 4, 0.45);
 }
 
 .jvli-sizeboard__scroll {
@@ -4550,10 +4551,10 @@ main[data-jvli-thread] {
   padding: 0 6px;
   border-radius: 50%;
   background:
-    radial-gradient(ellipse 70% 60% at 50% 62%, rgba(120, 72, 40, 0.55), transparent 70%),
-    radial-gradient(ellipse at 50% 40%, #3b2213 0%, #472917 55%, #5a3520 100%);
+    radial-gradient(ellipse at 50% 38%, rgba(26, 11, 3, 0.62) 0%, rgba(26, 11, 3, 0.4) 60%, rgba(26, 11, 3, 0.2) 100%),
+    url("jvli-wood.webp") var(--jvli-grain-x, 30%) var(--jvli-grain-y, 40%) / 900px auto no-repeat;
   box-shadow:
-    inset 0 7px 10px rgba(18, 8, 2, 0.6),
+    inset 0 8px 12px rgba(18, 8, 2, 0.7),
     inset 0 -2px 3px rgba(255, 214, 170, 0.14),
     0 1px 0 rgba(255, 222, 186, 0.22),
     0 -1px 0 rgba(20, 10, 4, 0.35);
@@ -4582,10 +4583,10 @@ main[data-jvli-thread] {
   padding: 18px 14px 18px 18px;
   border-radius: 999px;
   background:
-    radial-gradient(ellipse 70% 60% at 50% 60%, rgba(120, 72, 40, 0.5), transparent 70%),
-    radial-gradient(ellipse at 50% 40%, #3b2213 0%, #472917 60%, #5a3520 100%);
+    radial-gradient(ellipse at 50% 38%, rgba(26, 11, 3, 0.6) 0%, rgba(26, 11, 3, 0.38) 60%, rgba(26, 11, 3, 0.2) 100%),
+    url("jvli-wood.webp") 12% 50% / 900px auto no-repeat;
   box-shadow:
-    inset 0 9px 14px rgba(18, 8, 2, 0.6),
+    inset 0 10px 16px rgba(18, 8, 2, 0.7),
     inset 0 -2px 4px rgba(255, 214, 170, 0.14),
     0 1px 0 rgba(255, 222, 186, 0.22);
 }
@@ -4762,3 +4763,16 @@ main[data-jvli-thread] {
     font-style: italic;
   }
 }
+
+/* Each pit shows a different patch of the wood, as if carved into the board.
+   The photo is drawn large so no pit lands on its edge. */
+.jvli-sizeboard__grid tr:nth-child(2) { --jvli-grain-y: 22%; }
+.jvli-sizeboard__grid tr:nth-child(3) { --jvli-grain-y: 44%; }
+.jvli-sizeboard__grid tr:nth-child(4) { --jvli-grain-y: 66%; }
+.jvli-sizeboard__grid tr:nth-child(5) { --jvli-grain-y: 84%; }
+.jvli-sizeboard__grid :nth-child(1) > .jvli-sizeboard__pit { --jvli-grain-x: 18%; }
+.jvli-sizeboard__grid :nth-child(2) > .jvli-sizeboard__pit { --jvli-grain-x: 70%; }
+.jvli-sizeboard__grid :nth-child(3) > .jvli-sizeboard__pit { --jvli-grain-x: 34%; }
+.jvli-sizeboard__grid :nth-child(4) > .jvli-sizeboard__pit { --jvli-grain-x: 86%; }
+.jvli-sizeboard__grid :nth-child(5) > .jvli-sizeboard__pit { --jvli-grain-x: 50%; }
+.jvli-sizeboard__grid :nth-child(6) > .jvli-sizeboard__pit { --jvli-grain-x: 12%; }
