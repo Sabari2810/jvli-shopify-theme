@@ -1735,6 +1735,161 @@
     });
   }
 
+  /* ---------- Weave loupe (product photos) ----------
+     A round magnifier over the product photo shows the fabric up close:
+     following the cursor on desktop, or after pressing and holding on a
+     phone (then drag to move it; it sits above the finger). Uses the
+     largest version of the photo so the weave is sharp. A small hint on the
+     photo says how, until it has been used once. */
+
+  var LOUPE_ZOOM = 2.8;
+  var LOUPE_HOLD_MS = 280;
+
+  function largestSource(img) {
+    var best = img.currentSrc || img.src;
+    var bestWidth = 0;
+    (img.getAttribute('srcset') || '').split(',').forEach(function (candidate) {
+      var parts = candidate.trim().split(/\s+/);
+      var width = parseInt(parts[1], 10);
+      if (parts[0] && width > bestWidth) {
+        best = parts[0];
+        bestWidth = width;
+      }
+    });
+    return best;
+  }
+
+  function initLoupe(scope) {
+    scope.querySelectorAll('[data-jvli-slides]').forEach(function (slides) {
+      if (slides.dataset.jvliLoupe) return;
+      slides.dataset.jvliLoupe = 'true';
+      if (!slides.querySelector('.jvli-product__slide img')) return;
+
+      var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+      var gallery = slides.closest('.jvli-product__gallery') || slides;
+      var hint = el('p', 'jvli-loupe-hint', fine ? 'Hover to see the weave' : 'Press and hold to see the weave');
+      hint.setAttribute('aria-hidden', 'true');
+      gallery.style.position = 'relative';
+      gallery.appendChild(hint);
+
+      var lens = el('div', 'jvli-loupe');
+      lens.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(lens);
+      var current = null;
+      var loaded = {};
+
+      function show(img, x, y, above) {
+        if (current !== img) {
+          current = img;
+          var src = largestSource(img);
+          lens.style.backgroundImage = 'url("' + src + '")';
+          if (!loaded[src]) {
+            loaded[src] = true;
+            new Image().src = src;
+          }
+        }
+        var box = img.getBoundingClientRect();
+        // object-fit: cover crops the photo; map the pointer onto the
+        // photo itself, not just its box.
+        var nw = img.naturalWidth || box.width;
+        var nh = img.naturalHeight || box.height;
+        var scale = Math.max(box.width / nw, box.height / nh);
+        var shownW = nw * scale;
+        var shownH = nh * scale;
+        var px = x - box.left + (shownW - box.width) / 2;
+        var py = y - box.top + (shownH - box.height) / 2;
+        var size = lens.offsetWidth || 170;
+        lens.style.backgroundSize = shownW * LOUPE_ZOOM + 'px ' + shownH * LOUPE_ZOOM + 'px';
+        lens.style.backgroundPosition = size / 2 - px * LOUPE_ZOOM + 'px ' + (size / 2 - py * LOUPE_ZOOM) + 'px';
+        lens.style.transform = 'translate(' + (x - size / 2) + 'px, ' + (y - size / 2 - (above ? size * 0.75 : 0)) + 'px)';
+        lens.classList.add('is-on');
+        gallery.classList.add('is-loupe');
+      }
+
+      function hide() {
+        lens.classList.remove('is-on');
+        gallery.classList.remove('is-loupe');
+      }
+
+      function photoAt(target) {
+        var slide = target.closest && target.closest('.jvli-product__slide');
+        return slide ? slide.querySelector('img') : null;
+      }
+
+      function used() {
+        hint.classList.add('is-used');
+      }
+
+      // Desktop: follow the cursor.
+      slides.addEventListener('pointermove', function (event) {
+        if (event.pointerType !== 'mouse') return;
+        var img = photoAt(event.target);
+        if (!img) return hide();
+        show(img, event.clientX, event.clientY, false);
+        used();
+      });
+      slides.addEventListener('pointerleave', function (event) {
+        if (event.pointerType === 'mouse') hide();
+      });
+
+      // Phones: press and hold, then drag. Scrolling and swiping still work
+      // until the hold completes.
+      var hold = null;
+      var active = false;
+      slides.addEventListener(
+        'touchstart',
+        function (event) {
+          if (event.touches.length !== 1) return;
+          var touch = event.touches[0];
+          var img = photoAt(event.target);
+          if (!img) return;
+          var startX = touch.clientX;
+          var startY = touch.clientY;
+          clearTimeout(hold);
+          hold = setTimeout(function () {
+            active = true;
+            show(img, startX, startY, true);
+            used();
+            if (navigator.vibrate) navigator.vibrate(8);
+          }, LOUPE_HOLD_MS);
+          hold.startX = startX;
+          hold.startY = startY;
+        },
+        { passive: true }
+      );
+      slides.addEventListener(
+        'touchmove',
+        function (event) {
+          var touch = event.touches[0];
+          if (active) {
+            event.preventDefault();
+            var img = photoAt(document.elementFromPoint(touch.clientX, touch.clientY) || event.target) || current;
+            if (img) show(img, touch.clientX, touch.clientY, true);
+            return;
+          }
+          if (hold && Math.hypot(touch.clientX - hold.startX, touch.clientY - hold.startY) > 8) {
+            clearTimeout(hold);
+            hold = null;
+          }
+        },
+        { passive: false }
+      );
+      function release() {
+        clearTimeout(hold);
+        hold = null;
+        if (active) {
+          active = false;
+          hide();
+        }
+      }
+      slides.addEventListener('touchend', release);
+      slides.addEventListener('touchcancel', release);
+      slides.addEventListener('contextmenu', function (event) {
+        if (active || hold) event.preventDefault();
+      });
+    });
+  }
+
   /* ---------- Init ---------- */
 
   function init(scope) {
@@ -1744,6 +1899,7 @@
     initSearch();
     initCart();
     initProduct(scope);
+    initLoupe(scope);
     initRelated(scope);
     initCollection(scope);
     initThread();

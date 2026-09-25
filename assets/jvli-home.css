@@ -5012,3 +5012,77 @@ main[data-jvli-thread] {
     mask-position: 0 0;
   }
 }
+
+/* ---------- Weave loupe (jvli-home.js initLoupe) ---------- */
+
+.jvli-loupe {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 60;
+  width: 180px;
+  height: 180px;
+  border: 3px solid #fbf8f3;
+  border-radius: 50%;
+  background-color: var(--jvli-cream-deep, #efe9e1);
+  background-repeat: no-repeat;
+  box-shadow: 0 14px 34px rgba(34, 28, 24, 0.32), 0 2px 6px rgba(34, 28, 24, 0.2), inset 0 0 0 1px rgba(34, 28, 24, 0.08);
+  opacity: 0;
+  scale: 0.6;
+  pointer-events: none;
+  transition: opacity 0.18s ease, scale 0.22s cubic-bezier(0.2, 0.8, 0.3, 1.2);
+  will-change: transform;
+}
+
+.jvli-loupe.is-on {
+  opacity: 1;
+  scale: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .jvli-product__gallery.is-loupe .jvli-product__slide {
+    cursor: none;
+  }
+}
+
+.jvli-product__slide img {
+  -webkit-touch-callout: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* "Hover / press and hold to see the weave", until used once. */
+.jvli-loupe-hint {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+  margin: 0;
+  padding: 6px 11px;
+  border-radius: 999px;
+  background: rgba(251, 248, 243, 0.86);
+  color: var(--jvli-ink, #221c18);
+  font-family: var(--jvli-caps);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.jvli-loupe-hint.is-used {
+  opacity: 0;
+}
+
+@media screen and (max-width: 749px) {
+  .jvli-loupe {
+    width: 150px;
+    height: 150px;
+  }
+
+  .jvli-loupe-hint {
+    top: 12px;
+    left: 12px;
+  }
+}
