@@ -1,0 +1,75 @@
+{%- render 'jvli-assets' -%}
+<script src="{{ 'jvli-print.js' | asset_url }}" defer></script>
+{%- comment -%}
+  A small invitation to Make Your Own Print: a live swatch of a print
+  (drawn by jvli-print.js) beside a heading and a link to the page.
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+  assign link = s.link | default: '/pages/make-your-own-print'
+-%}
+<section class="jvli jvli-paper jvli-print-invite">
+  <div class="jvli-container jvli-print-invite__layout">
+    <a href="{{ link }}" class="jvli-print-invite__swatch" tabindex="-1" aria-hidden="true">
+      <canvas data-jvli-print-swatch></canvas>
+    </a>
+    <div class="jvli-print-invite__text">
+      <p class="jvli-eyebrow">{{ s.eyebrow }}</p>
+      <h2 class="jvli-h2 jvli-print-invite__heading">{{ s.heading }}</h2>
+      <p class="jvli-print-invite__body">{{ s.text }}</p>
+      <a href="{{ link }}" class="jvli-button jvli-button--dark">
+        {{- s.button -}}
+        {%- render 'jvli-icon', icon: 'arrow' -%}
+      </a>
+    </div>
+  </div>
+</section>
+
+<script>
+  (function () {
+    function draw() {
+      var E = window.JvliPrintEngine;
+      if (!E) return setTimeout(draw, 100);
+      document.querySelectorAll('[data-jvli-print-swatch]').forEach(function (c) {
+        if (c.dataset.drawn) return;
+        c.dataset.drawn = '1';
+        var r = c.getBoundingClientRect();
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        c.width = Math.round(r.width * dpr);
+        c.height = Math.round(r.height * dpr);
+        var g = c.getContext('2d');
+        g.setTransform(dpr, 0, 0, dpr, 0, 0);
+        var print = {
+          items: [
+            { k: 'm', id: 'bloom', c: 2, x: 0.46, y: 0.44, s: 0.34, r: 0.2 },
+            { k: 'm', id: 'leaf', c: 6, x: 0.74, y: 0.72, s: 0.26, r: 0.9 },
+            { k: 'm', id: 'dot', c: 5, x: 0.2, y: 0.78, s: 0.08, r: 0 },
+            { k: 'm', id: 'spark', c: 0, x: 0.78, y: 0.2, s: 0.12, r: 0.4 }
+          ],
+          ground: 0, mode: 'half', sym: 0, tile: 0.34, angle: 0, seed: 7, period: 0.95, ox: 0.5, oy: 0.5
+        };
+        var t = document.createElement('canvas');
+        t.width = t.height = 480;
+        E.renderTile(t, print, true);
+        E.renderCloth(g, r.width, r.height, print, { tileCanvas: t });
+      });
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', draw);
+    else draw();
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "JVLI Make a print link",
+  "class": "jvli-section-print-invite",
+  "settings": [
+    { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "Something to try" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Make your own print" },
+    { "type": "text", "id": "text", "label": "Text", "default": "Draw something small. Repeat it. See what happens." },
+    { "type": "text", "id": "button", "label": "Button", "default": "Start making" },
+    { "type": "url", "id": "link", "label": "Link", "info": "Defaults to /pages/make-your-own-print" }
+  ],
+  "presets": [{ "name": "JVLI Make a print link" }]
+}
+{% endschema %}

@@ -1,0 +1,142 @@
+{%- render 'jvli-assets' -%}
+{{ 'jvli-print.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'jvli-print.js' | asset_url }}" defer></script>
+<script src="{{ 'jvli-print-studio.js' | asset_url }}" defer></script>
+{%- comment -%}
+  Make Your Own Print. Intro, then a full-screen textile table: draw or add
+  motifs on the unit, REPEAT it across the cloth, MAKE IT WEIRD, see it as a
+  kurti, then save or share it. A print opened from a shared link (#p=...)
+  shows "Someone made this." first. Everything runs in the browser
+  (jvli-print.js, jvli-print-studio.js); nothing is stored anywhere.
+{%- endcomment -%}
+{%- liquid
+  assign s = section.settings
+-%}
+<section class="jvli-print" data-jvli-print data-page-url="{{ shop.url }}{{ request.path }}" data-site="{{ shop.domain | escape }}">
+
+  {%- comment -%} 01 Intro {%- endcomment -%}
+  <div class="jvli-print__intro" data-print-intro>
+    <h1 class="jvli-print__title">
+      <span>Make</span>
+      <span>your</span>
+      <span>own</span>
+      <span>print</span>
+    </h1>
+    <p class="jvli-print__meta">{{ s.subline }}</p>
+    <button type="button" class="jvli-print__start" data-print-start>{{ s.start_label }}</button>
+  </div>
+
+  {%- comment -%} Someone shared a print {%- endcomment -%}
+  <div class="jvli-print__received" data-print-received hidden>
+    <canvas class="jvli-print__received-cloth" aria-label="A print someone made"></canvas>
+    <div class="jvli-print__received-note">
+      <p class="jvli-print__received-line">Someone made this.</p>
+      <button type="button" class="jvli-print__start" data-print-start>Make your own</button>
+    </div>
+  </div>
+
+  {%- comment -%} 02 The table {%- endcomment -%}
+  <div class="jvli-print__studio" data-print-studio hidden role="dialog" aria-modal="true" aria-label="Make your own print">
+    <div class="jvli-print__stage" data-print-stage>
+      <canvas class="jvli-print__cloth" data-print-cloth aria-label="Your print. Draw on it or add motifs."></canvas>
+      <span class="jvli-print__handle" data-print-handle hidden aria-hidden="true"></span>
+    </div>
+
+    <div class="jvli-print__ui" data-print-ui>
+      <div class="jvli-print__top">
+        <button type="button" class="jvli-print__close" data-print-close aria-label="Close">JVLI</button>
+        <div class="jvli-print__top-actions">
+          <button type="button" data-print-undo>Undo</button>
+          <button type="button" data-print-clear>Clear</button>
+          <button type="button" data-print-wear>Wear it</button>
+          <button type="button" class="is-strong" data-print-done>Done</button>
+        </div>
+      </div>
+
+      <div class="jvli-print__tools" role="toolbar" aria-label="Tools">
+        <button type="button" data-print-tool="draw" aria-pressed="true">Draw</button>
+        <button type="button" data-print-tool="add" aria-pressed="false">Add</button>
+        <button type="button" data-print-mirror>Mirror <span data-print-mirror-state>Off</span></button>
+        <button type="button" class="jvli-print__phone-only" data-print-panel="repeat">Repeat</button>
+      </div>
+
+      <div class="jvli-print__repeat" data-print-repeat-panel>
+        <button type="button" class="jvli-print__repeat-go" data-print-repeat>Repeat</button>
+        <div class="jvli-print__modes" role="radiogroup" aria-label="Repeat">
+          <button type="button" role="radio" data-print-mode="grid">Grid</button>
+          <button type="button" role="radio" data-print-mode="half">Half drop</button>
+          <button type="button" role="radio" data-print-mode="mirror">Mirror</button>
+          <button type="button" role="radio" data-print-mode="random">Random</button>
+          <button type="button" role="radio" data-print-mode="single">Single</button>
+        </div>
+        <button type="button" class="jvli-print__weird" data-print-weird>Make it weird</button>
+      </div>
+
+      <div class="jvli-print__bottom">
+        <div class="jvli-print__library" data-print-library hidden aria-label="Motifs"></div>
+        <div class="jvli-print__selection" data-print-selection hidden>
+          <button type="button" data-print-flip>Flip</button>
+          <button type="button" data-print-dup>Copy</button>
+          <button type="button" data-print-remove>Remove</button>
+        </div>
+        <div class="jvli-print__colours">
+          <div class="jvli-print__inks" role="radiogroup" aria-label="Ink" data-print-inks></div>
+          <span class="jvli-print__divider" aria-hidden="true"></span>
+          <div class="jvli-print__grounds" role="radiogroup" aria-label="Ground" data-print-grounds></div>
+        </div>
+      </div>
+      <p class="jvli-print__hint" data-print-hint aria-live="polite"></p>
+    </div>
+
+    <div class="jvli-print__wear" data-print-wear-panel hidden>
+      <canvas class="jvli-print__garment" data-print-garment aria-label="Your print as a kurti"></canvas>
+    </div>
+
+    {%- comment -%} 03 Your print {%- endcomment -%}
+    <div class="jvli-print__result" data-print-result hidden>
+      <div class="jvli-print__result-art">
+        <canvas class="jvli-print__result-cloth" data-print-result-cloth aria-label="Your print"></canvas>
+        <canvas class="jvli-print__result-garment" data-print-result-garment aria-hidden="true"></canvas>
+      </div>
+      <div class="jvli-print__result-text">
+        <p class="jvli-print__meta">Your print</p>
+        <p class="jvli-print__number" data-print-number></p>
+        <div class="jvli-print__result-actions">
+          <button type="button" data-print-save>Save print</button>
+          <button type="button" data-print-share>Share</button>
+          <button type="button" data-print-again>Make another</button>
+          <button type="button" class="is-quiet" data-print-back>Keep working</button>
+        </div>
+      </div>
+    </div>
+
+    {%- comment -%} Share {%- endcomment -%}
+    <div class="jvli-print__share" data-print-share-panel hidden>
+      <div class="jvli-print__share-formats" role="radiogroup" aria-label="Shape">
+        <button type="button" role="radio" data-print-format="story">Story</button>
+        <button type="button" role="radio" data-print-format="post">Post</button>
+        <button type="button" role="radio" data-print-format="wa">WhatsApp</button>
+      </div>
+      <img class="jvli-print__share-preview" data-print-share-preview alt="Your print, ready to share">
+      <div class="jvli-print__share-actions">
+        <button type="button" class="is-strong" data-print-share-send>Share</button>
+        <button type="button" data-print-share-save>Save image</button>
+        <button type="button" data-print-share-link>Copy link</button>
+        <button type="button" class="is-quiet" data-print-share-close>Back</button>
+      </div>
+      <p class="jvli-print__hint" data-print-share-note aria-live="polite"></p>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Make your own print",
+  "class": "jvli-section-print",
+  "settings": [
+    { "type": "text", "id": "subline", "label": "Small line", "default": "Create something. See what happens." },
+    { "type": "text", "id": "start_label", "label": "Button", "default": "Start making" }
+  ],
+  "presets": [{ "name": "Make your own print" }]
+}
+{% endschema %}

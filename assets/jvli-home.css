@@ -5097,122 +5097,49 @@ div.jvli-loupe {
   }
 }
 
-/* ---------- Draw a kolam (sections/jvli-kolam, jvli-home.js initKolam) ---------- */
+/* ---------- Make a print link (sections/jvli-print-invite) ---------- */
 
-.jvli-kolam {
+.jvli-print-invite {
   padding-block: clamp(56px, 6vw, 104px);
 }
 
-.jvli-kolam__layout {
+.jvli-print-invite__layout {
   display: grid;
-  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
   align-items: center;
   gap: clamp(32px, 5vw, 88px);
 }
 
-.jvli-kolam .jvli-kolam__heading {
-  margin: 10px 0 18px;
+.jvli-print-invite__swatch {
+  display: block;
+  aspect-ratio: 5 / 4;
+  box-shadow: 0 30px 60px -34px rgba(40, 26, 16, 0.55);
+  transition: transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-.jvli-kolam__body {
-  max-width: 34em;
-  color: var(--jvli-ink-soft);
-  font-size: 15px;
-  line-height: 1.75;
+.jvli-print-invite__swatch:hover {
+  transform: rotate(-1deg) translateY(-4px);
 }
 
-.jvli-kolam__body p {
-  margin: 0 0 12px;
-}
-
-.jvli-kolam__actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 14px 26px;
-  margin-top: clamp(22px, 2.4vw, 34px);
-}
-
-.jvli-kolam__actions button.jvli-link-caps {
-  padding: 0;
-  border: 0;
-  background: none;
-  cursor: pointer;
-}
-
-/* The doorstep: damp earth, lighter where the morning light falls. */
-.jvli-kolam__board {
-  position: relative;
-  aspect-ratio: calc(var(--jvli-kolam-cols, 5) + 0.3) / calc(var(--jvli-kolam-rows, 6) + 0.3);
-  max-height: 78vh;
-  margin-inline: auto;
-  width: 100%;
-  border-radius: 6px;
-  background:
-    radial-gradient(ellipse 70% 55% at 30% 22%, rgba(255, 226, 196, 0.13), transparent 70%),
-    radial-gradient(ellipse 60% 50% at 78% 85%, rgba(0, 0, 0, 0.22), transparent 70%),
-    repeating-radial-gradient(circle at 17% 31%, rgba(255, 255, 255, 0.018) 0 1px, transparent 1px 3px),
-    #563d30;
-  box-shadow: inset 0 2px 14px rgba(0, 0, 0, 0.35), 0 18px 34px -18px rgba(40, 24, 14, 0.5);
-}
-
-.jvli-kolam__canvas {
+.jvli-print-invite__swatch canvas {
   display: block;
   width: 100%;
   height: 100%;
-  touch-action: none;
-  cursor: crosshair;
 }
 
-.jvli-kolam__hint {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 12px;
-  margin: 0;
-  color: rgba(251, 246, 236, 0.72);
-  font-family: var(--jvli-caps);
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-align: center;
-  text-transform: uppercase;
-  pointer-events: none;
-  transition: opacity 0.4s ease;
+.jvli-print-invite .jvli-print-invite__heading {
+  margin: 10px 0 14px;
 }
 
-.jvli-kolam__hint.is-hidden {
-  opacity: 0;
+.jvli-print-invite__body {
+  margin: 0 0 26px;
+  color: var(--jvli-ink-soft);
+  font-size: 15px;
+  line-height: 1.7;
 }
 
 @media screen and (max-width: 749px) {
-  .jvli-kolam__layout {
+  .jvli-print-invite__layout {
     grid-template-columns: minmax(0, 1fr);
   }
-
-  .jvli-kolam__board {
-    max-height: none;
-  }
-}
-
-/* Product cards: the sizes always sit on one line, sharing the card's
-   width, however many sizes there are. */
-.jvli-card .jvli-card__sizes {
-  flex-wrap: nowrap;
-  gap: 4px;
-}
-
-.jvli-card .jvli-card__size {
-  flex: 1 1 0;
-  min-width: 0;
-  max-width: 44px;
-}
-
-.jvli-card .jvli-card__size span {
-  display: flex;
-  width: 100%;
-  min-width: 0;
-  padding: 0 1px;
-  font-size: clamp(10px, 0.78vw, 12px);
-  letter-spacing: 0;
-  white-space: nowrap;
 }

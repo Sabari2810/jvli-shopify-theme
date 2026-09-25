@@ -1,0 +1,759 @@
+/* Make Your Own Print (sections/jvli-print.liquid). */
+
+.jvli-print {
+  --pr-paper: #efe7da;
+  --pr-table: #e6ddcf;
+  --pr-ink: #1d1a17;
+  --pr-soft: #6d6259;
+  --pr-settle: cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
+  color: var(--pr-ink);
+  background: var(--pr-paper);
+  font-family: var(--jvli-sans);
+}
+
+.jvli-print p,
+.jvli-print h1 {
+  margin: 0;
+}
+
+.jvli-print button {
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  padding: 0;
+}
+
+.jvli-print__meta,
+.jvli-print__ui button,
+.jvli-print__result-actions button,
+.jvli-print__share button,
+.jvli-print__hint {
+  font-family: var(--jvli-caps);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+html.jvli-print-open,
+html.jvli-print-open body {
+  overflow: hidden;
+}
+
+/* ---------- 01 Intro ---------- */
+
+.jvli-print__intro {
+  display: grid;
+  align-content: center;
+  min-height: calc(100svh - 108px);
+  padding: clamp(40px, 8vh, 90px) var(--jvli-gutter);
+}
+
+.jvli-print__title {
+  display: grid;
+  font-family: var(--jvli-serif);
+  font-size: clamp(72px, 14.5vw, 232px);
+  font-weight: 300;
+  line-height: 0.84;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+}
+
+.jvli-print__title span:nth-child(2) { padding-left: 0.9em; }
+.jvli-print__title span:nth-child(3) { padding-left: 0.3em; }
+.jvli-print__title span:nth-child(4) { padding-left: 1.6em; }
+
+.jvli-print__intro .jvli-print__meta {
+  margin-top: clamp(28px, 5vh, 56px);
+  color: var(--pr-soft);
+}
+
+.jvli-print__start {
+  justify-self: start;
+  margin-top: 26px;
+  padding: 16px 26px !important;
+  border: 1px solid var(--pr-ink) !important;
+  font-family: var(--jvli-caps);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.jvli-print__start:hover {
+  background: var(--pr-ink);
+  color: var(--pr-paper);
+}
+
+/* ---------- Received: someone shared a print ---------- */
+
+.jvli-print__received {
+  position: relative;
+  min-height: calc(100svh - 108px);
+}
+
+.jvli-print__received-cloth {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.jvli-print__received-note {
+  position: absolute;
+  left: var(--jvli-gutter);
+  bottom: clamp(28px, 6vh, 64px);
+  display: grid;
+  gap: 4px;
+  padding: 26px 30px 28px;
+  background: var(--pr-paper);
+  box-shadow: 0 24px 50px -30px rgba(40, 26, 16, 0.5);
+  opacity: 0;
+  transform: translateY(12px);
+  transition: opacity 0.9s var(--pr-settle), transform 0.9s var(--pr-settle);
+}
+
+.jvli-print__received.is-revealed .jvli-print__received-note {
+  opacity: 1;
+  transform: none;
+}
+
+.jvli-print__received-line {
+  font-family: var(--jvli-serif);
+  font-size: clamp(28px, 3vw, 44px);
+  font-weight: 300;
+}
+
+/* ---------- 02 The table ---------- */
+
+.jvli-print__studio {
+  position: fixed;
+  inset: 0;
+  z-index: 2147480000;
+  background:
+    radial-gradient(ellipse 70% 60% at 30% 15%, rgba(255, 251, 243, 0.5), transparent 70%),
+    var(--pr-table);
+  overscroll-behavior: contain;
+}
+
+.jvli-print__stage {
+  position: absolute;
+  top: 72px;
+  bottom: 110px;
+  left: 190px;
+  right: 190px;
+  perspective: 1600px;
+}
+
+.jvli-print__cloth {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  transform: rotateX(var(--tilt-y, 0deg)) rotateY(var(--tilt-x, 0deg));
+  transition: transform 0.8s var(--pr-settle);
+  box-shadow: 0 30px 60px -34px rgba(40, 26, 16, 0.55), 0 2px 6px rgba(40, 26, 16, 0.1);
+  cursor: crosshair;
+}
+
+.jvli-print__handle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 22px;
+  height: 22px;
+  border: 1px solid var(--pr-ink);
+  border-radius: 50%;
+  background: var(--pr-paper);
+  cursor: nwse-resize;
+  touch-action: none;
+}
+
+.jvli-print__handle::after {
+  content: "";
+  position: absolute;
+  inset: 7px;
+  border-radius: 50%;
+  background: var(--pr-ink);
+}
+
+/* The interface: words at the edges, fading while you work. */
+.jvli-print__ui > * {
+  transition: opacity 0.7s ease;
+}
+
+.jvli-print__studio.is-idle .jvli-print__ui > * {
+  opacity: 0.18;
+}
+
+.jvli-print__ui button {
+  padding: 6px 0;
+  opacity: 0.62;
+  transition: opacity 0.25s ease;
+}
+
+.jvli-print__ui button:hover,
+.jvli-print__ui button[aria-pressed="true"],
+.jvli-print__ui button[aria-checked="true"],
+.jvli-print__ui button.is-strong {
+  opacity: 1;
+}
+
+.jvli-print__ui button[aria-pressed="true"],
+.jvli-print__ui button[aria-checked="true"] {
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  text-decoration-thickness: 1px;
+}
+
+.jvli-print__top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 64px;
+  padding: 0 28px;
+}
+
+.jvli-print__ui .jvli-print__close {
+  font-family: var(--jvli-serif);
+  font-size: 22px;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  opacity: 1;
+}
+
+.jvli-print__top-actions {
+  display: flex;
+  gap: 26px;
+}
+
+.jvli-print__tools {
+  position: absolute;
+  top: 50%;
+  left: 36px;
+  display: grid;
+  justify-items: start;
+  gap: 18px;
+  transform: translateY(-50%);
+}
+
+.jvli-print__tools [data-print-mirror-state] {
+  display: block;
+  margin-top: 4px;
+  font-size: 9px;
+  opacity: 0.7;
+}
+
+.jvli-print__repeat {
+  position: absolute;
+  top: 50%;
+  right: 36px;
+  display: grid;
+  justify-items: end;
+  gap: 14px;
+  transform: translateY(-50%);
+}
+
+.jvli-print__ui .jvli-print__repeat-go,
+.jvli-print__ui .jvli-print__weird {
+  font-family: var(--jvli-serif);
+  font-size: 30px;
+  font-weight: 300;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  opacity: 1;
+}
+
+.jvli-print__ui .jvli-print__weird {
+  margin-top: 18px;
+  font-size: 22px;
+  font-style: italic;
+}
+
+/* After the first mark, Repeat breathes once in a while to be found. */
+.jvli-print__repeat-go.is-ready {
+  animation: jvli-print-breathe 2.6s ease-in-out infinite;
+}
+
+@keyframes jvli-print-breathe {
+  0%, 100% { letter-spacing: -0.01em; opacity: 1; }
+  50% { letter-spacing: 0.04em; opacity: 0.75; }
+}
+
+.jvli-print__weird.is-wobble {
+  animation: jvli-print-wobble 0.7s ease;
+}
+
+@keyframes jvli-print-wobble {
+  0%, 100% { transform: none; }
+  25% { transform: rotate(-4deg) translateX(-3px); }
+  60% { transform: rotate(3deg) translateX(2px); }
+}
+
+.jvli-print__modes {
+  display: grid;
+  justify-items: end;
+  gap: 8px;
+}
+
+.jvli-print__bottom {
+  position: absolute;
+  left: 190px;
+  right: 190px;
+  bottom: 22px;
+  display: grid;
+  justify-items: center;
+  gap: 12px;
+}
+
+.jvli-print__colours {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.jvli-print__inks,
+.jvli-print__grounds {
+  display: flex;
+  gap: 8px;
+}
+
+.jvli-print__ui .jvli-print__inks button,
+.jvli-print__ui .jvli-print__grounds button {
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--swatch);
+  box-shadow: inset 0 0 0 1px rgba(29, 26, 23, 0.18);
+  opacity: 1;
+  transition: transform 0.25s var(--pr-settle), box-shadow 0.25s ease;
+}
+
+.jvli-print__ui .jvli-print__grounds button {
+  border-radius: 2px;
+}
+
+.jvli-print__ui .jvli-print__inks button[aria-checked="true"],
+.jvli-print__ui .jvli-print__grounds button[aria-checked="true"] {
+  transform: scale(1.18);
+  box-shadow: inset 0 0 0 1px rgba(29, 26, 23, 0.18), 0 0 0 2px var(--pr-table), 0 0 0 3px var(--pr-ink);
+  text-decoration: none;
+}
+
+.jvli-print__divider {
+  width: 1px;
+  height: 18px;
+  background: rgba(29, 26, 23, 0.25);
+}
+
+.jvli-print__library {
+  display: flex;
+  gap: 4px;
+  max-width: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 2px;
+}
+
+.jvli-print__library::-webkit-scrollbar {
+  display: none;
+}
+
+.jvli-print__ui .jvli-print__motif {
+  flex: 0 0 auto;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  opacity: 0.85;
+  transition: transform 0.25s var(--pr-settle), opacity 0.2s ease;
+}
+
+.jvli-print__ui .jvli-print__motif:hover {
+  opacity: 1;
+  transform: translateY(-3px) rotate(-6deg);
+}
+
+.jvli-print__motif canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.jvli-print__selection {
+  display: flex;
+  gap: 22px;
+}
+
+.jvli-print__selection[hidden],
+.jvli-print__library[hidden] {
+  display: none;
+}
+
+.jvli-print__hint {
+  position: absolute;
+  top: 74px;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--pr-ink);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.6s ease;
+  white-space: nowrap;
+}
+
+.jvli-print__hint.is-on {
+  opacity: 0.75;
+}
+
+/* Wear it. */
+.jvli-print__wear {
+  position: absolute;
+  right: 210px;
+  bottom: 128px;
+  width: 260px;
+  height: 340px;
+  cursor: pointer;
+}
+
+.jvli-print__garment,
+.jvli-print__result-garment {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 0;
+  animation: jvli-print-sway 7s ease-in-out infinite;
+}
+
+@keyframes jvli-print-sway {
+  0%, 100% { transform: rotate(-0.8deg) translateY(0); }
+  50% { transform: rotate(0.8deg) translateY(3px); }
+}
+
+/* ---------- 03 Your print ---------- */
+
+.jvli-print__result {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(260px, 0.6fr);
+  align-items: center;
+  gap: clamp(28px, 5vw, 80px);
+  padding: 80px clamp(28px, 6vw, 110px);
+  background: var(--pr-paper);
+  animation: jvli-print-in 0.8s var(--pr-settle);
+}
+
+.jvli-print__result[hidden],
+.jvli-print__share[hidden],
+.jvli-print__wear[hidden] {
+  display: none;
+}
+
+@keyframes jvli-print-in {
+  from { opacity: 0; }
+}
+
+.jvli-print__result-art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: min(80svh, 100%);
+}
+
+.jvli-print__result-cloth {
+  box-shadow: 0 40px 70px -40px rgba(40, 26, 16, 0.55);
+}
+
+.jvli-print__result-garment {
+  position: absolute;
+  right: -4%;
+  bottom: -2%;
+  width: 30%;
+  height: 40%;
+}
+
+.jvli-print__result-text {
+  display: grid;
+  gap: 10px;
+}
+
+.jvli-print__number {
+  font-family: var(--jvli-serif);
+  font-size: clamp(40px, 5vw, 76px);
+  font-weight: 300;
+  line-height: 1;
+}
+
+.jvli-print__result-actions {
+  display: grid;
+  justify-items: start;
+  gap: 14px;
+  margin-top: 28px;
+}
+
+.jvli-print__result-actions button,
+.jvli-print__share-actions button {
+  padding: 6px 0;
+  border-bottom: 1px solid currentColor !important;
+}
+
+.jvli-print__result-actions .is-quiet,
+.jvli-print__share-actions .is-quiet {
+  border-bottom-color: transparent !important;
+  opacity: 0.6;
+}
+
+/* Share. */
+.jvli-print__share {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto auto;
+  justify-items: center;
+  gap: 18px;
+  padding: 28px 24px 30px;
+  background: var(--pr-table);
+  animation: jvli-print-in 0.5s var(--pr-settle);
+}
+
+.jvli-print__share-formats,
+.jvli-print__share-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px 28px;
+}
+
+.jvli-print__share-formats button[aria-checked="true"] {
+  text-decoration: underline;
+  text-underline-offset: 6px;
+}
+
+.jvli-print__share-preview {
+  max-width: 100%;
+  max-height: 100%;
+  min-height: 0;
+  object-fit: contain;
+  box-shadow: 0 30px 60px -30px rgba(40, 26, 16, 0.45);
+}
+
+.jvli-print__share .jvli-print__hint {
+  position: static;
+  transform: none;
+  opacity: 0.75;
+  white-space: normal;
+  text-align: center;
+  max-width: 34em;
+  word-break: break-all;
+}
+
+.jvli-print__phone-only {
+  display: none;
+}
+
+/* ---------- Phones: the cloth on top, tools in rows below ---------- */
+
+@media screen and (max-width: 749px) {
+  .jvli-print__intro {
+    min-height: calc(100svh - 64px);
+  }
+
+  .jvli-print__title {
+    font-size: 19.5vw;
+  }
+
+  .jvli-print__title span:nth-child(4) {
+    padding-left: 0.9em;
+  }
+
+  .jvli-print__studio {
+    --pr-stage: min(calc(100vw - 20px), calc(100svh - 300px));
+  }
+
+  .jvli-print__stage {
+    top: 56px;
+    left: 50%;
+    right: auto;
+    bottom: auto;
+    width: var(--pr-stage);
+    height: var(--pr-stage);
+    transform: translateX(-50%);
+  }
+
+  .jvli-print__top {
+    height: 56px;
+    padding: 0 14px;
+  }
+
+  .jvli-print__top-actions {
+    gap: 16px;
+  }
+
+  .jvli-print__top-actions [data-print-clear] {
+    display: none;
+  }
+
+  .jvli-print__tools {
+    top: calc(56px + var(--pr-stage) + 14px);
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-around;
+    gap: 0;
+    transform: none;
+  }
+
+  .jvli-print__ui .jvli-print__tools button {
+    min-height: 44px;
+    padding: 0 8px;
+  }
+
+  .jvli-print__tools [data-print-mirror-state] {
+    display: inline;
+    margin: 0 0 0 4px;
+  }
+
+  .jvli-print__phone-only {
+    display: inline-block;
+  }
+
+  .jvli-print__repeat {
+    top: auto;
+    right: 0;
+    left: 0;
+    bottom: 18px;
+    display: none;
+    grid-template-columns: auto auto;
+    grid-template-areas: "go weird" "modes modes";
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+    gap: 10px 36px;
+    padding: 0 14px;
+    transform: none;
+  }
+
+  .jvli-print__repeat-go { grid-area: go; }
+  .jvli-print__weird { grid-area: weird; white-space: nowrap; }
+  .jvli-print__modes { grid-area: modes; }
+
+  .jvli-print__studio[data-panel="repeat"] .jvli-print__repeat {
+    display: grid;
+  }
+
+  .jvli-print__studio[data-panel="repeat"] .jvli-print__bottom {
+    display: none;
+  }
+
+  .jvli-print__ui .jvli-print__repeat-go {
+    font-size: 26px;
+  }
+
+  .jvli-print__modes {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0 16px;
+  }
+
+  .jvli-print__ui .jvli-print__modes button {
+    min-height: 40px;
+    white-space: nowrap;
+  }
+
+  .jvli-print__ui .jvli-print__weird {
+    margin: 0;
+    font-size: 20px;
+  }
+
+  .jvli-print__bottom {
+    left: 0;
+    right: 0;
+    bottom: 16px;
+    gap: 10px;
+    padding: 0 10px;
+  }
+
+  .jvli-print__colours {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .jvli-print__inks,
+  .jvli-print__grounds {
+    gap: 7px;
+  }
+
+  .jvli-print__ui .jvli-print__inks button,
+  .jvli-print__ui .jvli-print__grounds button {
+    width: 26px;
+    height: 26px;
+  }
+
+  .jvli-print__ui .jvli-print__motif {
+    width: 52px;
+    height: 52px;
+  }
+
+  .jvli-print__hint {
+    top: calc(56px + var(--pr-stage) + 64px);
+  }
+
+  .jvli-print__wear {
+    right: 50%;
+    bottom: auto;
+    top: 64px;
+    width: 60vw;
+    height: 78vw;
+    transform: translateX(50%);
+    background: rgba(230, 221, 207, 0.9);
+  }
+
+  .jvli-print__result {
+    grid-template-columns: 1fr;
+    align-content: start;
+    padding: 64px 18px 28px;
+    overflow-y: auto;
+  }
+
+  .jvli-print__result-art {
+    height: auto;
+    min-height: 88vw;
+  }
+
+  .jvli-print__result-actions {
+    grid-template-columns: 1fr 1fr;
+    margin-top: 12px;
+  }
+
+  .jvli-print__received-note {
+    left: 16px;
+    right: 16px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jvli-print__garment,
+  .jvli-print__result-garment,
+  .jvli-print__repeat-go.is-ready {
+    animation: none;
+  }
+}
+
+/* Layout rules above set display; keep [hidden] meaning hidden. */
+.jvli-print [hidden] {
+  display: none !important;
+}

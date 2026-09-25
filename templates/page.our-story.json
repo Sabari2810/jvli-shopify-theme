@@ -19,10 +19,10 @@
         "end_image": "shopify://shop_images/jvli-story-leaf-shadows.webp"
       }
     },
-    "kolam": {
-      "type": "jvli-kolam",
+    "print_invite": {
+      "type": "jvli-print-invite",
       "settings": {}
     }
   },
-  "order": ["our_story", "kolam"]
+  "order": ["our_story", "print_invite"]
 }

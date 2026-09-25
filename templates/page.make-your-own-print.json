@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "print": {
+      "type": "jvli-print",
+      "settings": {}
+    }
+  },
+  "order": ["print"]
+}
