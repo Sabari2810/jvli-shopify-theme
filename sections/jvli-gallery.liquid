@@ -21,6 +21,7 @@
     {%- endcomment -%}
     <div
       class="jvli-gallery__row"
+      {% if section.settings.clothesline %}data-jvli-clothesline{% endif %}
       {% if section.settings.instagram_feed_url != blank %}
         data-jvli-reels="{{ section.settings.instagram_feed_url | escape }}"
         data-jvli-reels-count="{{ section.settings.reels_count }}"
@@ -65,6 +66,7 @@
   "settings": [
     { "type": "text", "id": "heading", "label": "Heading", "default": "JVLI in real life" },
     { "type": "text", "id": "follow_text", "label": "Follow text", "default": "Follow us @jvli.store" },
+    { "type": "checkbox", "id": "clothesline", "label": "Hang them on a clothesline", "default": true, "info": "Pegged to a line of twine; they sway as the page scrolls." },
     { "type": "url", "id": "follow_link", "label": "Follow link", "info": "e.g. your Instagram profile" },
     { "type": "header", "content": "Instagram reels" },
     {

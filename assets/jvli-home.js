@@ -313,6 +313,187 @@
     });
   }
 
+  /* ---------- Clothesline gallery ----------
+     The gallery's photos and reels hang from a sagging line of twine with a
+     wooden peg each, one line per row. They sway on the peg as the page
+     scrolls (and a little when the cursor brushes past), then settle.
+     Rebuilt when the reels arrive or the layout changes. Hanging only, no
+     sway, with reduced motion. */
+
+  var SVG_NS_LINE = 'http://www.w3.org/2000/svg';
+  var PEG =
+    '<svg viewBox="0 0 16 40" aria-hidden="true" focusable="false">' +
+    '<defs><linearGradient id="JvliPegWood" x1="0" x2="1"><stop offset="0" stop-color="#d9b48a"/><stop offset=".55" stop-color="#c59a6c"/><stop offset="1" stop-color="#a97c52"/></linearGradient></defs>' +
+    '<path d="M2.6 1.5h4.9v37H4.2a1.6 1.6 0 0 1-1.6-1.6Z" fill="url(#JvliPegWood)"/>' +
+    '<path d="M8.5 1.5h4.9v35.4a1.6 1.6 0 0 1-1.6 1.6H8.5Z" fill="url(#JvliPegWood)"/>' +
+    '<path d="M8 2v36" stroke="#7a5536" stroke-width=".8" opacity=".55"/>' +
+    '<rect x="1.3" y="13.5" width="13.4" height="4.2" rx="1.4" fill="#9aa0a3"/>' +
+    '<rect x="1.3" y="13.5" width="13.4" height="1.4" rx=".7" fill="#d5d9db"/>' +
+    '</svg>';
+
+  function initClothesline(scope) {
+    scope.querySelectorAll('[data-jvli-clothesline]').forEach(function (row) {
+      if (row.dataset.jvliLineReady) return;
+      row.dataset.jvliLineReady = 'true';
+      row.classList.add('jvli-clothesline');
+
+      var still = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var overlay = null;
+      var items = [];
+      var building = false;
+
+      function hanging() {
+        return Array.prototype.filter.call(row.children, function (child) {
+          return child !== overlay && child.offsetParent !== null;
+        });
+      }
+
+      function build() {
+        building = true;
+        if (overlay) overlay.remove();
+        items = hanging();
+        items.forEach(function (item) {
+          item.style.removeProperty('--jvli-sag');
+        });
+        overlay = el('div', 'jvli-clothesline__overlay');
+        overlay.setAttribute('aria-hidden', 'true');
+        var width = Math.max(row.scrollWidth, row.clientWidth);
+        overlay.style.width = width + 'px';
+        var svg = document.createElementNS(SVG_NS_LINE, 'svg');
+        svg.setAttribute('class', 'jvli-clothesline__twine');
+        overlay.appendChild(svg);
+
+        // Group items into visual rows by their resting top edge.
+        var lines = [];
+        items.forEach(function (item) {
+          var top = item.offsetTop;
+          var line = lines.filter(function (l) {
+            return Math.abs(l.top - top) < 4;
+          })[0];
+          if (!line) lines.push((line = { top: top, items: [] }));
+          line.items.push(item);
+        });
+
+        var height = row.scrollHeight;
+        svg.setAttribute('viewBox', '0 0 ' + width + ' ' + height);
+        svg.setAttribute('width', width);
+        svg.setAttribute('height', height);
+        var twine = '';
+        lines.forEach(function (line) {
+          var x0 = -6;
+          var x1 = width + 6;
+          var sag = Math.min(34, width * 0.03);
+          var y0 = line.top - 7; // the pegs grip the top edge
+          var at = function (x) {
+            var t = (x - x0) / (x1 - x0);
+            return y0 + 4 * sag * t * (1 - t);
+          };
+          twine += '<path d="M' + x0 + ' ' + y0 + ' Q' + (x0 + x1) / 2 + ' ' + (y0 + 2 * sag) + ' ' + x1 + ' ' + y0 + '"/>';
+          line.items.forEach(function (item, index) {
+            var cx = item.offsetLeft + item.offsetWidth / 2;
+            var y = at(cx);
+            item.style.setProperty('--jvli-sag', y + 7 - line.top + 'px');
+            if (!item.style.getPropertyValue('--jvli-tilt')) {
+              item.style.setProperty('--jvli-tilt', ((index * 37) % 5) - 2 + 'deg');
+            }
+            var peg = el('span', 'jvli-clothesline__peg');
+            peg.innerHTML = PEG;
+            peg.style.left = cx + 'px';
+            peg.style.top = y + 'px';
+            peg.style.setProperty('--jvli-peg-tilt', ((index * 53) % 7) - 3 + 'deg');
+            overlay.appendChild(peg);
+          });
+        });
+        svg.innerHTML = twine;
+        row.appendChild(overlay);
+        // Let the observer see our own insert before listening again.
+        setTimeout(function () {
+          building = false;
+        });
+      }
+
+      // Swaying: each item is a damped pendulum nudged by scrolling.
+      var swing = new WeakMap();
+      var frame = 0;
+      var lastY = window.scrollY;
+      var lastT = 0;
+      var visible = false;
+
+      function state(item) {
+        var s = swing.get(item);
+        if (!s) swing.set(item, (s = { angle: 0, speed: 0 }));
+        return s;
+      }
+
+      function step(time) {
+        frame = 0;
+        var dt = Math.min(0.05, lastT ? (time - lastT) / 1000 : 0.016);
+        lastT = time;
+        var moving = false;
+        items.forEach(function (item, index) {
+          var s = state(item);
+          var stiffness = 38 + (index % 3) * 9;
+          s.speed += -stiffness * s.angle * dt;
+          s.speed *= Math.pow(0.12, dt); // damping
+          s.angle = Math.max(-7, Math.min(7, s.angle + s.speed * dt));
+          item.style.setProperty('--jvli-sway', s.angle.toFixed(2) + 'deg');
+          if (Math.abs(s.angle) > 0.02 || Math.abs(s.speed) > 0.05) moving = true;
+        });
+        if (moving) frame = requestAnimationFrame(step);
+        else lastT = 0;
+      }
+
+      function kick(amount) {
+        items.forEach(function (item, index) {
+          state(item).speed += amount * (0.8 + (index % 3) * 0.15);
+        });
+        if (!frame) frame = requestAnimationFrame(step);
+      }
+
+      build();
+      if (window.ResizeObserver) {
+        var lastWidth = row.clientWidth;
+        new ResizeObserver(function () {
+          if (row.clientWidth !== lastWidth) {
+            lastWidth = row.clientWidth;
+            build();
+          }
+        }).observe(row);
+      }
+      new MutationObserver(function () {
+        if (!building) build();
+      }).observe(row, { childList: true });
+      window.addEventListener('load', build);
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(build);
+
+      if (still) return;
+      if (window.IntersectionObserver) {
+        new IntersectionObserver(function (entries) {
+          visible = entries[0].isIntersecting;
+        }).observe(row);
+      }
+      window.addEventListener(
+        'scroll',
+        function () {
+          var y = window.scrollY;
+          var delta = y - lastY;
+          lastY = y;
+          if (visible && delta) kick(Math.max(-40, Math.min(40, delta)) * 0.35);
+        },
+        { passive: true }
+      );
+      row.addEventListener('pointermove', function (event) {
+        if (event.pointerType !== 'mouse') return;
+        var item = items.filter(function (candidate) {
+          return candidate.contains(event.target);
+        })[0];
+        if (!item || !event.movementX) return;
+        state(item).speed += Math.max(-12, Math.min(12, event.movementX)) * 0.9;
+        if (!frame) frame = requestAnimationFrame(step);
+      });
+    });
+  }
+
   /* ---------- Search overlay ----------
      Opens over the page (a native <dialog>, so Escape, focus and screen
      readers are handled) and shows products, collections and pages as you
@@ -1741,6 +1922,7 @@
     initHeader(scope);
     initHero(scope);
     initReels(scope);
+    initClothesline(scope);
     initSearch();
     initCart();
     initProduct(scope);
