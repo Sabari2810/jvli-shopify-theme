@@ -865,7 +865,43 @@
      paragraph in italics for units and paragraphs under a "Fit notes"
      heading) into a pallanguzhi board: measurements carved into the pits,
      sizes along the top, seed trays at each end. The page stays the place to
-     edit the numbers; without JavaScript it shows as the plain table. */
+     edit the numbers; without JavaScript it shows as the plain table.
+
+     With 5 sizes and 3 measurements the board is a photograph (assets/
+     jvli-sizeboard.webp, its pits emptied) with the text set into each pit;
+     any other shape falls back to a board drawn in CSS. */
+
+  // Pit centres in the photograph, as % of its width and height.
+  var BOARD_COLUMNS = [22.0, 33.7, 45.2, 56.4, 67.7, 79.0];
+  var BOARD_ROWS = [18.3, 42.3, 62.7, 83.3];
+
+  function photoBoard(dialog, rows) {
+    var src = dialog.getAttribute('data-jvli-board-image');
+    if (!src || rows.length !== BOARD_COLUMNS.length) return null;
+    if (!rows.every(function (row) { return row.length === BOARD_ROWS.length; })) return null;
+
+    var frame = el('div', 'jvli-sizeboard__photo');
+    var inner = el('div', 'jvli-sizeboard__photo-inner');
+    inner.setAttribute('aria-hidden', 'true');
+    var img = el('img');
+    img.src = src;
+    img.alt = '';
+    img.width = 1435;
+    img.height = 480;
+    img.loading = 'lazy';
+    inner.appendChild(img);
+    // Page rows are sizes; on the board sizes run along the top.
+    rows.forEach(function (sizeRow, column) {
+      sizeRow.forEach(function (value, row) {
+        var label = el('span', column === 0 ? 'jvli-sizeboard__label jvli-sizeboard__label--head' : 'jvli-sizeboard__label', value);
+        label.style.left = BOARD_COLUMNS[column] + '%';
+        label.style.top = BOARD_ROWS[row] + '%';
+        inner.appendChild(label);
+      });
+    });
+    frame.appendChild(inner);
+    return frame;
+  }
 
   var SEEDS = 13;
 
@@ -917,12 +953,19 @@
       });
     });
 
-    var board = el('div', 'jvli-sizeboard__board');
-    board.appendChild(tray('left'));
-    var scroller = el('div', 'jvli-sizeboard__scroll');
-    scroller.appendChild(grid);
-    board.appendChild(scroller);
-    board.appendChild(tray('right'));
+    var board = photoBoard(dialog, rows);
+    if (board) {
+      // The photo is for the eye; screen readers get the table.
+      grid.classList.add('jvli-sizeboard__grid--hidden');
+      board.appendChild(grid);
+    } else {
+      board = el('div', 'jvli-sizeboard__board');
+      board.appendChild(tray('left'));
+      var scroller = el('div', 'jvli-sizeboard__scroll');
+      scroller.appendChild(grid);
+      board.appendChild(scroller);
+      board.appendChild(tray('right'));
+    }
 
     // Units (the italic line) and the fit notes under the heading.
     var units = '';

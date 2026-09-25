@@ -164,7 +164,7 @@
   </div>
 
   {%- if section.settings.size_chart_page != blank -%}
-    <dialog class="jvli-product__dialog" data-jvli-size-guide>
+    <dialog class="jvli-product__dialog" data-jvli-size-guide data-jvli-board-image="{{ 'jvli-sizeboard.webp' | asset_url }}">
       <div class="jvli-product__dialog-head">
         <h2>{{ section.settings.size_chart_page.title }}</h2>
         <button type="button" class="jvli-header__icon" data-jvli-size-guide-close aria-label="Close">

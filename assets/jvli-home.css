@@ -4776,3 +4776,63 @@ main[data-jvli-thread] {
 .jvli-sizeboard__grid :nth-child(4) > .jvli-sizeboard__pit { --jvli-grain-x: 86%; }
 .jvli-sizeboard__grid :nth-child(5) > .jvli-sizeboard__pit { --jvli-grain-x: 50%; }
 .jvli-sizeboard__grid :nth-child(6) > .jvli-sizeboard__pit { --jvli-grain-x: 12%; }
+
+/* The photographed board, with the size guide's text set into its pits. */
+.jvli-sizeboard__photo {
+  position: relative;
+  filter: drop-shadow(0 18px 20px rgba(70, 40, 16, 0.32)) drop-shadow(0 3px 5px rgba(70, 40, 16, 0.2));
+}
+
+.jvli-sizeboard__photo-inner {
+  position: relative;
+  container-type: inline-size;
+}
+
+.jvli-sizeboard__photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.jvli-sizeboard__label {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  color: #f4e8d6;
+  font-family: var(--jvli-serif);
+  font-size: max(13px, 2.2cqw);
+  font-weight: 400;
+  line-height: 1;
+  white-space: nowrap;
+  text-shadow: 0 1px 2px rgba(20, 8, 2, 0.45);
+}
+
+.jvli-sizeboard__label--head {
+  font-size: max(9.5px, 1.7cqw);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.jvli-product__dialog .jvli-sizeboard__grid--hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* Phones: crop to the pits (the seed trays are cut away) so the numbers stay
+   readable, with the cut edges rounded. */
+@media screen and (max-width: 749px) {
+  .jvli-sizeboard__photo {
+    overflow: hidden;
+    border-radius: 22px;
+    filter: none;
+    box-shadow: 0 14px 22px -8px rgba(70, 40, 16, 0.4);
+  }
+
+  .jvli-sizeboard__photo-inner {
+    width: 137%;
+    margin-left: -18.5%;
+  }
+}
