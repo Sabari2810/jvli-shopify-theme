@@ -8,6 +8,8 @@
 //                   <section>.<block>.jpg or product-<n>.jpg (optional)
 //   TEMPLATE        template to render, e.g. page.favorites (default: index)
 //   LOGGED_IN       set to render as a signed-in customer
+//   MTO             render a made-to-order product (Size and Sleeve chosen on
+//                   the page); with TEMPLATE=cart, the first line carries them
 import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -341,6 +343,8 @@ function sampleCart() {
     variant: { inventory_management: "shopify", inventory_policy: "deny", inventory_quantity: 5 },
   });
   const items = [line(sampleProducts[0], "M", 1), line(sampleProducts[1], "S", 2, 17980), line(sampleProducts[3], "L", 1)];
+  // MTO=1: the first line is made to order, its choices saved as properties.
+  if (process.env.MTO) items[0].properties = { Size: "M", Sleeve: "Short", _hidden: "x" };
   const subtotal = items.reduce((sum, item) => sum + item.final_line_price, 0);
   return {
     items,

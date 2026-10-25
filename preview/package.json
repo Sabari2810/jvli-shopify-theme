@@ -5,7 +5,8 @@
   "description": "Renders the JVLI theme sections locally with sample data and screenshots them.",
   "scripts": {
     "render": "node render.mjs",
-    "shots": "node render.mjs && node screenshot.mjs"
+    "shots": "node render.mjs && node screenshot.mjs",
+    "test": "node test-made-to-order.mjs"
   },
   "dependencies": {
     "liquidjs": "^10.21.0"
