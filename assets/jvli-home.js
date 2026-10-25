@@ -734,6 +734,12 @@
       var priceEl = section.querySelector('[data-jvli-price]');
       var addButton = section.querySelector('[data-jvli-add-button]');
       var fieldsets = Array.prototype.slice.call(section.querySelectorAll('[data-jvli-option]'));
+      var qtyInput = section.querySelector('input[name="quantity"]');
+      function clampQty() {
+        if (!qtyInput) return;
+        var max = parseInt(qtyInput.max, 10) || 20;
+        qtyInput.value = Math.min(Math.max(parseInt(qtyInput.value, 10) || 1, 1), max);
+      }
 
       /* Gallery: thumbnails, dots and swiping share one "show" function. */
       var slidesEl = section.querySelector('[data-jvli-slides]');
@@ -891,6 +897,10 @@
         }
         if (!variant) return;
         if (idInput) idInput.value = variant.id;
+        if (qtyInput && variant.max) {
+          qtyInput.max = variant.max;
+          clampQty();
+        }
         if (priceEl) priceEl.innerHTML = variant.price;
         if (variant.media) showMedia(variant.media, true);
         // Keep the URL shareable for the chosen variant.
@@ -903,14 +913,15 @@
       });
       if (fieldsets.length) markAvailability(selected());
 
-      /* Quantity stepper. */
+      /* Quantity stepper. It stops at the stock count (the input's max). */
       section.querySelectorAll('[data-jvli-qty]').forEach(function (button) {
         button.addEventListener('click', function () {
-          var input = section.querySelector('input[name="quantity"]');
-          var next = (parseInt(input.value, 10) || 1) + parseInt(button.dataset.jvliQty, 10);
-          input.value = Math.min(Math.max(next, 1), parseInt(input.max, 10) || 99);
+          var next = (parseInt(qtyInput.value, 10) || 1) + parseInt(button.dataset.jvliQty, 10);
+          qtyInput.value = next;
+          clampQty();
         });
       });
+      if (qtyInput) qtyInput.addEventListener('change', clampQty);
 
       /* Size guide pop-up. */
       var dialog = section.querySelector('[data-jvli-size-guide]');

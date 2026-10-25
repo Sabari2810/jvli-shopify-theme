@@ -179,7 +179,14 @@
         <div class="jvli-product__buy">
           <div class="jvli-product__qty">
             <button type="button" data-jvli-qty="-1" aria-label="Decrease quantity">−</button>
-            <input type="number" name="quantity" value="1" min="1" max="20" aria-label="Quantity" inputmode="numeric">
+            {%- liquid
+              # The counter never goes past the stock count (most 20 at a time).
+              assign qty_max = 20
+              if current.inventory_management == 'shopify' and current.inventory_policy == 'deny' and current.inventory_quantity < qty_max
+                assign qty_max = current.inventory_quantity | at_least: 1
+              endif
+            -%}
+            <input type="number" name="quantity" value="1" min="1" max="{{ qty_max }}" aria-label="Quantity" inputmode="numeric">
             <button type="button" data-jvli-qty="1" aria-label="Increase quantity">+</button>
           </div>
           <button type="submit" class="jvli-card__add jvli-product__add" data-jvli-add-button {% unless current.available %}disabled{% endunless %}>
@@ -246,6 +253,7 @@
           "id": {{ variant.id }},
           "options": {{ variant.options | json }},
           "available": {{ variant.available | json }},
+          "max": {% if variant.inventory_management == 'shopify' and variant.inventory_policy == 'deny' and variant.inventory_quantity < 20 %}{{ variant.inventory_quantity | at_least: 1 }}{% else %}20{% endif %},
           "media": {{ variant.featured_media.id | default: 'null' }},
           "price": {% capture price_html %}{% render 'jvli-product-price', variant: variant %}{% endcapture %}{{ price_html | strip | json }}
         }{% unless forloop.last %},{% endunless %}

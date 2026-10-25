@@ -125,7 +125,7 @@ function sampleProductPage() {
 // MTO=1: a made-to-order product: one variant, Size and Sleeve chosen as
 // line item properties from the product's own fields.
 function sampleMadeToOrder(page) {
-  const only = { ...page.variants[1], title: "Default Title", options: ["Default Title"], available: true };
+  const only = { ...page.variants[1], title: "Default Title", options: ["Default Title"], available: true, inventory_management: "shopify", inventory_policy: "deny", inventory_quantity: 3 };
   return {
     ...page,
     has_only_default_variant: true,
