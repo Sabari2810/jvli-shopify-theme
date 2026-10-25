@@ -5143,3 +5143,12 @@ div.jvli-loupe {
     grid-template-columns: minmax(0, 1fr);
   }
 }
+
+/* Made-to-order products: the card links to the product page to choose. */
+a.jvli-card__choose {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 12px;
+  text-decoration: none;
+}

@@ -1194,6 +1194,14 @@
     });
   }
 
+  // Made-to-order choices: show the picked value beside the label.
+  document.addEventListener('change', function (event) {
+    var fieldset = event.target.closest && event.target.closest('[data-jvli-property]');
+    if (!fieldset) return;
+    var shown = fieldset.querySelector('[data-jvli-property-value]');
+    if (shown) shown.textContent = event.target.value;
+  });
+
   function onAddSubmit(event) {
     var form = event.target.closest('[data-jvli-add-form]');
     if (!form) return;
@@ -1208,6 +1216,20 @@
       return;
     }
 
+    // Made-to-order choices (line item properties), e.g. Size and Sleeve.
+    var properties = {};
+    var missing = null;
+    form.querySelectorAll('[data-jvli-property]').forEach(function (fieldset) {
+      var name = fieldset.getAttribute('data-jvli-property');
+      var checked = fieldset.querySelector('input:checked');
+      if (checked) properties[name] = checked.value;
+      else if (!missing) missing = name;
+    });
+    if (missing) {
+      if (message) message.textContent = 'Please choose a ' + missing.toLowerCase() + '.';
+      return;
+    }
+
     var label = button.textContent;
     var quantityField = form.querySelector('[name="quantity"]');
     var quantity = Math.max(1, parseInt(quantityField && quantityField.value, 10) || 1);
@@ -1219,7 +1241,7 @@
     fetch(root + 'cart/add.js', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({ items: [{ id: Number(idField.value), quantity: quantity }] }),
+      body: JSON.stringify({ items: [{ id: Number(idField.value), quantity: quantity, properties: properties }] }),
     })
       .then(function (response) {
         return response.json().then(function (data) {

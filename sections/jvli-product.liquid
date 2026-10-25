@@ -12,6 +12,11 @@
   if product.has_only_default_variant
     assign has_options = false
   endif
+  # Made-to-order products (size/sleeve chosen as line item properties)
+  assign made_to_order = false
+  if product.metafields.custom.made_to_order_sizes.value != blank or product.metafields.custom.made_to_order_sleeves.value != blank
+    assign made_to_order = true
+  endif
 -%}
 {%- capture fabric -%}
   {%- if product.metafields.custom.fabric_care != blank -%}
@@ -118,6 +123,46 @@
           {%- endfor -%}
         {%- endif -%}
 
+        {%- comment -%}
+          Made-to-order choices: set per product in Shopify admin (product
+          page, "Made to order" fields). They aren't variants: the product
+          keeps one stock count, and the choice travels with the order line
+          as a line item property (e.g. "Size: M"). Each must be picked.
+        {%- endcomment -%}
+        {%- liquid
+          assign mto_sizes = product.metafields.custom.made_to_order_sizes.value
+          assign mto_sleeves = product.metafields.custom.made_to_order_sleeves.value
+        -%}
+        {%- for mto in (1..2) -%}
+          {%- liquid
+            if mto == 1
+              assign mto_values = mto_sizes
+              assign mto_name = 'Size'
+            else
+              assign mto_values = mto_sleeves
+              assign mto_name = 'Sleeve'
+            endif
+          -%}
+          {%- if mto_values != blank and mto_values.size > 0 -%}
+            <fieldset class="jvli-product__option" data-jvli-property="{{ mto_name }}">
+              <legend class="jvli-product__label">
+                {{ mto_name }}: <span data-jvli-property-value>Choose</span>
+                {%- if mto == 1 and section.settings.size_chart_page != blank -%}
+                  <button type="button" class="jvli-product__size-guide" data-jvli-size-guide-open>Size guide</button>
+                {%- endif -%}
+              </legend>
+              <div class="jvli-card__sizes jvli-product__values">
+                {%- for value in mto_values -%}
+                  <label class="jvli-card__size">
+                    <input type="radio" name="properties[{{ mto_name }}]" value="{{ value | escape }}" required>
+                    <span>{{ value }}</span>
+                  </label>
+                {%- endfor -%}
+              </div>
+            </fieldset>
+          {%- endif -%}
+        {%- endfor -%}
+
         <div class="jvli-product__buy">
           <div class="jvli-product__qty">
             <button type="button" data-jvli-qty="-1" aria-label="Decrease quantity">−</button>
@@ -133,7 +178,8 @@
           Added to your bag. <a href="{{ routes.cart_url }}">View bag</a>
         </p>
 
-        {%- if section.settings.show_dynamic_checkout -%}
+        {%- comment -%} Buy it now would skip the size and sleeve choice, so made-to-order products go through the bag. {%- endcomment -%}
+        {%- if section.settings.show_dynamic_checkout and made_to_order == false -%}
           <div class="jvli-product__checkout">{{ form | payment_button }}</div>
         {%- endif -%}
       {%- endform -%}

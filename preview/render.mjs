@@ -122,6 +122,20 @@ function sampleProductPage() {
   };
 }
 
+// MTO=1: a made-to-order product: one variant, Size and Sleeve chosen as
+// line item properties from the product's own fields.
+function sampleMadeToOrder(page) {
+  const only = { ...page.variants[1], title: "Default Title", options: ["Default Title"], available: true };
+  return {
+    ...page,
+    has_only_default_variant: true,
+    options_with_values: [{ name: "Title", values: ["Default Title"], selected_value: "Default Title" }],
+    variants: [only],
+    selected_or_first_available_variant: only,
+    metafields: { custom: { made_to_order_sizes: { value: ["XS", "S", "M", "L", "XL"] }, made_to_order_sleeves: { value: ["Short", "3/4", "Full"] } } },
+  };
+}
+
 // /collections/all with filters (one active) and sort options.
 function sampleCollectionPage() {
   const value = (label, count, active = false) => ({
@@ -366,7 +380,7 @@ const globals = {
   cart: process.env.TEMPLATE === "cart" && process.env.CART !== "empty" ? sampleCart() : { item_count: 0, items: [] },
   settings: { show_cart_note: true },
   request: { page_type: (process.env.TEMPLATE || "index").split(".")[0] },
-  product: sampleProductPage(),
+  product: process.env.MTO ? sampleMadeToOrder(sampleProductPage()) : sampleProductPage(),
   collection: sampleCollectionPage(),
   // /search: SEARCH_TERMS=<words> (default "cotton"), "empty" for no
   // results, or "none" for the page before searching.
