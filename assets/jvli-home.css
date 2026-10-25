@@ -5152,3 +5152,22 @@ a.jvli-card__choose {
   margin-top: 12px;
   text-decoration: none;
 }
+
+/* Made-to-order: Buy it now waits until size (and sleeve) are chosen. The
+   overlay also covers payment buttons drawn in iframes, and its tap is
+   answered by jvli-home.js with what's missing. */
+.jvli-product__checkout[data-jvli-buy-now-wait] {
+  position: relative;
+}
+
+.jvli-product__checkout.is-waiting {
+  opacity: 0.45;
+}
+
+.jvli-product__checkout.is-waiting::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  cursor: not-allowed;
+}

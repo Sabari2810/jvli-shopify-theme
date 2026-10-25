@@ -178,9 +178,13 @@
           Added to your bag. <a href="{{ routes.cart_url }}">View bag</a>
         </p>
 
-        {%- comment -%} Buy it now would skip the size and sleeve choice, so made-to-order products go through the bag. {%- endcomment -%}
-        {%- if section.settings.show_dynamic_checkout and made_to_order == false -%}
-          <div class="jvli-product__checkout">{{ form | payment_button }}</div>
+        {%- comment -%}
+          On made-to-order products Buy it now waits (greyed, tap shows what's
+          missing) until every choice is picked; Shopify then carries the
+          chosen properties into checkout.
+        {%- endcomment -%}
+        {%- if section.settings.show_dynamic_checkout -%}
+          <div class="jvli-product__checkout{% if made_to_order %} is-waiting{% endif %}"{% if made_to_order %} data-jvli-buy-now-wait{% endif %}>{{ form | payment_button }}</div>
         {%- endif -%}
       {%- endform -%}
 

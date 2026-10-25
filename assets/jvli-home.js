@@ -1194,13 +1194,42 @@
     });
   }
 
-  // Made-to-order choices: show the picked value beside the label.
+  // Made-to-order choices: the first one not yet picked, or null.
+  function missingProperty(form) {
+    var missing = null;
+    form.querySelectorAll('[data-jvli-property]').forEach(function (fieldset) {
+      if (!missing && !fieldset.querySelector('input:checked')) missing = fieldset.getAttribute('data-jvli-property');
+    });
+    return missing;
+  }
+
+  // Show the picked value beside the label, and let Buy it now through once
+  // every choice is made.
   document.addEventListener('change', function (event) {
     var fieldset = event.target.closest && event.target.closest('[data-jvli-property]');
     if (!fieldset) return;
     var shown = fieldset.querySelector('[data-jvli-property-value]');
     if (shown) shown.textContent = event.target.value;
+    var form = fieldset.closest('form');
+    var wait = form && form.querySelector('[data-jvli-buy-now-wait]');
+    if (wait) wait.classList.toggle('is-waiting', !!missingProperty(form));
   });
+
+  // A tap on the waiting Buy it now says what's missing.
+  document.addEventListener(
+    'click',
+    function (event) {
+      var wait = event.target.closest && event.target.closest('[data-jvli-buy-now-wait].is-waiting');
+      if (!wait) return;
+      event.preventDefault();
+      event.stopPropagation();
+      var form = wait.closest('form');
+      var message = form && form.querySelector('[data-jvli-add-message]');
+      var missing = form && missingProperty(form);
+      if (message && missing) message.textContent = 'Please choose a ' + missing.toLowerCase() + '.';
+    },
+    true
+  );
 
   function onAddSubmit(event) {
     var form = event.target.closest('[data-jvli-add-form]');
@@ -1218,12 +1247,9 @@
 
     // Made-to-order choices (line item properties), e.g. Size and Sleeve.
     var properties = {};
-    var missing = null;
-    form.querySelectorAll('[data-jvli-property]').forEach(function (fieldset) {
-      var name = fieldset.getAttribute('data-jvli-property');
-      var checked = fieldset.querySelector('input:checked');
-      if (checked) properties[name] = checked.value;
-      else if (!missing) missing = name;
+    var missing = missingProperty(form);
+    form.querySelectorAll('[data-jvli-property] input:checked').forEach(function (input) {
+      properties[input.closest('[data-jvli-property]').getAttribute('data-jvli-property')] = input.value;
     });
     if (missing) {
       if (message) message.textContent = 'Please choose a ' + missing.toLowerCase() + '.';
