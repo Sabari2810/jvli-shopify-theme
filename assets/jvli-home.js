@@ -843,6 +843,9 @@
           if (lead) showMedia(lead, true);
           syncArrows();
         });
+        // The first sleeve starts out chosen: show its photos from the start.
+        var startSleeve = sleeveSet.querySelector('input:checked');
+        if (startSleeve) startSleeve.dispatchEvent(new Event('change', { bubbles: true }));
       }
 
       /* Options -> variant. */
