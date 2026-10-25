@@ -762,6 +762,11 @@
         });
       });
       // Phones: the slides scroll sideways; keep the dots in step.
+      function shownSlides() {
+        return slides.filter(function (slide) {
+          return !slide.classList.contains('is-filtered');
+        });
+      }
       if (slidesEl) {
         var scrollTimer = null;
         slidesEl.addEventListener('scroll', function () {
@@ -769,9 +774,46 @@
           scrollTimer = setTimeout(function () {
             if (slidesEl.scrollWidth <= slidesEl.clientWidth + 1) return;
             var index = Math.round(slidesEl.scrollLeft / slidesEl.clientWidth);
-            if (slides[index]) showMedia(slides[index].dataset.mediaId, false);
+            var shown = shownSlides();
+            if (shown[index]) showMedia(shown[index].dataset.mediaId, false);
           }, 80);
         }, { passive: true });
+      }
+
+      /* Made-to-order sleeves: photos whose description (alt text) names a
+         sleeve, e.g. "Full" or "Model in a full sleeve kurti", show only
+         when that sleeve is chosen; untagged photos always show. */
+      var sleeveSet = section.querySelector('[data-jvli-property="Sleeve"]');
+      if (sleeveSet) {
+        var sleeveValues = Array.prototype.map.call(sleeveSet.querySelectorAll('input'), function (input) {
+          return input.value;
+        });
+        var mentions = function (alt, value) {
+          var a = ' ' + alt.toLowerCase().replace(/[^a-z0-9/]+/g, ' ') + ' ';
+          return a.indexOf(' ' + value.toLowerCase().replace(/[^a-z0-9/]+/g, ' ').trim() + ' ') !== -1;
+        };
+        var tags = slides.map(function (slide) {
+          var alt = slide.getAttribute('data-jvli-alt') || '';
+          return sleeveValues.filter(function (value) {
+            return mentions(alt, value);
+          });
+        });
+        sleeveSet.addEventListener('change', function (event) {
+          var chosen = event.target.value;
+          var first = null;
+          slides.forEach(function (slide, i) {
+            var hide = tags[i].length > 0 && tags[i].indexOf(chosen) === -1;
+            var id = slide.dataset.mediaId;
+            slide.classList.toggle('is-filtered', hide);
+            section.querySelectorAll('[data-jvli-thumb="' + id + '"], [data-jvli-dot-for="' + id + '"]').forEach(function (el) {
+              el.classList.toggle('is-filtered', hide);
+            });
+            if (!hide && first === null && tags[i].length) first = id;
+          });
+          // Bring the chosen sleeve's first photo to the front.
+          var lead = first || (shownSlides()[0] && shownSlides()[0].dataset.mediaId);
+          if (lead) showMedia(lead, true);
+        });
       }
 
       /* Options -> variant. */

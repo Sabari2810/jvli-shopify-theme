@@ -133,6 +133,8 @@ function sampleMadeToOrder(page) {
     variants: [only],
     selected_or_first_available_variant: only,
     metafields: { custom: { made_to_order_sizes: { value: ["XS", "S", "M", "L", "XL"] }, made_to_order_sleeves: { value: ["Short", "3/4", "Full"] } } },
+    // Photos tagged by sleeve in their description; the last one is untagged.
+    media: page.media.map((m, i) => ({ ...m, alt: ["Model in a full sleeve kurti", "Short sleeve", ""][i] ?? "" })),
   };
 }
 

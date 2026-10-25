@@ -5171,3 +5171,10 @@ a.jvli-card__choose {
   z-index: 2;
   cursor: not-allowed;
 }
+
+/* Made-to-order: photos of other sleeves are hidden once a sleeve is chosen. */
+.jvli-product__slide.is-filtered,
+.jvli-product__thumb.is-filtered,
+.jvli-product__dot.is-filtered {
+  display: none !important;
+}

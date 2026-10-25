@@ -36,6 +36,7 @@
             <figure
               class="jvli-product__slide{% if media.id == current.featured_media.id or forloop.first and current.featured_media == blank %} is-active{% endif %}"
               data-media-id="{{ media.id }}"
+              data-jvli-alt="{{ media.alt | escape }}"
             >
               {%- liquid
                 assign slide_loading = 'lazy'
