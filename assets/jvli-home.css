@@ -3498,9 +3498,9 @@ html.jvli-search-open {
   color: var(--jvli-ink-soft);
 }
 
-/* Price breakup beside the counter: "Rs. 999 × 10 = Rs. 9,990". */
+/* Price breakup at the right end of the line: "Rs. 999 × 10 = Rs. 9,990". */
 .jvli-cart .jvli-cart__each {
-  margin: 0;
+  margin: 0 0 0 auto;
   font-size: 14px;
   color: var(--jvli-ink-soft);
   white-space: nowrap;
@@ -3700,10 +3700,10 @@ html.jvli-search-open {
     row-gap: 8px;
   }
 
-  /* No room beside the counter on a phone: the breakup gets its own line below. */
+  /* No room on a phone: the breakup gets its own line below, at the right. */
   .jvli-cart .jvli-cart__each {
-    order: 3;
     flex-basis: 100%;
+    text-align: right;
   }
 
   .jvli-cart__summary {

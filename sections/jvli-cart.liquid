@@ -95,10 +95,10 @@
                       >
                       <button type="button" data-jvli-cart-step="1" aria-label="Increase quantity of {{ item.product.title | escape }}">+</button>
                     </div>
+                    <a href="{{ item.url_to_remove }}" class="jvli-cart__remove" data-jvli-cart-remove>Remove</a>
                     {%- if item.quantity > 1 -%}
                       <p class="jvli-cart__each">{{ item.final_price | money_without_trailing_zeros }} × {{ item.quantity }} = {{ item.final_line_price | money_without_trailing_zeros }}</p>
                     {%- endif -%}
-                    <a href="{{ item.url_to_remove }}" class="jvli-cart__remove" data-jvli-cart-remove>Remove</a>
                   </div>
                 </div>
               </li>
