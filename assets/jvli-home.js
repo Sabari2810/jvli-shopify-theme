@@ -782,7 +782,8 @@
 
       /* Made-to-order sleeves: photos whose description (alt text) names a
          sleeve, e.g. "Full" or "Model in a full sleeve kurti", show only
-         when that sleeve is chosen; untagged photos always show. */
+         when that sleeve is chosen; untagged photos always show. A sleeve
+         with no photos of its own leaves every photo showing. */
       var sleeveSet = section.querySelector('[data-jvli-property="Sleeve"]');
       if (sleeveSet) {
         var sleeveValues = Array.prototype.map.call(sleeveSet.querySelectorAll('input'), function (input) {
@@ -801,8 +802,12 @@
         sleeveSet.addEventListener('change', function (event) {
           var chosen = event.target.value;
           var first = null;
+          // A sleeve with no photos of its own hides nothing.
+          var hasOwn = tags.some(function (t) {
+            return t.indexOf(chosen) !== -1;
+          });
           slides.forEach(function (slide, i) {
-            var hide = tags[i].length > 0 && tags[i].indexOf(chosen) === -1;
+            var hide = hasOwn && tags[i].length > 0 && tags[i].indexOf(chosen) === -1;
             var id = slide.dataset.mediaId;
             slide.classList.toggle('is-filtered', hide);
             section.querySelectorAll('[data-jvli-thumb="' + id + '"], [data-jvli-dot-for="' + id + '"]').forEach(function (el) {
