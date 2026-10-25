@@ -1916,7 +1916,9 @@
         // photo itself, not just its box.
         var nw = img.naturalWidth || box.width;
         var nh = img.naturalHeight || box.height;
-        var scale = Math.max(box.width / nw, box.height / nh);
+        // Product photos are shown whole (contain); others fill (cover).
+        var fit = getComputedStyle(img).objectFit === 'contain' ? Math.min : Math.max;
+        var scale = fit(box.width / nw, box.height / nh);
         var shownW = nw * scale;
         var shownH = nh * scale;
         var px = x - box.left + (shownW - box.width) / 2;

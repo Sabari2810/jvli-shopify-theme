@@ -5242,3 +5242,9 @@ a.jvli-card__choose {
     right: 10px;
   }
 }
+
+/* Product photos are shown whole, never cropped: a photo that isn't 4:5
+   sits in the frame with the frame's colour around it. */
+.jvli-product__slide img {
+  object-fit: contain;
+}
