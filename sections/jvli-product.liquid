@@ -30,6 +30,7 @@
   <div class="jvli-container jvli-product__layout">
     {%- comment -%} Gallery {%- endcomment -%}
     <div class="jvli-product__gallery">
+      <div class="jvli-product__stage">
       <div class="jvli-product__slides" data-jvli-slides>
         {%- for media in product.media -%}
           {%- if media.media_type == 'image' or media.preview_image -%}
@@ -58,6 +59,16 @@
             {%- render 'jvli-media', image: blank, placeholder: 'product-apparel-1' -%}
           </figure>
         {%- endfor -%}
+      </div>
+      {%- if product.media.size > 1 -%}
+        {%- comment -%} Previous / next photo (jvli-home.js); hidden while only one photo shows. {%- endcomment -%}
+        <button type="button" class="jvli-product__arrow jvli-product__arrow--prev" data-jvli-step="-1" aria-label="Previous photo">
+          {%- render 'jvli-icon', icon: 'arrow' -%}
+        </button>
+        <button type="button" class="jvli-product__arrow jvli-product__arrow--next" data-jvli-step="1" aria-label="Next photo">
+          {%- render 'jvli-icon', icon: 'arrow' -%}
+        </button>
+      {%- endif -%}
       </div>
       {%- if product.media.size > 1 -%}
         <div class="jvli-product__thumbs" role="list">

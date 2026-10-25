@@ -5178,3 +5178,67 @@ a.jvli-card__choose {
 .jvli-product__dot.is-filtered {
   display: none !important;
 }
+
+/* Product photos: previous / next arrows over the main photo. */
+.jvli-product__stage {
+  position: relative;
+}
+
+.jvli-product__arrow {
+  position: absolute;
+  top: 50%;
+  z-index: 3;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(251, 248, 243, 0.88);
+  color: var(--jvli-ink);
+  box-shadow: 0 4px 14px rgba(34, 28, 24, 0.14);
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.jvli-product__arrow:hover {
+  background: #fbf8f3;
+}
+
+.jvli-product__arrow[hidden] {
+  display: none;
+}
+
+.jvli-product__arrow--prev {
+  left: 14px;
+}
+
+.jvli-product__arrow--next {
+  right: 14px;
+}
+
+.jvli-product__arrow .jvli-icon {
+  width: 18px;
+  height: 10px;
+}
+
+.jvli-product__arrow--prev .jvli-icon {
+  transform: scaleX(-1);
+}
+
+@media screen and (max-width: 749px) {
+  .jvli-product__arrow {
+    width: 36px;
+    height: 36px;
+  }
+
+  .jvli-product__arrow--prev {
+    left: 10px;
+  }
+
+  .jvli-product__arrow--next {
+    right: 10px;
+  }
+}

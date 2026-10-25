@@ -780,6 +780,29 @@
         }, { passive: true });
       }
 
+      /* Arrows: step through the photos currently shown (a chosen sleeve
+         hides the others), wrapping around at the ends. */
+      var arrows = Array.prototype.slice.call(section.querySelectorAll('[data-jvli-step]'));
+      function syncArrows() {
+        var hide = shownSlides().length < 2;
+        arrows.forEach(function (arrow) {
+          arrow.hidden = hide;
+        });
+      }
+      arrows.forEach(function (arrow) {
+        arrow.addEventListener('click', function () {
+          var shown = shownSlides();
+          if (shown.length < 2) return;
+          var current = shown.findIndex(function (slide) {
+            return slide.classList.contains('is-active');
+          });
+          var step = parseInt(arrow.getAttribute('data-jvli-step'), 10);
+          var next = shown[(Math.max(current, 0) + step + shown.length) % shown.length];
+          showMedia(next.dataset.mediaId, true);
+        });
+      });
+      syncArrows();
+
       /* Made-to-order sleeves: photos whose description (alt text) names a
          sleeve, e.g. "Full" or "Model in a full sleeve kurti", show only
          when that sleeve is chosen; untagged photos always show. A sleeve
@@ -818,6 +841,7 @@
           // Bring the chosen sleeve's first photo to the front.
           var lead = first || (shownSlides()[0] && shownSlides()[0].dataset.mediaId);
           if (lead) showMedia(lead, true);
+          syncArrows();
         });
       }
 
