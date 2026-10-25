@@ -163,7 +163,7 @@ console.log("\nBag page");
   check("Bag line shows the chosen Size and Sleeve", text.includes("Size: M") && text.includes("Sleeve: Short"), text.replace(/\s+/g, " "));
   check("Bag line hides properties starting with _", !text.includes("_hidden"));
   const each = await page.locator("[data-jvli-cart-line] .jvli-cart__each").allInnerTexts();
-  check("Price per piece shows only on lines with more than one piece", each.length === 1 && /× 2$/.test(each[0]), each.join(" | "));
+  check("Price breakup shows only on lines with more than one piece", each.length === 1 && /^₹[\d,.]+ × 2 = ₹[\d,.]+$/.test(each[0]), each.join(" | "));
   const max = await page.locator("[data-jvli-cart-line] [data-jvli-cart-qty]").first().getAttribute("max");
   check("Bag counter stops at the stock count", max === "5", max);
   check("No page errors", state.errors.length === 0, state.errors.join("; "));

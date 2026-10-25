@@ -3493,10 +3493,17 @@ html.jvli-search-open {
   white-space: nowrap;
 }
 
-.jvli-cart__price s,
-.jvli-cart__each {
+.jvli-cart__price s {
   font-size: 13px;
   color: var(--jvli-ink-soft);
+}
+
+/* Price breakup beside the counter: "Rs. 999 × 10 = Rs. 9,990". */
+.jvli-cart .jvli-cart__each {
+  margin: 0;
+  font-size: 14px;
+  color: var(--jvli-ink-soft);
+  white-space: nowrap;
 }
 
 .jvli-cart__controls {
@@ -3689,6 +3696,14 @@ html.jvli-search-open {
 
   .jvli-cart__controls {
     justify-content: space-between;
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+
+  /* No room beside the counter on a phone: the breakup gets its own line below. */
+  .jvli-cart .jvli-cart__each {
+    order: 3;
+    flex-basis: 100%;
   }
 
   .jvli-cart__summary {
