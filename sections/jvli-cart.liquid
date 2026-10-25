@@ -77,6 +77,9 @@
                         <s>{{ item.original_line_price | money }}</s>
                       {%- endif -%}
                       <span>{{ item.final_line_price | money }}</span>
+                      {%- if item.quantity > 1 -%}
+                        <small class="jvli-cart__each">{{ item.final_price | money }} × {{ item.quantity }}</small>
+                      {%- endif -%}
                     </p>
                   </div>
 

@@ -337,6 +337,7 @@ function sampleCart() {
     properties: {},
     line_level_discount_allocations: discount ? [{ amount: discount, discount_application: { title: "WELCOME10" } }] : [],
     quantity: qty,
+    final_price: (p.price * qty - discount) / qty,
     original_line_price: p.price * qty,
     final_line_price: p.price * qty - discount,
     url_to_remove: "/cart/change?line=1&quantity=0",

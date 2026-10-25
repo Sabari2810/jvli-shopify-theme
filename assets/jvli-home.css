@@ -3493,7 +3493,8 @@ html.jvli-search-open {
   white-space: nowrap;
 }
 
-.jvli-cart__price s {
+.jvli-cart__price s,
+.jvli-cart__each {
   font-size: 13px;
   color: var(--jvli-ink-soft);
 }
