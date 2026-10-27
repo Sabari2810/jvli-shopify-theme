@@ -5304,6 +5304,11 @@ a.jvli-card__choose {
   color: var(--jvli-ink-soft);
 }
 
+.jvli-cart__addon-qty p:first-child {
+  color: var(--jvli-ink);
+  font-weight: 700;
+}
+
 .jvli-cart__addon-qty .jvli-cart__addon-note {
   margin-top: 2px;
   font-size: 12px;
