@@ -58,6 +58,16 @@ async function open(browser, width, height) {
   return { page, state };
 }
 
+// Whether the page is pointing at the Size choice: the note under the sizes
+// shows and the boxes are outlined.
+const askingForSize = (page) =>
+  page.evaluate(() => {
+    const set = document.querySelector('[data-jvli-property="Size"]');
+    const note = set.querySelector("[data-jvli-property-note]");
+    const box = set.getBoundingClientRect();
+    return !note.hidden && note.textContent === "Please choose a size" && set.classList.contains("is-missing") && box.top >= 0 && box.bottom <= window.innerHeight;
+  });
+
 // Which photo (1, 2, 3...) is in front: the active one, or on phones the one scrolled to.
 const frontPhoto = (page) =>
   page.evaluate(() => {
@@ -89,13 +99,14 @@ for (const [label, width, height] of [["desktop", 1440, 900], ["phone", 390, 844
 
   check("Buy it now waits until a size is chosen", await waiting());
   await page.locator(".shopify-payment-button .shopify-payment-button__button").click({ force: true });
-  await page.waitForTimeout(150);
-  check("Tapping the waiting Buy it now asks for a size", (await message.textContent()) === "Please choose a size.", await message.textContent());
+  await page.waitForTimeout(700);
+  check("Tapping the waiting Buy it now points at the sizes", await askingForSize(page));
 
-  await message.evaluate((el) => (el.textContent = ""));
+  await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   await page.click("[data-jvli-add-button]");
-  await page.waitForTimeout(200);
-  check("Add to bag without a size asks for one", (await message.textContent()) === "Please choose a size.", await message.textContent());
+  await page.waitForTimeout(900);
+  check("Add to bag without a size scrolls to the sizes and points at them", await askingForSize(page));
+  check("No message under Add to bag", (await message.textContent()) === "", await message.textContent());
   check("Nothing is sent to the bag without a size", state.adds.length === 0, state.adds.length);
 
   const arrows = await page.evaluate(() => [...document.querySelectorAll("[data-jvli-step]")].filter((a) => !a.hidden && a.offsetParent).length);
@@ -182,10 +193,15 @@ for (const [label, width, height] of [["desktop", 1440, 900], ["phone", 390, 844
     check("With dupatta: our Buy it now shows instead of Shopify's", d.ourBuy && !d.shopifyBuy, JSON.stringify(d));
 
     await page.click("[data-jvli-buy-both]");
-    await page.waitForTimeout(200);
-    check("Our Buy it now asks for a size first", (await message.textContent()) === "Please choose a size." && state.adds.length === 0, await message.textContent());
+    await page.waitForTimeout(700);
+    check("Our Buy it now points at the sizes first", (await askingForSize(page)) && state.adds.length === 0);
 
     await page.locator('[data-jvli-property="Size"] label').filter({ has: page.locator('input[value="L"]') }).click();
+    const cleared = await page.evaluate(() => {
+      const set = document.querySelector('[data-jvli-property="Size"]');
+      return set.querySelector("[data-jvli-property-note]").hidden && !set.classList.contains("is-missing");
+    });
+    check("Picking a size clears the note and outline", cleared);
     for (let k = 0; k < 3; k++) await page.click('[data-jvli-qty="1"]');
     await page.click("[data-jvli-add-button]");
     await page.waitForTimeout(300);

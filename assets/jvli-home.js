@@ -1273,6 +1273,23 @@
     return missing;
   }
 
+  // Point at a choice that's still missing: scroll it into view, outline and
+  // nudge its boxes, and show the note under them until it's picked.
+  function askFor(form, name) {
+    var fieldset = form.querySelector('[data-jvli-property="' + name + '"]');
+    if (!fieldset) return;
+    var note = fieldset.querySelector('[data-jvli-property-note]');
+    if (note) note.hidden = false;
+    fieldset.classList.remove('is-missing');
+    void fieldset.offsetWidth; // restart the nudge on every tap
+    fieldset.classList.add('is-missing');
+    var box = fieldset.getBoundingClientRect();
+    if (box.top < 90 || box.bottom > window.innerHeight) {
+      var still = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      fieldset.scrollIntoView({ block: 'center', behavior: still ? 'auto' : 'smooth' });
+    }
+  }
+
   // Show the picked value beside the label, and let Buy it now through once
   // every choice is made.
   document.addEventListener('change', function (event) {
@@ -1280,6 +1297,9 @@
     if (!fieldset) return;
     var shown = fieldset.querySelector('[data-jvli-property-value]');
     if (shown) shown.textContent = event.target.value;
+    var note = fieldset.querySelector('[data-jvli-property-note]');
+    if (note) note.hidden = true;
+    fieldset.classList.remove('is-missing');
     var form = fieldset.closest('form');
     var wait = form && form.querySelector('[data-jvli-buy-now-wait]');
     if (wait) wait.classList.toggle('is-waiting', !!missingProperty(form));
@@ -1294,9 +1314,8 @@
       event.preventDefault();
       event.stopPropagation();
       var form = wait.closest('form');
-      var message = form && form.querySelector('[data-jvli-add-message]');
       var missing = form && missingProperty(form);
-      if (message && missing) message.textContent = 'Please choose a ' + missing.toLowerCase() + '.';
+      if (missing) askFor(form, missing);
     },
     true
   );
@@ -1328,7 +1347,8 @@
       properties[input.closest('[data-jvli-property]').getAttribute('data-jvli-property')] = input.value;
     });
     if (missing) {
-      if (message) message.textContent = 'Please choose a ' + missing.toLowerCase() + '.';
+      if (message) message.textContent = '';
+      askFor(form, missing);
       return null;
     }
 

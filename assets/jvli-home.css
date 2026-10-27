@@ -5283,3 +5283,73 @@ a.jvli-card__choose {
   font-size: 14px;
   color: var(--jvli-ink-soft);
 }
+
+/* Made-to-order: a choice still to make is pointed out where it's made. The
+   boxes get a maroon outline and a small nudge, with a note underneath. */
+.jvli-product__option.is-missing [data-jvli-property-value] {
+  color: var(--jvli-maroon);
+}
+
+.jvli-product__option.is-missing .jvli-card__size span {
+  border-color: var(--jvli-maroon);
+}
+
+.jvli-product__option.is-missing .jvli-product__values {
+  animation: jvli-nudge 0.42s ease;
+}
+
+@keyframes jvli-nudge {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  20% {
+    transform: translateX(-6px);
+  }
+  40% {
+    transform: translateX(6px);
+  }
+  60% {
+    transform: translateX(-4px);
+  }
+  80% {
+    transform: translateX(3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jvli-product__option.is-missing .jvli-product__values {
+    animation: none;
+  }
+}
+
+.jvli-product__choose-note {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 12px 0 0;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  color: var(--jvli-maroon);
+}
+
+.jvli-product__choose-note[hidden] {
+  display: none;
+}
+
+.jvli-product__choose-note::before {
+  content: "!";
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--jvli-maroon);
+  color: #fff;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1;
+}
+
