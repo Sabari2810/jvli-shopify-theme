@@ -184,7 +184,10 @@
                     {%- if jvli_piece > 0 -%}
                       {%- comment -%} A paired dupatta follows its piece's quantity. {%- endcomment -%}
                       <input type="hidden" name="updates[{{ item.key }}]" value="{{ item.quantity }}">
-                      <p class="jvli-cart__addon-qty">Qty {{ item.quantity }}</p>
+                      <div class="jvli-cart__addon-qty">
+                        <p>Qty {{ item.quantity }}</p>
+                        <p class="jvli-cart__addon-note">Matches the kurti quantity</p>
+                      </div>
                     {%- else -%}
                     <div class="jvli-product__qty jvli-cart__qty">
                       <button type="button" data-jvli-cart-step="-1" aria-label="Decrease quantity of {{ item.product.title | escape }}">−</button>
@@ -201,8 +204,9 @@
                       <button type="button" data-jvli-cart-step="1" aria-label="Increase quantity of {{ item.product.title | escape }}">+</button>
                     </div>
                     {%- endif -%}
-                    <a href="{{ item.url_to_remove }}" class="jvli-cart__remove" data-jvli-cart-remove aria-label="Remove {{ item.product.title | escape }}" title="Remove">
+                    <a href="{{ item.url_to_remove }}" class="jvli-cart__remove" data-jvli-cart-remove aria-label="Remove {{ item.product.title | escape }}">
                       {%- render 'jvli-icon', icon: 'trash' -%}
+                      <span aria-hidden="true">Remove</span>
                     </a>
                     {%- if item.quantity > 1 -%}
                       <p class="jvli-cart__each">{{ item.final_price | money_without_trailing_zeros }} × {{ item.quantity }} = {{ item.final_line_price | money_without_trailing_zeros }}</p>

@@ -3516,27 +3516,33 @@ html.jvli-search-open {
   height: 42px;
 }
 
-/* Remove: a bin icon with a comfortable tap area. */
+/* Remove: a maroon bin and word, with a comfortable tap area. */
 .jvli-cart__remove {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  color: var(--jvli-ink-soft);
-  transition: color 0.2s ease, background-color 0.2s ease;
+  gap: 6px;
+  min-height: 40px;
+  padding: 0 4px;
+  color: var(--jvli-maroon);
+  font-size: 14px;
+  font-weight: 600;
+  transition: color 0.2s ease;
 }
 
 .jvli-cart__remove .jvli-icon {
-  --jvli-icon-size: 21px;
-  stroke-width: 1.4;
+  --jvli-icon-size: 18px;
+  stroke-width: 1.8;
 }
 
 .jvli-cart__remove:hover,
 .jvli-cart__remove:focus-visible {
-  color: var(--jvli-maroon);
-  background: rgba(118, 53, 48, 0.08);
+  color: #652c28;
+}
+
+.jvli-cart__remove:hover span,
+.jvli-cart__remove:focus-visible span {
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .jvli-cart__update {
@@ -3706,6 +3712,12 @@ html.jvli-search-open {
     justify-content: space-between;
     flex-wrap: wrap;
     row-gap: 8px;
+  }
+
+  /* The dupatta's quantity note wraps so its Remove stays on the same line. */
+  .jvli-cart__addon-qty {
+    flex: 1 1 0;
+    min-width: 0;
   }
 
   /* No room on a phone: the breakup gets its own line below, at the right. */
@@ -5286,10 +5298,16 @@ a.jvli-card__choose {
 }
 
 /* Bag: a dupatta sits under its piece, its quantity following the piece's. */
-.jvli-cart__addon-qty {
+.jvli-cart__addon-qty p {
   margin: 0;
   font-size: 14px;
   color: var(--jvli-ink-soft);
+}
+
+.jvli-cart__addon-qty .jvli-cart__addon-note {
+  margin-top: 2px;
+  font-size: 12px;
+  color: rgba(34, 28, 24, 0.5);
 }
 
 /* Made-to-order: a choice still to make is pointed out where it's made: a
