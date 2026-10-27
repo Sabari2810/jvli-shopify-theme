@@ -222,6 +222,24 @@ for (const [label, width, height] of [["desktop", 1440, 900], ["phone", 390, 844
   }
 }
 
+/* ---------- Sold-out dupatta ---------- */
+render({ MTO: "1", TEMPLATE: "product", DUPATTA_SOLD_OUT: "1" });
+console.log("\nSold-out dupatta");
+{
+  const { page, state } = await open(browser, 1440, 900);
+  const out = await page.evaluate(() => {
+    const label = document.querySelectorAll("[data-jvli-dupatta] label")[1];
+    return { text: label.innerText.trim(), disabled: label.querySelector("input").disabled, marked: label.classList.contains("is-unavailable") };
+  });
+  check("Sold-out dupatta says so and can't be picked", out.text === "With dupatta (sold out)" && out.disabled && out.marked, JSON.stringify(out));
+  await page.locator('[data-jvli-property="Size"] label').filter({ has: page.locator('input[value="M"]') }).click();
+  await page.click("[data-jvli-add-button]");
+  await page.waitForTimeout(300);
+  const items = state.adds[0]?.items || [];
+  check("The kurti can still be bought on its own", items.length === 1 && items[0].properties.Size === "M", JSON.stringify(items));
+  await page.close();
+}
+
 /* ---------- Bag page ---------- */
 render({ MTO: "1", TEMPLATE: "cart" });
 console.log("\nBag page");

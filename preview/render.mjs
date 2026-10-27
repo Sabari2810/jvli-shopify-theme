@@ -11,6 +11,7 @@
 //   MTO             render a made-to-order product (Size chosen on
 //                   the page, with a dupatta add-on); with TEMPLATE=cart, the
 //                   first line carries them and is paired with a dupatta line
+//   DUPATTA_SOLD_OUT with MTO, the dupatta add-on is sold out
 import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -143,7 +144,9 @@ function sampleMadeToOrder(page) {
           value: {
             id: 901,
             title: `Dupatta for ${page.title}`,
-            selected_or_first_available_variant: { id: 9010, price: 30000, available: true, inventory_management: "shopify", inventory_policy: "deny", inventory_quantity: 2 },
+            selected_or_first_available_variant: process.env.DUPATTA_SOLD_OUT
+              ? { id: 9010, price: 30000, available: false, inventory_management: "shopify", inventory_policy: "deny", inventory_quantity: 0 }
+              : { id: 9010, price: 30000, available: true, inventory_management: "shopify", inventory_policy: "deny", inventory_quantity: 2 },
           },
         },
       },
