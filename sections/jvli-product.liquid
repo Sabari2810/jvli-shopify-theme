@@ -103,6 +103,9 @@
         <p class="jvli-product__note">{{ section.settings.tax_note }}</p>
       {%- endif -%}
 
+      {%- if product.tags contains 'dupatta' -%}
+        <p class="jvli-product__sold-with">This dupatta is sold with its kurti. Choose "With dupatta" on the kurti's page.</p>
+      {%- else -%}
       {%- form 'product', product, class: 'jvli-product__form', data-jvli-add-form: '', data-jvli-product-form: '', novalidate: 'novalidate' -%}
         <input type="hidden" name="id" value="{{ current.id }}" data-jvli-variant-id>
 
@@ -176,6 +179,50 @@
           {%- endif -%}
         {%- endfor -%}
 
+        {%- comment -%}
+          Dupatta add-on: a product can be linked to its own dupatta product
+          ("Made to order: dupatta"), with its own price and stock. "With
+          dupatta" adds it to the bag as a second line, "For: <this product>
+          (<choices>)", which the bag keeps in step with this one.
+        {%- endcomment -%}
+        {%- liquid
+          assign dupatta = product.metafields.custom.made_to_order_dupatta.value
+          assign dupatta_variant = dupatta.selected_or_first_available_variant
+          assign dupatta_max = 20
+          if dupatta_variant.inventory_management == 'shopify' and dupatta_variant.inventory_policy == 'deny' and dupatta_variant.inventory_quantity < dupatta_max
+            assign dupatta_max = dupatta_variant.inventory_quantity | at_least: 1
+          endif
+        -%}
+        {%- if dupatta != blank and dupatta_variant != blank -%}
+          <fieldset
+            class="jvli-product__option"
+            data-jvli-dupatta
+            data-variant-id="{{ dupatta_variant.id }}"
+            data-cents="{{ dupatta_variant.price }}"
+            data-max="{{ dupatta_max }}"
+            data-for="{{ product.title | escape }}"
+          >
+            <legend class="jvli-product__label">Dupatta: <span data-jvli-dupatta-value>Without</span></legend>
+            <div class="jvli-card__sizes jvli-product__values">
+              <label class="jvli-card__size">
+                <input type="radio" name="jvli_dupatta" value="" checked>
+                <span>Without</span>
+              </label>
+              <label class="jvli-card__size{% unless dupatta_variant.available %} is-unavailable{% endunless %}">
+                <input type="radio" name="jvli_dupatta" value="with"{% unless dupatta_variant.available %} disabled{% endunless %}>
+                <span>
+                  {%- if dupatta_variant.available -%}
+                    With dupatta +{{ dupatta_variant.price | money_without_trailing_zeros }}
+                  {%- else -%}
+                    With dupatta (sold out)
+                  {%- endif -%}
+                </span>
+              </label>
+            </div>
+            <p class="jvli-product__dupatta-total" data-jvli-dupatta-total hidden></p>
+          </fieldset>
+        {%- endif -%}
+
         <div class="jvli-product__buy">
           <div class="jvli-product__qty">
             <button type="button" data-jvli-qty="-1" aria-label="Decrease quantity">−</button>
@@ -205,8 +252,19 @@
         {%- endcomment -%}
         {%- if section.settings.show_dynamic_checkout -%}
           <div class="jvli-product__checkout{% if made_to_order %} is-waiting{% endif %}"{% if made_to_order %} data-jvli-buy-now-wait{% endif %}>{{ form | payment_button }}</div>
+          {%- comment -%}
+            Shopify's Buy it now can only buy one item, so with a dupatta
+            chosen this one shows instead: it adds both to the bag and goes
+            to checkout.
+          {%- endcomment -%}
+          {%- if dupatta != blank and dupatta_variant != blank -%}
+            <div class="jvli-product__checkout" data-jvli-buy-both-wrap hidden>
+              <button type="button" class="jvli-product__buy-both shopify-payment-button__button shopify-payment-button__button--unbranded" data-jvli-buy-both>Buy it now</button>
+            </div>
+          {%- endif -%}
         {%- endif -%}
       {%- endform -%}
+      {%- endif -%}
 
       {%- render 'jvli-favorite-button', product: product, style: 'text' -%}
 
@@ -253,6 +311,7 @@
           "id": {{ variant.id }},
           "options": {{ variant.options | json }},
           "available": {{ variant.available | json }},
+          "cents": {{ variant.price }},
           "max": {% if variant.inventory_management == 'shopify' and variant.inventory_policy == 'deny' and variant.inventory_quantity < 20 %}{{ variant.inventory_quantity | at_least: 1 }}{% else %}20{% endif %},
           "media": {{ variant.featured_media.id | default: 'null' }},
           "price": {% capture price_html %}{% render 'jvli-product-price', variant: variant %}{% endcapture %}{{ price_html | strip | json }}

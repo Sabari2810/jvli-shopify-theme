@@ -6,8 +6,9 @@
 
   Without JavaScript it is a plain form: quantities post as updates[] and
   "Update bag" / "Checkout" submit it. jvli-home.js (initCart) changes
-  quantities and removes items in place through /cart/change.js, re-rendering
-  this section from the response.
+  quantities and removes items in place through /cart/update.js, re-rendering
+  this section from the response. A dupatta add-on is listed under the piece
+  it was bought with and follows its quantity.
 {%- endcomment -%}
 <section class="jvli jvli-cart" data-jvli-cart data-section-id="{{ section.id }}">
   <div class="jvli-container">
@@ -41,17 +42,116 @@
       <form action="{{ routes.cart_url }}" method="post" class="jvli-cart__layout" novalidate data-jvli-cart-form>
         <div class="jvli-cart__main">
           <p class="jvli-cart__error" role="alert" data-jvli-cart-error hidden></p>
+          {%- liquid
+            # Dupatta add-ons: a dupatta line belongs to the piece it was
+            # bought with. Its "For" property is "<title> (<variant>, <choices>)"
+            # of that line, built the same way as here in jvli-home.js
+            # (cartItems). jvli_pairs lists ",piece:dupatta," line numbers.
+            assign jvli_pairs = ','
+            assign jvli_paired = ','
+            for item in cart.items
+              assign jvli_dupatta = item.product.metafields.custom.made_to_order_dupatta.value
+              if jvli_dupatta == blank
+                continue
+              endif
+              assign jvli_parts = ''
+              unless item.product.has_only_default_variant
+                assign jvli_parts = item.variant.title
+              endunless
+              for property in item.properties
+                assign first_char = property.first | slice: 0
+                if property.last != blank and first_char != '_'
+                  if jvli_parts != ''
+                    assign jvli_parts = jvli_parts | append: ', '
+                  endif
+                  assign jvli_parts = jvli_parts | append: property.last
+                endif
+              endfor
+              assign jvli_for = item.product.title
+              if jvli_parts != ''
+                assign jvli_for = jvli_for | append: ' (' | append: jvli_parts | append: ')'
+              endif
+              assign jvli_line = forloop.index
+              for other in cart.items
+                assign jvli_mark = ',' | append: forloop.index | append: ','
+                if other.product_id == jvli_dupatta.id and other.properties.For == jvli_for
+                  unless jvli_paired contains jvli_mark
+                    assign jvli_paired = jvli_paired | append: forloop.index | append: ','
+                    assign jvli_pairs = jvli_pairs | append: jvli_line | append: ':' | append: forloop.index | append: ','
+                    break
+                  endunless
+                endif
+              endfor
+            endfor
+
+            # Line order on the page: each piece followed by its dupatta.
+            assign jvli_order = ''
+            for item in cart.items
+              assign jvli_mark = ',' | append: forloop.index | append: ','
+              if jvli_paired contains jvli_mark
+                continue
+              endif
+              assign jvli_order = jvli_order | append: forloop.index | append: ','
+              assign jvli_key = ',' | append: forloop.index | append: ':'
+              if jvli_pairs contains jvli_key
+                assign jvli_partner = jvli_pairs | split: jvli_key | last | split: ',' | first
+                assign jvli_order = jvli_order | append: jvli_partner | append: ','
+              endif
+            endfor
+            assign jvli_order = jvli_order | split: ','
+          -%}
           <ul class="jvli-cart__items" role="list">
-            {%- for item in cart.items -%}
-              <li class="jvli-cart__item" data-jvli-cart-line="{{ forloop.index }}">
-                <a href="{{ item.url }}" class="jvli-cart__media" tabindex="-1" aria-hidden="true">
+            {%- for jvli_n in jvli_order -%}
+              {%- liquid
+                assign jvli_index = jvli_n | plus: 0
+                assign jvli_i0 = jvli_index | minus: 1
+                assign item = cart.items[jvli_i0]
+                assign jvli_key = ',' | append: jvli_index | append: ':'
+                assign jvli_partner = 0
+                assign jvli_piece = 0
+                if jvli_pairs contains jvli_key
+                  assign jvli_partner = jvli_pairs | split: jvli_key | last | split: ',' | first | plus: 0
+                endif
+                assign jvli_mark = ':' | append: jvli_index | append: ','
+                if jvli_pairs contains jvli_mark
+                  assign jvli_piece = jvli_pairs | split: jvli_mark | first | split: ',' | last | plus: 0
+                endif
+                assign jvli_url = item.url
+                if jvli_piece > 0
+                  assign jvli_i0 = jvli_piece | minus: 1
+                  assign jvli_url = cart.items[jvli_i0].url
+                endif
+                assign jvli_max = ''
+                if item.variant.inventory_management == 'shopify' and item.variant.inventory_policy == 'deny'
+                  assign jvli_max = item.variant.inventory_quantity
+                endif
+                # A piece can't go past what its dupatta's stock allows either.
+                if jvli_partner > 0
+                  assign jvli_i0 = jvli_partner | minus: 1
+                  assign jvli_other = cart.items[jvli_i0]
+                  if jvli_other.variant.inventory_management == 'shopify' and jvli_other.variant.inventory_policy == 'deny'
+                    assign jvli_room = item.quantity | plus: jvli_other.variant.inventory_quantity | minus: jvli_other.quantity
+                    if jvli_max == '' or jvli_room < jvli_max
+                      assign jvli_max = jvli_room
+                    endif
+                  endif
+                endif
+              -%}
+              <li
+                class="jvli-cart__item{% if jvli_piece > 0 %} jvli-cart__item--addon{% endif %}"
+                data-jvli-cart-line="{{ jvli_index }}"
+                data-jvli-cart-key="{{ item.key }}"
+                data-jvli-cart-quantity="{{ item.quantity }}"
+                {% if jvli_partner > 0 %}data-jvli-cart-partner="{{ jvli_partner }}"{% endif %}
+              >
+                <a href="{{ jvli_url }}" class="jvli-cart__media" tabindex="-1" aria-hidden="true">
                   {%- render 'jvli-media', image: item.image, alt: '', sizes: '(max-width: 749px) 96px, 140px', class: 'jvli-cover', placeholder: 'product-apparel-1' -%}
                 </a>
 
                 <div class="jvli-cart__details">
                   <div class="jvli-cart__top">
                     <div class="jvli-cart__info">
-                      <a href="{{ item.url }}" class="jvli-cart__name">{{ item.product.title }}</a>
+                      <a href="{{ jvli_url }}" class="jvli-cart__name">{{ item.product.title }}</a>
                       {%- unless item.product.has_only_default_variant -%}
                         <p class="jvli-cart__variant">
                           {%- for option in item.options_with_values -%}
@@ -81,20 +181,26 @@
                   </div>
 
                   <div class="jvli-cart__controls">
+                    {%- if jvli_piece > 0 -%}
+                      {%- comment -%} A paired dupatta follows its piece's quantity. {%- endcomment -%}
+                      <input type="hidden" name="updates[{{ item.key }}]" value="{{ item.quantity }}">
+                      <p class="jvli-cart__addon-qty">Qty {{ item.quantity }}</p>
+                    {%- else -%}
                     <div class="jvli-product__qty jvli-cart__qty">
                       <button type="button" data-jvli-cart-step="-1" aria-label="Decrease quantity of {{ item.product.title | escape }}">−</button>
                       <input
                         type="number"
-                        name="updates[]"
+                        name="updates[{{ item.key }}]"
                         value="{{ item.quantity }}"
                         min="0"
-                        {% if item.variant.inventory_management == 'shopify' and item.variant.inventory_policy == 'deny' %}max="{{ item.variant.inventory_quantity }}"{% endif %}
+                        {% if jvli_max != '' %}max="{{ jvli_max | at_least: 0 }}"{% endif %}
                         inputmode="numeric"
                         aria-label="Quantity of {{ item.product.title | escape }}"
                         data-jvli-cart-qty
                       >
                       <button type="button" data-jvli-cart-step="1" aria-label="Increase quantity of {{ item.product.title | escape }}">+</button>
                     </div>
+                    {%- endif -%}
                     <a href="{{ item.url_to_remove }}" class="jvli-cart__remove" data-jvli-cart-remove>Remove</a>
                     {%- if item.quantity > 1 -%}
                       <p class="jvli-cart__each">{{ item.final_price | money_without_trailing_zeros }} × {{ item.quantity }} = {{ item.final_line_price | money_without_trailing_zeros }}</p>

@@ -6,7 +6,11 @@
   button whose value is the variant id, so the form posts the chosen variant
   to /cart/add even without JavaScript. Otherwise the first available variant
   is added. The heart is saved by jvli-favorites.js.
+
+  Dupatta add-ons (tagged "dupatta") are sold only with their kurti, so they
+  get no card in any grid.
 {%- endcomment -%}
+{%- unless product.tags contains 'dupatta' -%}
 {%- liquid
   assign jvli_size_index = -1
   for option in product.options_with_values
@@ -109,3 +113,4 @@
     {%- endif -%}
   </div>
 </article>
+{%- endunless -%}

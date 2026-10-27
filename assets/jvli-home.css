@@ -5264,3 +5264,35 @@ a.jvli-card__choose {
 .jvli-product__slide img {
   object-fit: contain;
 }
+
+/* Dupatta add-on (product page): the total with the dupatta, and our Buy it
+   now for both, styled like Shopify's. */
+.jvli-product__dupatta-total {
+  margin: 10px 0 0;
+  font-size: 15px;
+  color: var(--jvli-ink);
+}
+
+.jvli-product__buy-both {
+  display: block;
+  width: 100%;
+  color: #fff;
+  cursor: pointer;
+}
+
+.jvli-product__buy-both[disabled] {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.jvli-product__sold-with {
+  margin: 24px 0;
+  color: var(--jvli-ink-soft);
+}
+
+/* Bag: a dupatta sits under its piece, its quantity following the piece's. */
+.jvli-cart__addon-qty {
+  margin: 0;
+  font-size: 14px;
+  color: var(--jvli-ink-soft);
+}

@@ -578,8 +578,10 @@
 
   /* ---------- Cart page ----------
      Quantity steppers and Remove update the bag in place through
-     /cart/change.js, which also returns this section re-rendered; the new
-     HTML replaces the old. The form still works without JavaScript. */
+     /cart/update.js, which also returns this section re-rendered; the new
+     HTML replaces the old. A dupatta add-on moves with the piece it was
+     bought with: up or down by the same amount, and removed with it. The
+     form still works without JavaScript. */
 
   var cartBusy = false;
 
@@ -602,10 +604,18 @@
     section.classList.add('is-updating');
     var sectionId = section.dataset.sectionId;
     var focusLine = line;
-    fetch(root + 'cart/change.js', {
+    var row = section.querySelector('[data-jvli-cart-line="' + line + '"]');
+    var updates = {};
+    updates[row.dataset.jvliCartKey] = quantity;
+    var partner = row.dataset.jvliCartPartner && section.querySelector('[data-jvli-cart-line="' + row.dataset.jvliCartPartner + '"]');
+    if (partner) {
+      var change = quantity - Number(row.dataset.jvliCartQuantity);
+      updates[partner.dataset.jvliCartKey] = quantity === 0 ? 0 : Math.max(0, Number(partner.dataset.jvliCartQuantity) + change);
+    }
+    fetch(root + 'cart/update.js', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({ line: line, quantity: quantity, sections: [sectionId], sections_url: window.location.pathname }),
+      body: JSON.stringify({ updates: updates, sections: [sectionId], sections_url: window.location.pathname }),
     })
       .then(function (response) {
         return response.json().then(function (data) {
@@ -739,6 +749,39 @@
         if (!qtyInput) return;
         var max = parseInt(qtyInput.max, 10) || 20;
         qtyInput.value = Math.min(Math.max(parseInt(qtyInput.value, 10) || 1, 1), max);
+      }
+
+      /* Dupatta add-on: with "With dupatta" chosen, the total shows under
+         the choice, the counter stops at the lower of the two stocks, and
+         our Buy it now (both items) stands in for Shopify's. */
+      var dupatta = section.querySelector('[data-jvli-dupatta]');
+      function syncDupatta() {
+        if (!dupatta) return;
+        var chosen = !!chosenDupatta(form);
+        if (qtyInput) {
+          var base = parseInt(qtyInput.dataset.jvliBaseMax || qtyInput.max, 10) || 20;
+          qtyInput.dataset.jvliBaseMax = base;
+          qtyInput.max = chosen ? Math.min(base, parseInt(dupatta.dataset.max, 10) || base) : base;
+          clampQty();
+        }
+        var label = dupatta.querySelector('[data-jvli-dupatta-value]');
+        if (label) label.textContent = chosen ? 'With' : 'Without';
+        var total = dupatta.querySelector('[data-jvli-dupatta-total]');
+        var variant = variants.filter(function (v) {
+          return idInput && String(v.id) === idInput.value;
+        })[0];
+        if (total) {
+          total.hidden = !chosen || !variant;
+          if (chosen && variant) total.textContent = 'With dupatta: ' + formatPrice((variant.cents + Number(dupatta.dataset.cents)) / 100);
+        }
+        var own = section.querySelector('[data-jvli-buy-both-wrap]');
+        var shopifyBuy = section.querySelector('.jvli-product__checkout:not([data-jvli-buy-both-wrap])');
+        if (own) own.hidden = !chosen;
+        if (shopifyBuy) shopifyBuy.hidden = chosen;
+      }
+      if (dupatta) {
+        dupatta.addEventListener('change', syncDupatta);
+        syncDupatta();
       }
 
       /* Gallery: thumbnails, dots and swiping share one "show" function. */
@@ -899,8 +942,10 @@
         if (idInput) idInput.value = variant.id;
         if (qtyInput && variant.max) {
           qtyInput.max = variant.max;
+          qtyInput.dataset.jvliBaseMax = variant.max;
           clampQty();
         }
+        syncDupatta();
         if (priceEl) priceEl.innerHTML = variant.price;
         if (variant.media) showMedia(variant.media, true);
         // Keep the URL shareable for the chosen variant.
@@ -1316,18 +1361,24 @@
     true
   );
 
-  function onAddSubmit(event) {
-    var form = event.target.closest('[data-jvli-add-form]');
-    if (!form) return;
-    event.preventDefault();
+  // The dupatta box when "With dupatta" is chosen, else null.
+  function chosenDupatta(form) {
+    var box = form.querySelector('[data-jvli-dupatta]');
+    var input = box && box.querySelector('input:checked');
+    return input && input.value ? box : null;
+  }
 
+  // What the form puts in the bag: the product with its choices, and its
+  // dupatta when chosen. The dupatta line says which piece it goes with,
+  // "For: <product> (<variant>, <choices>)"; jvli-cart.liquid builds the same
+  // text to pair the two lines. Says what's missing and returns null if a
+  // choice isn't made yet.
+  function cartItems(form) {
     var message = form.querySelector('[data-jvli-add-message]');
-    var button = form.querySelector('button[type="submit"]');
     var idField = form.querySelector('input[name="id"]:checked') || form.querySelector('input[type="hidden"][name="id"]');
-
     if (!idField) {
       if (message) message.textContent = 'Please choose a size.';
-      return;
+      return null;
     }
 
     // Made-to-order choices (line item properties), e.g. Size and Sleeve.
@@ -1338,28 +1389,79 @@
     });
     if (missing) {
       if (message) message.textContent = 'Please choose a ' + missing.toLowerCase() + '.';
-      return;
+      return null;
     }
 
-    var label = button.textContent;
     var quantityField = form.querySelector('[name="quantity"]');
     var quantity = Math.max(1, parseInt(quantityField && quantityField.value, 10) || 1);
+    var items = [{ id: Number(idField.value), quantity: quantity, properties: properties }];
+
+    var dupatta = chosenDupatta(form);
+    if (dupatta) {
+      var parts = [];
+      var options = Array.prototype.map.call(form.querySelectorAll('[data-jvli-option] input:checked'), function (input) {
+        return input.value;
+      });
+      if (options.length) parts.push(options.join(' / '));
+      Object.keys(properties).forEach(function (key) {
+        parts.push(properties[key]);
+      });
+      var forText = dupatta.dataset.for + (parts.length ? ' (' + parts.join(', ') + ')' : '');
+      items.push({ id: Number(dupatta.dataset.variantId), quantity: quantity, properties: { For: forText } });
+    }
+    return items;
+  }
+
+  function addItems(items) {
+    return fetch(root + 'cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ items: items }),
+    }).then(function (response) {
+      return response.json().then(function (data) {
+        if (!response.ok) throw new Error(data.description || data.message || 'Could not add to bag');
+        return data;
+      });
+    });
+  }
+
+  // Buy it now with a dupatta: both go in the bag, then on to checkout.
+  document.addEventListener('click', function (event) {
+    var button = event.target.closest && event.target.closest('[data-jvli-buy-both]');
+    if (!button) return;
+    var form = button.closest('form');
+    var items = form && cartItems(form);
+    if (!items) return;
+    var message = form.querySelector('[data-jvli-add-message]');
+    if (message) message.textContent = '';
+    button.disabled = true;
+    addItems(items)
+      .then(function () {
+        window.location.href = root + 'checkout';
+      })
+      .catch(function (error) {
+        if (message) message.textContent = error.message;
+        button.disabled = false;
+      });
+  });
+
+  function onAddSubmit(event) {
+    var form = event.target.closest('[data-jvli-add-form]');
+    if (!form) return;
+    event.preventDefault();
+
+    var message = form.querySelector('[data-jvli-add-message]');
+    var button = form.querySelector('button[type="submit"]');
+    var items = cartItems(form);
+    if (!items) return;
+
+    var label = button.textContent;
     var added = form.querySelector('[data-jvli-added]');
     button.disabled = true;
     if (message) message.textContent = '';
     if (added) added.hidden = true;
 
-    fetch(root + 'cart/add.js', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
-      body: JSON.stringify({ items: [{ id: Number(idField.value), quantity: quantity, properties: properties }] }),
-    })
-      .then(function (response) {
-        return response.json().then(function (data) {
-          if (!response.ok) throw new Error(data.description || data.message || 'Could not add to bag');
-          return data;
-        });
-      })
+    addItems(items)
       .then(function () {
         button.textContent = 'Added';
         if (added) added.hidden = false;
