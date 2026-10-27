@@ -3516,19 +3516,27 @@ html.jvli-search-open {
   height: 42px;
 }
 
+/* Remove: a bin icon with a comfortable tap area. */
 .jvli-cart__remove {
-  font-family: var(--jvli-caps);
-  font-size: 11px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   color: var(--jvli-ink-soft);
-  border-bottom: 1px solid transparent;
-  transition: color 0.2s ease, border-color 0.2s ease;
+  transition: color 0.2s ease, background-color 0.2s ease;
 }
 
-.jvli-cart__remove:hover {
-  color: var(--jvli-ink);
-  border-bottom-color: currentColor;
+.jvli-cart__remove .jvli-icon {
+  --jvli-icon-size: 21px;
+  stroke-width: 1.4;
+}
+
+.jvli-cart__remove:hover,
+.jvli-cart__remove:focus-visible {
+  color: var(--jvli-maroon);
+  background: rgba(118, 53, 48, 0.08);
 }
 
 .jvli-cart__update {
@@ -5284,14 +5292,25 @@ a.jvli-card__choose {
   color: var(--jvli-ink-soft);
 }
 
-/* Made-to-order: a choice still to make is pointed out where it's made. The
-   boxes get a maroon outline and a small nudge, with a note underneath. */
+/* Made-to-order: a choice still to make is pointed out where it's made: a
+   tinted panel, thick maroon boxes with a small nudge, and a note underneath. */
+.jvli-product__option.is-missing {
+  /* A tinted panel around the whole choice, without moving anything. */
+  background: rgba(118, 53, 48, 0.08);
+  box-shadow: 0 0 0 14px rgba(118, 53, 48, 0.08);
+  border-radius: 2px;
+}
+
+.jvli-product__option.is-missing .jvli-product__label,
 .jvli-product__option.is-missing [data-jvli-property-value] {
   color: var(--jvli-maroon);
+  font-weight: 600;
 }
 
 .jvli-product__option.is-missing .jvli-card__size span {
-  border-color: var(--jvli-maroon);
+  border: 2px solid var(--jvli-maroon);
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(118, 53, 48, 0.18);
 }
 
 .jvli-product__option.is-missing .jvli-product__values {
@@ -5327,9 +5346,10 @@ a.jvli-card__choose {
   display: flex;
   align-items: center;
   gap: 8px;
-  margin: 12px 0 0;
-  font-size: 13px;
-  letter-spacing: 0.02em;
+  margin: 14px 0 0;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   color: var(--jvli-maroon);
 }
 
@@ -5343,12 +5363,12 @@ a.jvli-card__choose {
   align-items: center;
   justify-content: center;
   flex: none;
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background: var(--jvli-maroon);
   color: #fff;
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
   line-height: 1;
 }
