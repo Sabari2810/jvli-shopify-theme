@@ -355,7 +355,12 @@
 
   function renderSearchResults(container, query, data) {
     var results = (data && data.resources && data.resources.results) || {};
-    var products = results.products || [];
+    // Dupatta add-ons (tagged "dupatta") are sold only with their kurti.
+    var products = (results.products || []).filter(function (product) {
+      return !(product.tags || []).some(function (tag) {
+        return String(tag).toLowerCase() === 'dupatta';
+      });
+    });
     var collections = results.collections || [];
     var pages = results.pages || [];
     container.replaceChildren();

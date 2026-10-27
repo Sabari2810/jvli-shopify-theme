@@ -43,6 +43,11 @@ async function open(browser, width, height) {
       // No re-rendered section in the reply, so the page reloads itself.
       return route.fulfill({ status: 200, contentType: "application/json", body: '{"item_count":1,"sections":{}}' });
     }
+    if (url.pathname.endsWith("/search/suggest.json")) {
+      const product = (id, title, tags) => ({ id, title, tags, url: `/products/p${id}`, price: "999.00", available: true });
+      const body = { resources: { results: { products: [product(1, "Kaveri Kurti", ["cotton"]), product(901, "Dupatta for Kaveri Kurti", ["Dupatta"])], collections: [], pages: [] } } };
+      return route.fulfill({ status: 200, contentType: "application/json", body: JSON.stringify(body) });
+    }
     if (url.pathname === "/checkout") return route.fulfill({ status: 200, contentType: "text/html", body: "checkout" });
     if (url.host !== "jvli-preview.test") return route.abort();
     const file = join(out, url.pathname);
@@ -282,6 +287,28 @@ console.log("\nBag page");
   check("Removing the dupatta keeps the kurti", JSON.stringify(sent) === JSON.stringify({ [dupattaRow.key]: 0 }), JSON.stringify(sent));
   sent = await step('[data-jvli-cart-line="2"] [data-jvli-cart-step="-1"]');
   check("Other lines change on their own", sent && Object.keys(sent).length === 1 && Object.values(sent)[0] === 1, JSON.stringify(sent));
+}
+
+/* ---------- Search ---------- */
+render({ MTO: "1", TEMPLATE: "search" });
+console.log("\nSearch");
+{
+  const { page, state } = await open(browser, 1440, 900);
+  const page_ = await page.evaluate(() => ({
+    names: [...document.querySelectorAll(".jvli-collection__grid .jvli-card")].map((c) => c.innerText),
+    count: document.querySelector(".jvli-collection__count")?.textContent.trim(),
+    total: document.querySelectorAll(".jvli-collection__grid .jvli-card").length,
+  }));
+  check("Search page leaves dupattas out", page_.total > 0 && !page_.names.some((n) => n.includes("Dupatta")), page_.names.length + " cards");
+  check("Search page doesn't count dupattas", page_.count === `${page_.total + 2} results`, page_.count);
+
+  await page.click("[data-jvli-search-open]");
+  await page.fill("[data-jvli-search-input]", "kaveri");
+  await page.waitForTimeout(800);
+  const typed = await page.evaluate(() => [...document.querySelectorAll("[data-jvli-search-results] .jvli-search__product-title")].map((t) => t.textContent));
+  check("Type-ahead search leaves dupattas out", typed.join() === "Kaveri Kurti", typed.join(" | "));
+  check("No page errors", state.errors.length === 0, state.errors.join("; "));
+  await page.close();
 }
 
 await browser.close();

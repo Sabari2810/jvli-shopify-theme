@@ -397,6 +397,8 @@ function sampleSearch(terms) {
     { object_type: "page", title: "Our Fabrics", url: "/pages/our-fabrics" },
     { object_type: "article", title: "How we choose our cotton", url: "/blogs/journal/cotton" },
   ];
+  // MTO=1: a dupatta add-on matches too; the page must leave it out.
+  if (process.env.MTO) results.unshift({ ...sampleProducts[2], id: 901, title: "Dupatta for Kaveri Kurti", tags: ["dupatta"], object_type: "product" });
   return { performed: true, terms, results, results_count: results.length };
 }
 
