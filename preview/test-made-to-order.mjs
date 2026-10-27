@@ -58,16 +58,14 @@ async function open(browser, width, height) {
   return { page, state };
 }
 
-// The photos showing, by their alt text ("untagged" for none), and the one in front.
-const photos = (page) =>
+// Which photo (1, 2, 3...) is in front: the active one, or on phones the one scrolled to.
+const frontPhoto = (page) =>
   page.evaluate(() => {
     const slides = [...document.querySelectorAll(".jvli-product__slide")];
-    const shown = slides.filter((s) => !s.classList.contains("is-filtered"));
     const g = document.querySelector("[data-jvli-slides]");
     const scrolled = g.scrollWidth > g.clientWidth + 1;
-    const front = scrolled ? shown[Math.round(g.scrollLeft / g.clientWidth)] : slides.find((s) => s.classList.contains("is-active"));
-    const name = (s) => (s && s.dataset.jvliAlt) || "untagged";
-    return { shown: shown.map(name), front: name(front) };
+    const front = scrolled ? slides[Math.round(g.scrollLeft / g.clientWidth)] : slides.find((s) => s.classList.contains("is-active"));
+    return slides.indexOf(front) + 1;
   });
 
 const browser = await chromium.launch();
@@ -82,15 +80,12 @@ for (const [label, width, height] of [["desktop", 1440, 900], ["phone", 390, 844
 
   const start = await page.evaluate(() => ({
     sizes: [...document.querySelectorAll('[data-jvli-property="Size"] input')].map((i) => i.value),
-    sleeves: [...document.querySelectorAll('[data-jvli-property="Sleeve"] input')].map((i) => i.value),
     size: document.querySelector('[data-jvli-property="Size"] input:checked')?.value ?? null,
-    sleeve: document.querySelector('[data-jvli-property="Sleeve"] input:checked')?.value ?? null,
-    sleeveLabel: document.querySelector('[data-jvli-property="Sleeve"] [data-jvli-property-value]')?.textContent,
+    otherChoices: document.querySelectorAll("[data-jvli-property]").length - 1,
   }));
   check("Size choices come from the product's sizes field", start.sizes.join() === "XS,S,M,L,XL", start.sizes.join());
-  check("Sleeve choices come from the product's sleeves field", start.sleeves.join() === "Short,3/4,Full", start.sleeves.join());
+  check("Size is the only made-to-order choice", start.otherChoices === 0, start.otherChoices);
   check("No size chosen to start with", start.size === null, start.size);
-  check("First sleeve chosen to start with, and named", start.sleeve === "Short" && start.sleeveLabel === "Short", `${start.sleeve} / ${start.sleeveLabel}`);
 
   check("Buy it now waits until a size is chosen", await waiting());
   await page.locator(".shopify-payment-button .shopify-payment-button__button").click({ force: true });
@@ -103,29 +98,18 @@ for (const [label, width, height] of [["desktop", 1440, 900], ["phone", 390, 844
   check("Add to bag without a size asks for one", (await message.textContent()) === "Please choose a size.", await message.textContent());
   check("Nothing is sent to the bag without a size", state.adds.length === 0, state.adds.length);
 
-  // Photos: Short shows its own photo and the untagged one; 3/4 has none of
-  // its own, so all show; Full shows its own and the untagged one.
-  let p = await photos(page);
-  check("Short sleeve: only Short and untagged photos", p.shown.join("|") === "Short sleeve|untagged", p.shown.join("|"));
-  check("Short sleeve: a Short photo is in front", p.front === "Short sleeve", p.front);
   const arrows = await page.evaluate(() => [...document.querySelectorAll("[data-jvli-step]")].filter((a) => !a.hidden && a.offsetParent).length);
   check("Both photo arrows show", arrows === 2, arrows);
-  const seen = [];
-  for (let k = 0; k < 2; k++) {
+  const seen = [await frontPhoto(page)];
+  for (let k = 0; k < 3; k++) {
     await page.click('[data-jvli-step="1"]');
     await page.waitForTimeout(450);
-    seen.push((await photos(page)).front);
+    seen.push(await frontPhoto(page));
   }
-  check("Next arrow steps through the shown photos and wraps", seen.join(">") === "untagged>Short sleeve", seen.join(">"));
-  await page.locator('[data-jvli-property="Sleeve"] label', { hasText: "3/4" }).click();
+  await page.click('[data-jvli-step="-1"]');
   await page.waitForTimeout(450);
-  p = await photos(page);
-  check("3/4 sleeve (no own photos): all photos show", p.shown.length === 3, p.shown.join("|"));
-  await page.locator('[data-jvli-property="Sleeve"] label', { hasText: "Full" }).click();
-  await page.waitForTimeout(450);
-  p = await photos(page);
-  check("Full sleeve: only Full and untagged photos", p.shown.join("|") === "Model in a full sleeve kurti|untagged", p.shown.join("|"));
-  check("Full sleeve: a Full photo is in front", p.front === "Model in a full sleeve kurti", p.front);
+  seen.push(await frontPhoto(page));
+  check("Arrows step through all photos and wrap around", seen.join(">") === "1>2>3>1>3", seen.join(">"));
 
   // The sample product has placeholders, not photos, so try a photo in a slide.
   const fit = await page.evaluate(() => {
@@ -158,8 +142,8 @@ for (const [label, width, height] of [["desktop", 1440, 900], ["phone", 390, 844
   await page.waitForTimeout(300);
   const sent = state.adds[0]?.items?.[0];
   check(
-    "Add to bag sends the variant, quantity 2, Size L and Sleeve Full",
-    sent && sent.id > 0 && sent.quantity === 2 && sent.properties?.Size === "L" && sent.properties?.Sleeve === "Full" && Object.keys(sent.properties).length === 2,
+    "Add to bag sends the variant, quantity 2 and Size L",
+    sent && sent.id > 0 && sent.quantity === 2 && JSON.stringify(sent.properties) === JSON.stringify({ Size: "L" }),
     JSON.stringify(sent),
   );
   check("No page errors", state.errors.length === 0, state.errors.join("; "));
@@ -209,9 +193,9 @@ for (const [label, width, height] of [["desktop", 1440, 900], ["phone", 390, 844
     check(
       "Add to bag sends the kurti and its dupatta, 2 each",
       items.length === 2 &&
-        items[0].quantity === 2 && items[0].properties.Size === "L" && items[0].properties.Sleeve === "Short" &&
+        items[0].quantity === 2 && JSON.stringify(items[0].properties) === JSON.stringify({ Size: "L" }) &&
         items[1].id === 9010 && items[1].quantity === 2 &&
-        JSON.stringify(items[1].properties) === JSON.stringify({ For: "Kaveri Kurti (L, Short)" }),
+        JSON.stringify(items[1].properties) === JSON.stringify({ For: "Kaveri Kurti (L)" }),
       JSON.stringify(items),
     );
 
@@ -244,7 +228,7 @@ console.log("\nBag page");
 {
   const { page, state } = await open(browser, 1440, 900);
   const text = await page.locator("[data-jvli-cart-line]").first().innerText();
-  check("Bag line shows the chosen Size and Sleeve", text.includes("Size: M") && text.includes("Sleeve: Short"), text.replace(/\s+/g, " "));
+  check("Bag line shows the chosen Size", text.includes("Size: M"), text.replace(/\s+/g, " "));
   check("Bag line hides properties starting with _", !text.includes("_hidden"));
   const each = await page.locator("[data-jvli-cart-line] .jvli-cart__each").allInnerTexts();
   check("Price breakup shows only on lines with more than one piece", each.length === 1 && /^₹[\d,.]+ × 2 = ₹[\d,.]+$/.test(each[0]), each.join(" | "));
@@ -266,7 +250,7 @@ console.log("\nBag page");
   const kurtiRow = rows[0];
   const dupattaRow = rows[1];
   check("Dupatta line sits right under its kurti", rows.map((r) => r.line).join() === "1,4,2,3" && dupattaRow.name.startsWith("Dupatta for"), rows.map((r) => r.line + " " + r.name).join(" | "));
-  check("Dupatta line says which kurti it's for", dupattaRow.text.includes("For: ") && dupattaRow.text.includes("(M, Short)"), dupattaRow.text);
+  check("Dupatta line says which kurti it's for", dupattaRow.text.includes("For: ") && dupattaRow.text.includes("(M)"), dupattaRow.text);
   check("Dupatta line has no counter, shows its quantity", !dupattaRow.counter && dupattaRow.text.includes("Qty 1"), dupattaRow.text);
   check("Dupatta line links to its kurti", dupattaRow.href === kurtiRow.href, `${dupattaRow.href} vs ${kurtiRow.href}`);
   check("Kurti counter stops where the dupatta's stock runs out (3)", kurtiRow.max === "3", kurtiRow.max);

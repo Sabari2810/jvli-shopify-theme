@@ -58,8 +58,8 @@
       {%- endif -%}
     </div>
 
-    {%- if product.metafields.custom.made_to_order_sizes.value != blank or product.metafields.custom.made_to_order_sleeves.value != blank -%}
-      {%- comment -%} Made-to-order: size and sleeve are picked on the product page. {%- endcomment -%}
+    {%- if product.metafields.custom.made_to_order_sizes.value != blank -%}
+      {%- comment -%} Made-to-order: the size is picked on the product page. {%- endcomment -%}
       <a href="{{ product.url }}" class="jvli-card__add jvli-card__choose">
         {%- if product.available -%}Choose size{%- else -%}Sold out{%- endif -%}
       </a>

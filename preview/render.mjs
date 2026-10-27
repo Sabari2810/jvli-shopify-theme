@@ -8,7 +8,7 @@
 //                   <section>.<block>.jpg or product-<n>.jpg (optional)
 //   TEMPLATE        template to render, e.g. page.favorites (default: index)
 //   LOGGED_IN       set to render as a signed-in customer
-//   MTO             render a made-to-order product (Size and Sleeve chosen on
+//   MTO             render a made-to-order product (Size chosen on
 //                   the page, with a dupatta add-on); with TEMPLATE=cart, the
 //                   first line carries them and is paired with a dupatta line
 import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
@@ -125,8 +125,8 @@ function sampleProductPage() {
   };
 }
 
-// MTO=1: a made-to-order product: one variant, Size and Sleeve chosen as
-// line item properties from the product's own fields.
+// MTO=1: a made-to-order product: one variant, Size chosen as a
+// line item property from the product's own field.
 function sampleMadeToOrder(page) {
   const only = { ...page.variants[1], title: "Default Title", options: ["Default Title"], available: true, inventory_management: "shopify", inventory_policy: "deny", inventory_quantity: 3 };
   return {
@@ -138,7 +138,6 @@ function sampleMadeToOrder(page) {
     metafields: {
       custom: {
         made_to_order_sizes: { value: ["XS", "S", "M", "L", "XL"] },
-        made_to_order_sleeves: { value: ["Short", "3/4", "Full"] },
         // Its own dupatta: ₹300, 2 in stock (fewer than the kurti's 3).
         made_to_order_dupatta: {
           value: {
@@ -149,8 +148,6 @@ function sampleMadeToOrder(page) {
         },
       },
     },
-    // Photos tagged by sleeve in their description; the last one is untagged.
-    media: page.media.map((m, i) => ({ ...m, alt: ["Model in a full sleeve kurti", "Short sleeve", ""][i] ?? "" })),
   };
 }
 
@@ -361,7 +358,7 @@ function sampleCart() {
   // MTO=1: the first line is made to order, its choices saved as properties.
   if (process.env.MTO) {
     const kurti = items[0];
-    kurti.properties = { Size: "M", Sleeve: "Short", _hidden: "x" };
+    kurti.properties = { Size: "M", _hidden: "x" };
     kurti.product_id = 900;
     kurti.options_with_values = [];
     kurti.product = { ...kurti.product, has_only_default_variant: true, metafields: { custom: { made_to_order_dupatta: { value: { id: 901 } } } } };
@@ -373,7 +370,7 @@ function sampleCart() {
       product_id: 901,
       product: { title: `Dupatta for ${kurti.product.title}`, has_only_default_variant: true },
       options_with_values: [],
-      properties: { For: `${kurti.product.title} (M, Short)` },
+      properties: { For: `${kurti.product.title} (M)` },
       variant: { inventory_management: "shopify", inventory_policy: "deny", inventory_quantity: 3 },
     });
   }

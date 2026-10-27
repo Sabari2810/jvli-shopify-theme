@@ -12,9 +12,9 @@
   if product.has_only_default_variant
     assign has_options = false
   endif
-  # Made-to-order products (size/sleeve chosen as line item properties)
+  # Made-to-order products (size chosen as a line item property)
   assign made_to_order = false
-  if product.metafields.custom.made_to_order_sizes.value != blank or product.metafields.custom.made_to_order_sleeves.value != blank
+  if product.metafields.custom.made_to_order_sizes.value != blank
     assign made_to_order = true
   endif
 -%}
@@ -37,7 +37,6 @@
             <figure
               class="jvli-product__slide{% if media.id == current.featured_media.id or forloop.first and current.featured_media == blank %} is-active{% endif %}"
               data-media-id="{{ media.id }}"
-              data-jvli-alt="{{ media.alt | escape }}"
             >
               {%- liquid
                 assign slide_loading = 'lazy'
@@ -139,45 +138,30 @@
         {%- endif -%}
 
         {%- comment -%}
-          Made-to-order choices: set per product in Shopify admin (product
-          page, "Made to order" fields). They aren't variants: the product
-          keeps one stock count, and the choice travels with the order line
-          as a line item property (e.g. "Size: M"). The first sleeve is
-          picked to start with; the size must be picked.
+          Made-to-order size: set per product in Shopify admin (product page,
+          "Made to order: sizes"). Sizes aren't variants: the product keeps one
+          stock count, and the chosen size travels with the order line as a
+          line item property ("Size: M"). It must be picked.
         {%- endcomment -%}
-        {%- liquid
-          assign mto_sizes = product.metafields.custom.made_to_order_sizes.value
-          assign mto_sleeves = product.metafields.custom.made_to_order_sleeves.value
-        -%}
-        {%- for mto in (1..2) -%}
-          {%- liquid
-            if mto == 1
-              assign mto_values = mto_sizes
-              assign mto_name = 'Size'
-            else
-              assign mto_values = mto_sleeves
-              assign mto_name = 'Sleeve'
-            endif
-          -%}
-          {%- if mto_values != blank and mto_values.size > 0 -%}
-            <fieldset class="jvli-product__option" data-jvli-property="{{ mto_name }}">
-              <legend class="jvli-product__label">
-                {{ mto_name }}: <span data-jvli-property-value>{% if mto == 2 %}{{ mto_values.first }}{% else %}Choose{% endif %}</span>
-                {%- if mto == 1 and section.settings.size_chart_page != blank -%}
-                  <button type="button" class="jvli-product__size-guide" data-jvli-size-guide-open>Size guide</button>
-                {%- endif -%}
-              </legend>
-              <div class="jvli-card__sizes jvli-product__values">
-                {%- for value in mto_values -%}
-                  <label class="jvli-card__size">
-                    <input type="radio" name="properties[{{ mto_name }}]" value="{{ value | escape }}" required{% if mto == 2 and forloop.first %} checked{% endif %}>
-                    <span>{{ value }}</span>
-                  </label>
-                {%- endfor -%}
-              </div>
-            </fieldset>
-          {%- endif -%}
-        {%- endfor -%}
+        {%- assign mto_sizes = product.metafields.custom.made_to_order_sizes.value -%}
+        {%- if mto_sizes != blank and mto_sizes.size > 0 -%}
+          <fieldset class="jvli-product__option" data-jvli-property="Size">
+            <legend class="jvli-product__label">
+              Size: <span data-jvli-property-value>Choose</span>
+              {%- if section.settings.size_chart_page != blank -%}
+                <button type="button" class="jvli-product__size-guide" data-jvli-size-guide-open>Size guide</button>
+              {%- endif -%}
+            </legend>
+            <div class="jvli-card__sizes jvli-product__values">
+              {%- for value in mto_sizes -%}
+                <label class="jvli-card__size">
+                  <input type="radio" name="properties[Size]" value="{{ value | escape }}" required>
+                  <span>{{ value }}</span>
+                </label>
+              {%- endfor -%}
+            </div>
+          </fieldset>
+        {%- endif -%}
 
         {%- comment -%}
           Dupatta add-on: a product can be linked to its own dupatta product

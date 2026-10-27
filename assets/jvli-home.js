@@ -812,11 +812,6 @@
         });
       });
       // Phones: the slides scroll sideways; keep the dots in step.
-      function shownSlides() {
-        return slides.filter(function (slide) {
-          return !slide.classList.contains('is-filtered');
-        });
-      }
       if (slidesEl) {
         var scrollTimer = null;
         slidesEl.addEventListener('scroll', function () {
@@ -824,79 +819,23 @@
           scrollTimer = setTimeout(function () {
             if (slidesEl.scrollWidth <= slidesEl.clientWidth + 1) return;
             var index = Math.round(slidesEl.scrollLeft / slidesEl.clientWidth);
-            var shown = shownSlides();
-            if (shown[index]) showMedia(shown[index].dataset.mediaId, false);
+            if (slides[index]) showMedia(slides[index].dataset.mediaId, false);
           }, 80);
         }, { passive: true });
       }
 
-      /* Arrows: step through the photos currently shown (a chosen sleeve
-         hides the others), wrapping around at the ends. */
-      var arrows = Array.prototype.slice.call(section.querySelectorAll('[data-jvli-step]'));
-      function syncArrows() {
-        var hide = shownSlides().length < 2;
-        arrows.forEach(function (arrow) {
-          arrow.hidden = hide;
-        });
-      }
-      arrows.forEach(function (arrow) {
+      /* Arrows: step through the photos, wrapping around at the ends. */
+      section.querySelectorAll('[data-jvli-step]').forEach(function (arrow) {
         arrow.addEventListener('click', function () {
-          var shown = shownSlides();
-          if (shown.length < 2) return;
-          var current = shown.findIndex(function (slide) {
+          if (slides.length < 2) return;
+          var current = slides.findIndex(function (slide) {
             return slide.classList.contains('is-active');
           });
           var step = parseInt(arrow.getAttribute('data-jvli-step'), 10);
-          var next = shown[(Math.max(current, 0) + step + shown.length) % shown.length];
+          var next = slides[(Math.max(current, 0) + step + slides.length) % slides.length];
           showMedia(next.dataset.mediaId, true);
         });
       });
-      syncArrows();
-
-      /* Made-to-order sleeves: photos whose description (alt text) names a
-         sleeve, e.g. "Full" or "Model in a full sleeve kurti", show only
-         when that sleeve is chosen; untagged photos always show. A sleeve
-         with no photos of its own leaves every photo showing. */
-      var sleeveSet = section.querySelector('[data-jvli-property="Sleeve"]');
-      if (sleeveSet) {
-        var sleeveValues = Array.prototype.map.call(sleeveSet.querySelectorAll('input'), function (input) {
-          return input.value;
-        });
-        var mentions = function (alt, value) {
-          var a = ' ' + alt.toLowerCase().replace(/[^a-z0-9/]+/g, ' ') + ' ';
-          return a.indexOf(' ' + value.toLowerCase().replace(/[^a-z0-9/]+/g, ' ').trim() + ' ') !== -1;
-        };
-        var tags = slides.map(function (slide) {
-          var alt = slide.getAttribute('data-jvli-alt') || '';
-          return sleeveValues.filter(function (value) {
-            return mentions(alt, value);
-          });
-        });
-        sleeveSet.addEventListener('change', function (event) {
-          var chosen = event.target.value;
-          var first = null;
-          // A sleeve with no photos of its own hides nothing.
-          var hasOwn = tags.some(function (t) {
-            return t.indexOf(chosen) !== -1;
-          });
-          slides.forEach(function (slide, i) {
-            var hide = hasOwn && tags[i].length > 0 && tags[i].indexOf(chosen) === -1;
-            var id = slide.dataset.mediaId;
-            slide.classList.toggle('is-filtered', hide);
-            section.querySelectorAll('[data-jvli-thumb="' + id + '"], [data-jvli-dot-for="' + id + '"]').forEach(function (el) {
-              el.classList.toggle('is-filtered', hide);
-            });
-            if (!hide && first === null && tags[i].length) first = id;
-          });
-          // Bring the chosen sleeve's first photo to the front.
-          var lead = first || (shownSlides()[0] && shownSlides()[0].dataset.mediaId);
-          if (lead) showMedia(lead, true);
-          syncArrows();
-        });
-        // The first sleeve starts out chosen: show its photos from the start.
-        var startSleeve = sleeveSet.querySelector('input:checked');
-        if (startSleeve) startSleeve.dispatchEvent(new Event('change', { bubbles: true }));
-      }
 
       /* Options -> variant. */
       function selected() {
@@ -1382,7 +1321,7 @@
       return null;
     }
 
-    // Made-to-order choices (line item properties), e.g. Size and Sleeve.
+    // Made-to-order choices (line item properties), e.g. Size.
     var properties = {};
     var missing = missingProperty(form);
     form.querySelectorAll('[data-jvli-property] input:checked').forEach(function (input) {
