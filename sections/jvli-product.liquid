@@ -219,7 +219,6 @@
                 </span>
               </label>
             </div>
-            <p class="jvli-product__dupatta-total" data-jvli-dupatta-total hidden></p>
           </fieldset>
         {%- endif -%}
 
@@ -311,9 +310,11 @@
           "id": {{ variant.id }},
           "options": {{ variant.options | json }},
           "available": {{ variant.available | json }},
-          "cents": {{ variant.price }},
           "max": {% if variant.inventory_management == 'shopify' and variant.inventory_policy == 'deny' and variant.inventory_quantity < 20 %}{{ variant.inventory_quantity | at_least: 1 }}{% else %}20{% endif %},
           "media": {{ variant.featured_media.id | default: 'null' }},
+          {%- if dupatta != blank and dupatta_variant != blank -%}
+            "priceWithDupatta": {% capture price_html %}{% render 'jvli-product-price', variant: variant, extra: dupatta_variant.price %}{% endcapture %}{{ price_html | strip | json }},
+          {%- endif %}
           "price": {% capture price_html %}{% render 'jvli-product-price', variant: variant %}{% endcapture %}{{ price_html | strip | json }}
         }{% unless forloop.last %},{% endunless %}
       {%- endfor -%}

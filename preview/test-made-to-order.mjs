@@ -167,28 +167,28 @@ for (const [label, width, height] of [["desktop", 1440, 900], ["phone", 390, 844
     const look = () =>
       page.evaluate(() => {
         const box = document.querySelector("[data-jvli-dupatta]");
-        const total = box.querySelector("[data-jvli-dupatta-total]");
+
         const shown = (el) => !!el && !el.closest("[hidden]") && getComputedStyle(el).display !== "none";
         return {
           label: box.querySelector("[data-jvli-dupatta-value]").textContent,
           withText: box.querySelectorAll("label")[1].innerText.trim(),
-          total: shown(total) ? total.textContent : null,
+          price: document.querySelector("[data-jvli-price] .jvli-product__price-now").textContent.trim(),
           max: document.querySelector('input[name="quantity"]').max,
           shopifyBuy: shown(document.querySelector(".shopify-payment-button .shopify-payment-button__button")),
           ourBuy: shown(document.querySelector("[data-jvli-buy-both]")),
-          cents: JSON.parse(document.querySelector("[data-jvli-variants]").textContent)[0].cents,
         };
       });
     let d = await look();
     check("Dupatta choice shows its price", d.withText === "With dupatta +₹300", d.withText);
-    check("Without dupatta to start with", d.label === "Without" && d.total === null && d.max === "3", JSON.stringify(d));
+    const plainPrice = d.price;
+    check("Without dupatta to start with", d.label === "Without" && d.max === "3", JSON.stringify(d));
     check("Without dupatta: Shopify's Buy it now shows", d.shopifyBuy && !d.ourBuy, JSON.stringify(d));
 
     await page.locator('[data-jvli-dupatta] label').nth(1).click();
     await page.waitForTimeout(100);
     d = await look();
-    const expected = "With dupatta: ₹" + ((d.cents + 30000) / 100).toLocaleString("en-IN");
-    check("With dupatta: the total shows", d.label === "With" && d.total === expected, `${d.label} / ${d.total} (want ${expected})`);
+    const rupees = (text) => Number(text.replace(/[^\d.]/g, ""));
+    check("With dupatta: the price goes up by the dupatta's ₹300", d.label === "With" && rupees(d.price) === rupees(plainPrice) + 300, `${plainPrice} -> ${d.price}`);
     check("With dupatta: counter stops at the dupatta's stock (2)", d.max === "2", d.max);
     check("With dupatta: our Buy it now shows instead of Shopify's", d.ourBuy && !d.shopifyBuy, JSON.stringify(d));
 
@@ -223,10 +223,12 @@ for (const [label, width, height] of [["desktop", 1440, 900], ["phone", 390, 844
     await page.locator('[data-jvli-dupatta] label').nth(0).click();
     await page.waitForTimeout(100);
     const back = await page.evaluate(() => ({
+      price: document.querySelector("[data-jvli-price]").innerHTML.trim(),
+      plain: JSON.parse(document.querySelector("[data-jvli-variants]").textContent)[0].price,
       max: document.querySelector('input[name="quantity"]').max,
       ours: !!document.querySelector("[data-jvli-buy-both-wrap]").hidden,
     }));
-    check("Back to Without: counter back to 3, Shopify's Buy it now back", back.max === "3" && back.ours, JSON.stringify(back));
+    check("Back to Without: price, counter (3) and Shopify's Buy it now back", back.price === back.plain && back.max === "3" && back.ours, JSON.stringify(back));
     await page.close();
   }
 }

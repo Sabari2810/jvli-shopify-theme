@@ -751,8 +751,8 @@
         qtyInput.value = Math.min(Math.max(parseInt(qtyInput.value, 10) || 1, 1), max);
       }
 
-      /* Dupatta add-on: with "With dupatta" chosen, the total shows under
-         the choice, the counter stops at the lower of the two stocks, and
+      /* Dupatta add-on: with "With dupatta" chosen, the price shows the
+         dupatta added, the counter stops at the lower of the two stocks, and
          our Buy it now (both items) stands in for Shopify's. */
       var dupatta = section.querySelector('[data-jvli-dupatta]');
       function syncDupatta() {
@@ -766,14 +766,10 @@
         }
         var label = dupatta.querySelector('[data-jvli-dupatta-value]');
         if (label) label.textContent = chosen ? 'With' : 'Without';
-        var total = dupatta.querySelector('[data-jvli-dupatta-total]');
         var variant = variants.filter(function (v) {
           return idInput && String(v.id) === idInput.value;
         })[0];
-        if (total) {
-          total.hidden = !chosen || !variant;
-          if (chosen && variant) total.textContent = 'With dupatta: ' + formatPrice((variant.cents + Number(dupatta.dataset.cents)) / 100);
-        }
+        if (priceEl && variant) priceEl.innerHTML = chosen && variant.priceWithDupatta ? variant.priceWithDupatta : variant.price;
         var own = section.querySelector('[data-jvli-buy-both-wrap]');
         var shopifyBuy = section.querySelector('.jvli-product__checkout:not([data-jvli-buy-both-wrap])');
         if (own) own.hidden = !chosen;
@@ -945,8 +941,8 @@
           qtyInput.dataset.jvliBaseMax = variant.max;
           clampQty();
         }
-        syncDupatta();
         if (priceEl) priceEl.innerHTML = variant.price;
+        syncDupatta();
         if (variant.media) showMedia(variant.media, true);
         // Keep the URL shareable for the chosen variant.
         var url = new URL(window.location.href);

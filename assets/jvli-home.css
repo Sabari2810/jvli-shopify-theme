@@ -5265,14 +5265,8 @@ a.jvli-card__choose {
   object-fit: contain;
 }
 
-/* Dupatta add-on (product page): the total with the dupatta, and our Buy it
-   now for both, styled like Shopify's. */
-.jvli-product__dupatta-total {
-  margin: 10px 0 0;
-  font-size: 15px;
-  color: var(--jvli-ink);
-}
-
+/* Dupatta add-on (product page): our Buy it now for both, styled like
+   Shopify's. */
 .jvli-product__buy-both {
   display: block;
   width: 100%;
