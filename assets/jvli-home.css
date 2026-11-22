@@ -5498,8 +5498,8 @@ a.jvli-card__choose {
 }
 
 
-/* "Shop by Collections" and "JVLI in real life" in the logo's maroon. */
-.jvli-categories .jvli-h2,
-.jvli-gallery .jvli-h2 {
+/* Section headings ("New In", "Shop by Collections", "JVLI in real life"...)
+   in the logo's maroon. */
+.jvli .jvli-h2 {
   color: #7a0021;
 }
