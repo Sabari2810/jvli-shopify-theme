@@ -7,7 +7,11 @@
   assign jvli_fav_url = section.settings.favorites_link | default: '/pages/favorites'
 -%}
 {%- capture jvli_logo -%}
-  {%- if section.settings.logo_style == 'image' and section.settings.logo != blank -%}
+  {%- if section.settings.logo_style == 'jvli' -%}
+    {%- comment -%} Maroon JVLI; beige on maroon once the page is scrolled (jvli-home.js sets .is-scrolled). {%- endcomment -%}
+    <img class="jvli-header__logo-image jvli-header__logo-image--default" src="{{ 'jvli-logo-maroon.png' | asset_url }}" alt="{{ shop.name | escape }}" width="{{ section.settings.logo_width }}" height="{{ section.settings.logo_width | times: 422 | divided_by: 800 }}" style="--jvli-logo-width: {{ section.settings.logo_width }}px;">
+    <img class="jvli-header__logo-image jvli-header__logo-image--scrolled" src="{{ 'jvli-logo-beige.png' | asset_url }}" alt="" aria-hidden="true" width="{{ section.settings.logo_width }}" height="{{ section.settings.logo_width | times: 422 | divided_by: 800 }}" style="--jvli-logo-width: {{ section.settings.logo_width }}px;">
+  {%- elsif section.settings.logo_style == 'image' and section.settings.logo != blank -%}
     <img
       class="jvli-header__logo-image"
       src="{{ section.settings.logo | image_url: width: 600 }}"
@@ -100,6 +104,7 @@
   "class": "jvli-section-header",
   "settings": [
     { "type": "select", "id": "logo_style", "label": "Logo", "default": "text", "options": [
+      { "value": "jvli", "label": "JVLI logos (maroon; beige on maroon when scrolled)" },
       { "value": "text", "label": "Text wordmark" },
       { "value": "image", "label": "Logo image" }
     ] },

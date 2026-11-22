@@ -23,6 +23,18 @@
       document.documentElement.style.setProperty('--jvli-header-height', header.offsetHeight + 'px');
     }
 
+    // Every header turns maroon, with the beige logo, once the page scrolls.
+    var scrolled = null;
+    var onScrolled = function () {
+      var next = window.scrollY > 24;
+      if (next !== scrolled) {
+        scrolled = next;
+        header.classList.toggle('is-scrolled', scrolled);
+      }
+    };
+    onScrolled();
+    window.addEventListener('scroll', onScrolled, { passive: true });
+
     if (header.hasAttribute('data-jvli-header-overlay')) {
       var solid = false;
       var onScroll = function () {

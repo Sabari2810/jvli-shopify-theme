@@ -5407,3 +5407,41 @@ a.jvli-card__choose {
   line-height: 1;
 }
 
+/* Header logos: maroon JVLI by default; once the page scrolls the header
+   turns maroon, with the beige JVLI and light menu and icons. */
+.jvli-header__logo-image--scrolled {
+  display: none;
+}
+
+.jvli-header.is-scrolled .jvli-header__logo-image--default {
+  display: none;
+}
+
+.jvli-header.is-scrolled .jvli-header__logo-image--scrolled {
+  display: block;
+}
+
+.jvli-header.jvli-header.is-scrolled {
+  background: #50121f;
+  color: #e5d3b0;
+  box-shadow: none;
+}
+
+.jvli-header.is-scrolled .jvli-header__count {
+  background: #e5d3b0;
+  color: #50121f;
+}
+
+
+/* The open mobile menu stays cream, so it keeps the maroon logo and dark text. */
+.jvli-header.is-scrolled .jvli-menu__panel {
+  color: var(--jvli-ink);
+}
+
+.jvli-header.is-scrolled .jvli-menu__panel .jvli-header__logo-image--default {
+  display: block;
+}
+
+.jvli-header.is-scrolled .jvli-menu__panel .jvli-header__logo-image--scrolled {
+  display: none;
+}
