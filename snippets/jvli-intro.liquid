@@ -1,110 +1,34 @@
 {%- comment -%}
-  Kolam loading screen, shown once per visit (the first page opened in a
+  நல்வரவு loading screen, shown once per visit (the first page opened in a
   browser tab session) and only when Theme settings > Loading screen is on.
-  Rendered first thing in <body> by layout/theme.liquid, with its own styles
-  and script so it appears before the page does. A single line (a sikku kolam on a
-  diamond of 25 dots, 1-3-5-7-5-3-1) is drawn around the dots, then "JVLI" fades in; it always
-  lasts 3 seconds from when the drawing starts, however fast the page loads.
-  The end is tied to the wordmark's animation, not a clock, because Safari can
-  start the animation well after this script runs. Tapping or any key skips it. Not shown in the theme editor or to visitors who prefer
-  reduced motion.
+  Rendered first thing in <body> by layout/theme.liquid. Its dark wall shows
+  straight away; assets/jvli-nalvaravu.js then shows a coconut-frond panthal
+  (assets/jvli-intro-panthal.webp), drops the painted marquee board from it on
+  two threads and lights its bulbs, about 3.3 seconds in all.
+  Tapping or any key skips it, and it never stays longer than 8 seconds (or
+  9, by this CSS, if the script never runs). Not shown in the theme editor or
+  to visitors who prefer reduced motion. (The earlier kolam version is in the
+  theme's git history.)
 {%- endcomment -%}
 {%- if settings.jvli_intro_enabled and request.design_mode != true -%}
-  <div class="jvli-intro" id="JvliIntro" aria-hidden="true" hidden>
-    <div class="jvli-intro__inner">
-      <svg class="jvli-intro__kolam" viewBox="-78 -78 156 156" focusable="false">
-        <path class="jvli-intro__line" pathLength="1" d="M -60 -6.4 C -54.7 -6.4 -54 -2.6 -50 0 C -46 4 -44 6 -40 10 C -36 14 -34 16 -30 20 C -26 22.6 -25.3 26.4 -20 26.4 C -15.9 26.4 -13.6 24.1 -13.6 20 C -13.6 14.7 -17.4 14 -20 10 C -24 6 -26 4 -30 0 C -34 -4 -36 -6 -40 -10 C -42.6 -14 -46.4 -14.7 -46.4 -20 C -46.4 -24.1 -44.1 -26.4 -40 -26.4 C -34.7 -26.4 -34 -22.6 -30 -20 C -26 -16 -24 -14 -20 -10 C -16 -6 -14 -4 -10 0 C -6 4 -4 6 0 10 C 2.6 14 6.4 14.7 6.4 20 C 6.4 25.3 2.6 26 0 30 C -4 34 -6 36 -10 40 C -14 42.6 -14.7 46.4 -20 46.4 C -24.1 46.4 -26.4 44.1 -26.4 40 C -26.4 35.9 -24.1 33.6 -20 33.6 C -14.7 33.6 -14 37.4 -10 40 C -6 44 -4 46 0 50 C 2.6 54 6.4 54.7 6.4 60 C 6.4 64.1 4.1 66.4 0 66.4 C -4.1 66.4 -6.4 64.1 -6.4 60 C -6.4 54.7 -2.6 54 0 50 C 4 46 6 44 10 40 C 14 37.4 14.7 33.6 20 33.6 C 24.1 33.6 26.4 35.9 26.4 40 C 26.4 44.1 24.1 46.4 20 46.4 C 14.7 46.4 14 42.6 10 40 C 6 36 4 34 0 30 C -2.6 26 -6.4 25.3 -6.4 20 C -6.4 14.7 -2.6 14 0 10 C 4 6 6 4 10 0 C 14 -4 16 -6 20 -10 C 24 -14 26 -16 30 -20 C 34 -22.6 34.7 -26.4 40 -26.4 C 44.1 -26.4 46.4 -24.1 46.4 -20 C 46.4 -14.7 42.6 -14 40 -10 C 36 -6 34 -4 30 0 C 26 4 24 6 20 10 C 17.4 14 13.6 14.7 13.6 20 C 13.6 24.1 15.9 26.4 20 26.4 C 25.3 26.4 26 22.6 30 20 C 34 16 36 14 40 10 C 44 6 46 4 50 0 C 54 -2.6 54.7 -6.4 60 -6.4 C 64.1 -6.4 66.4 -4.1 66.4 0 C 66.4 4.1 64.1 6.4 60 6.4 C 54.7 6.4 54 2.6 50 0 C 46 -4 44 -6 40 -10 C 36 -14 34 -16 30 -20 C 26 -22.6 25.3 -26.4 20 -26.4 C 15.9 -26.4 13.6 -24.1 13.6 -20 C 13.6 -14.7 17.4 -14 20 -10 C 24 -6 26 -4 30 0 C 34 4 36 6 40 10 C 42.6 14 46.4 14.7 46.4 20 C 46.4 24.1 44.1 26.4 40 26.4 C 34.7 26.4 34 22.6 30 20 C 26 16 24 14 20 10 C 16 6 14 4 10 0 C 6 -4 4 -6 0 -10 C -2.6 -14 -6.4 -14.7 -6.4 -20 C -6.4 -25.3 -2.6 -26 0 -30 C 4 -34 6 -36 10 -40 C 14 -42.6 14.7 -46.4 20 -46.4 C 24.1 -46.4 26.4 -44.1 26.4 -40 C 26.4 -35.9 24.1 -33.6 20 -33.6 C 14.7 -33.6 14 -37.4 10 -40 C 6 -44 4 -46 0 -50 C -2.6 -54 -6.4 -54.7 -6.4 -60 C -6.4 -64.1 -4.1 -66.4 0 -66.4 C 4.1 -66.4 6.4 -64.1 6.4 -60 C 6.4 -54.7 2.6 -54 0 -50 C -4 -46 -6 -44 -10 -40 C -14 -37.4 -14.7 -33.6 -20 -33.6 C -24.1 -33.6 -26.4 -35.9 -26.4 -40 C -26.4 -44.1 -24.1 -46.4 -20 -46.4 C -14.7 -46.4 -14 -42.6 -10 -40 C -6 -36 -4 -34 0 -30 C 2.6 -26 6.4 -25.3 6.4 -20 C 6.4 -14.7 2.6 -14 0 -10 C -4 -6 -6 -4 -10 0 C -14 4 -16 6 -20 10 C -24 14 -26 16 -30 20 C -34 22.6 -34.7 26.4 -40 26.4 C -44.1 26.4 -46.4 24.1 -46.4 20 C -46.4 14.7 -42.6 14 -40 10 C -36 6 -34 4 -30 0 C -26 -4 -24 -6 -20 -10 C -17.4 -14 -13.6 -14.7 -13.6 -20 C -13.6 -24.1 -15.9 -26.4 -20 -26.4 C -25.3 -26.4 -26 -22.6 -30 -20 C -34 -16 -36 -14 -40 -10 C -44 -6 -46 -4 -50 0 C -54 2.6 -54.7 6.4 -60 6.4 C -64.1 6.4 -66.4 4.1 -66.4 0 C -66.4 -4.1 -64.1 -6.4 -60 -6.4 Z"/>
-        <g class="jvli-intro__dots">
-      <circle cx="0" cy="-60" r="1.7" style="--i:0"/>
-      <circle cx="-20" cy="-40" r="1.7" style="--i:1"/>
-      <circle cx="0" cy="-40" r="1.7" style="--i:2"/>
-      <circle cx="20" cy="-40" r="1.7" style="--i:3"/>
-      <circle cx="-40" cy="-20" r="1.7" style="--i:4"/>
-      <circle cx="-20" cy="-20" r="1.7" style="--i:5"/>
-      <circle cx="0" cy="-20" r="1.7" style="--i:6"/>
-      <circle cx="20" cy="-20" r="1.7" style="--i:7"/>
-      <circle cx="40" cy="-20" r="1.7" style="--i:8"/>
-      <circle cx="-60" cy="0" r="1.7" style="--i:9"/>
-      <circle cx="-40" cy="0" r="1.7" style="--i:10"/>
-      <circle cx="-20" cy="0" r="1.7" style="--i:11"/>
-      <circle cx="0" cy="0" r="1.7" style="--i:12"/>
-      <circle cx="20" cy="0" r="1.7" style="--i:13"/>
-      <circle cx="40" cy="0" r="1.7" style="--i:14"/>
-      <circle cx="60" cy="0" r="1.7" style="--i:15"/>
-      <circle cx="-40" cy="20" r="1.7" style="--i:16"/>
-      <circle cx="-20" cy="20" r="1.7" style="--i:17"/>
-      <circle cx="0" cy="20" r="1.7" style="--i:18"/>
-      <circle cx="20" cy="20" r="1.7" style="--i:19"/>
-      <circle cx="40" cy="20" r="1.7" style="--i:20"/>
-      <circle cx="-20" cy="40" r="1.7" style="--i:21"/>
-      <circle cx="0" cy="40" r="1.7" style="--i:22"/>
-      <circle cx="20" cy="40" r="1.7" style="--i:23"/>
-      <circle cx="0" cy="60" r="1.7" style="--i:24"/>
-        </g>
-      </svg>
-      <p class="jvli-intro__mark">{{ shop.name | default: 'JVLI' | escape }}</p>
-    </div>
+  <link rel="preload" as="image" href="{{ 'jvli-intro-panthal.webp' | asset_url }}">
+  <div class="jvli-intro" id="JvliIntro" aria-hidden="true" data-scene="{{ 'jvli-intro-panthal.webp' | asset_url }}" hidden>
+    <canvas class="jvli-intro__board"></canvas>
   </div>
   <style>
     .jvli-intro {
       position: fixed;
       inset: 0;
       z-index: 2147483000;
-      display: grid;
-      place-items: center;
-      background: #f5f1ea;
+      background: #17160d;
       cursor: pointer;
-      transition: opacity 0.45s ease, visibility 0.45s ease;
+      transition: opacity 0.55s ease, visibility 0.55s ease;
+      animation: jvli-intro-giveup 0.5s ease 9s forwards;
     }
     .jvli-intro[hidden] { display: none; }
     .jvli-intro.is-leaving { opacity: 0; visibility: hidden; }
-    .jvli-intro__inner {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 22px;
-    }
-    .jvli-intro__kolam {
-      width: clamp(120px, 34vw, 168px);
-      height: auto;
-      overflow: visible;
-    }
-    .jvli-intro__line {
-      fill: none;
-      stroke: #763530;
-      stroke-width: 2.2;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-      stroke-dasharray: 1;
-      stroke-dashoffset: 1;
-      animation: jvli-intro-draw 1.9s cubic-bezier(0.45, 0, 0.3, 1) 0.45s forwards;
-    }
-    .jvli-intro__dots circle {
-      fill: #b08c60;
-      opacity: 0;
-      transform-box: fill-box;
-      transform-origin: center;
-      animation: jvli-intro-dot 0.35s ease calc(var(--i) * 0.018s) forwards;
-    }
-    .jvli-intro__mark {
-      margin: 0;
-      color: #b0894f;
-      font-family: "Newsreader", "Iowan Old Style", Georgia, serif;
-      font-size: 26px;
-      letter-spacing: 0.32em;
-      text-indent: 0.32em;
-      opacity: 0;
-      animation: jvli-intro-fade 0.5s ease 2.2s forwards;
-    }
-    @keyframes jvli-intro-draw { to { stroke-dashoffset: 0; } }
-    @keyframes jvli-intro-dot {
-      from { opacity: 0; transform: scale(0.2); }
-      to { opacity: 1; transform: scale(1); }
-    }
-    @keyframes jvli-intro-fade {
-      from { opacity: 0; transform: translateY(4px); }
-      to { opacity: 1; transform: none; }
-    }
+    .jvli-intro__board { display: block; }
+    @keyframes jvli-intro-giveup { to { opacity: 0; visibility: hidden; } }
   </style>
   <script>
     (function () {
@@ -117,28 +41,9 @@
         return intro.remove();
       }
       if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return intro.remove();
-
       intro.hidden = false;
-      var HOLD_MS = 300; // after "JVLI" has faded in (2.7s into the drawing)
-      var SAFETY_MS = 8000; // in case the animation never runs
-      var done = false;
-      function hide() {
-        if (done) return;
-        done = true;
-        intro.classList.add('is-leaving');
-        setTimeout(function () {
-          intro.remove();
-        }, 500);
-      }
-      var mark = intro.querySelector('.jvli-intro__mark');
-      if (mark) {
-        mark.addEventListener('animationend', function () {
-          setTimeout(hide, HOLD_MS);
-        });
-      }
-      setTimeout(hide, SAFETY_MS);
-      intro.addEventListener('click', hide);
-      document.addEventListener('keydown', hide, { once: true });
     })();
   </script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Catamaran:wght@800&text=%E0%AE%A8%E0%AE%B2%E0%AF%8D%E0%AE%B5%E0%AE%B0%E0%AE%B5%E0%AF%81&display=block">
+  <script src="{{ 'jvli-nalvaravu.js' | asset_url }}" async></script>
 {%- endif -%}
