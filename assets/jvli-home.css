@@ -5,6 +5,22 @@
    vw values keep the proportions between 1000px and 1600px.
    ========================================================================== */
 
+@font-face {
+  font-family: "Palmore";
+  src: url("palmore-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Palmore";
+  src: url("palmore-semibold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
 :root {
   /* The JVLI palette: olive green grounds the page (top bar, footer, main
      buttons), burgundy marks actions and accents, cream is the canvas. */
@@ -27,6 +43,9 @@
   --jvli-caps: "Jost", "Futura", "Century Gothic", sans-serif;
   --jvli-sans: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
   --jvli-hand: "Nothing You Could Do", "Segoe Script", cursive;
+  /* Palmore (Creative Corner Studio, web licence): retro condensed display,
+     for the hero heading and the menu. */
+  --jvli-display: "Palmore", var(--jvli-serif);
 
   --jvli-gutter: clamp(20px, 5.4vw, 96px);
   --jvli-h2: clamp(34px, 3.9vw, 62px);
@@ -398,9 +417,10 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   display: flex;
   gap: clamp(22px, 2.6vw, 44px);
   margin-left: clamp(0px, 13vw, 240px);
-  font-family: var(--jvli-caps);
-  font-size: 15px;
-  letter-spacing: 0.04em;
+  font-family: var(--jvli-display);
+  font-size: 18px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .jvli-header__nav a {
@@ -504,8 +524,10 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   justify-content: space-between;
   padding: 16px 0;
   border-bottom: 1px solid var(--jvli-line);
-  font-family: var(--jvli-serif);
-  font-size: 28px;
+  font-family: var(--jvli-display);
+  font-size: 30px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
 .jvli-menu__footer {
@@ -580,11 +602,13 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
 }
 
 .jvli-hero__heading {
-  font-family: var(--jvli-serif);
-  font-size: clamp(56px, 6.1vw, 96px);
-  font-weight: var(--jvli-display-weight);
-  line-height: 0.98;
-  letter-spacing: -0.025em;
+  font-family: var(--jvli-display);
+  font-size: clamp(60px, 7vw, 112px);
+  font-weight: 400;
+  line-height: 0.8;
+  letter-spacing: 0.01em;
+  word-spacing: -0.06em;
+  text-transform: uppercase;
 }
 
 .jvli-hero__buttons {
