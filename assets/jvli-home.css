@@ -44,7 +44,7 @@
   --jvli-sans: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
   --jvli-hand: "Nothing You Could Do", "Segoe Script", cursive;
   /* Palmore (Creative Corner Studio, web licence): retro condensed display,
-     for the hero heading and the menu. */
+     in capitals for the menu and the headings (see the end of this file). */
   --jvli-display: "Palmore", var(--jvli-serif);
 
   --jvli-gutter: clamp(20px, 5.4vw, 96px);
@@ -418,7 +418,7 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   gap: clamp(22px, 2.6vw, 44px);
   margin-left: clamp(0px, 13vw, 240px);
   font-family: var(--jvli-display);
-  font-size: 18px;
+  font-size: 21px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -602,13 +602,11 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
 }
 
 .jvli-hero__heading {
-  font-family: var(--jvli-display);
-  font-size: clamp(60px, 7vw, 112px);
-  font-weight: 400;
-  line-height: 0.8;
-  letter-spacing: 0.01em;
-  word-spacing: -0.06em;
-  text-transform: uppercase;
+  font-family: var(--jvli-serif);
+  font-size: clamp(56px, 6.1vw, 96px);
+  font-weight: var(--jvli-display-weight);
+  line-height: 0.98;
+  letter-spacing: -0.025em;
 }
 
 .jvli-hero__buttons {
@@ -5469,3 +5467,29 @@ a.jvli-card__choose {
 .jvli-header.is-scrolled .jvli-menu__panel .jvli-header__logo-image--scrolled {
   display: none;
 }
+
+/* Headings across the site in Palmore capitals (the home hero keeps the
+   serif). Palmore sits small in its line box, hence the tight line height. */
+.jvli-h2,
+.jvli-banner__heading,
+.jvli-fabric__heading,
+.jvli-product__title,
+.jvli-product__dialog-head h2,
+.jvli-collection__title,
+.jvli-ourstory .jvli-ourstory__heading,
+.jvli-ourstory .jvli-ourstory__title,
+.jvli-fabrics .jvli-fabrics__title,
+.jvli-fabrics .jvli-fabrics__closing-heading,
+.jvli-search .jvli-search__empty-title,
+.jvli-search-page .jvli-search-page__empty-title,
+.jvli-cart .jvli-cart__title,
+.jvli-cart .jvli-cart__summary-title,
+.jvli-cart .jvli-cart__empty-title {
+  font-family: var(--jvli-display);
+  font-weight: 400;
+  line-height: 0.9;
+  letter-spacing: 0.01em;
+  word-spacing: -0.04em;
+  text-transform: uppercase;
+}
+
