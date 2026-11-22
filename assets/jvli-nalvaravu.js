@@ -85,8 +85,8 @@
 
   /* ---------- The wall behind the board ---------- */
 
-  // The panthal at golden hour: the photo, covering the screen, warmed and
-  // dimmed a little so the bulbs read as lit.
+  // The panthal photo in its own colours, covering the screen, dimmed a
+  // little so the bulbs read as lit.
   function buildScene() {
     var l = layer(vw, vh);
     var g = l.ctx;
@@ -100,11 +100,7 @@
     var dy = (vh - dh) * 0.35;
     g.drawImage(scene, 0, sy, sw, sh, dx, dy, dw, dh);
     anchorY = dy + (SCENE.stick * scene.naturalHeight - sy) * k;
-    g.globalCompositeOperation = 'multiply';
-    g.fillStyle = 'rgba(214, 150, 88, 0.55)';
-    g.fillRect(0, 0, vw, vh);
-    g.globalCompositeOperation = 'source-over';
-    g.fillStyle = 'rgba(16, 12, 4, 0.32)';
+    g.fillStyle = 'rgba(0, 0, 0, 0.18)';
     g.fillRect(0, 0, vw, vh);
     var vignette = g.createRadialGradient(vw / 2, vh * 0.5, Math.min(vw, vh) * 0.25, vw / 2, vh * 0.5, Math.max(vw, vh) * 0.8);
     vignette.addColorStop(0, 'rgba(0, 0, 0, 0)');
