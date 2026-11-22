@@ -78,6 +78,7 @@
     },
     "jvli_banner": {
       "type": "jvli-banner",
+      "disabled": true,
       "settings": {
         "image": "shopify://shop_images/jvli-banner-temple.webp",
         "image_alt": "Temple gopuram between palm trees in Tamil Nadu",
