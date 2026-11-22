@@ -21,6 +21,7 @@
     },
     "print_invite": {
       "type": "jvli-print-invite",
+      "disabled": true,
       "settings": {}
     }
   },
