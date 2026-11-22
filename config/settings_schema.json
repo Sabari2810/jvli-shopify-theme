@@ -1471,9 +1471,9 @@
     "settings": [
       {
         "type": "paragraph",
-        "content": "A painted நல்வரவு (welcome) marquee board drops in on two threads and its bulbs light up, shown once per visit on the first page someone opens (about 3 seconds, tap to skip). Not shown in the theme editor."
+        "content": "A kolam drawn in one line, with JVLI underneath, shown once per visit on the first page someone opens (3 seconds, tap to skip). Not shown in the theme editor."
       },
-      { "type": "checkbox", "id": "jvli_intro_enabled", "label": "Show the நல்வரவு loading screen", "default": true }
+      { "type": "checkbox", "id": "jvli_intro_enabled", "label": "Show the kolam loading screen", "default": true }
     ]
   },
   {

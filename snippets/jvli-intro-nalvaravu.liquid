@@ -1,0 +1,53 @@
+{%- comment -%}
+  NOT IN USE: the loading screen is the kolam (snippets/jvli-intro.liquid).
+  To switch to this board instead, render 'jvli-intro-nalvaravu' in
+  layout/theme.liquid in place of 'jvli-intro'.
+
+  நல்வரவு loading screen, shown once per visit (the first page opened in a
+  browser tab session) and only when Theme settings > Loading screen is on.
+  Rendered first thing in <body> by layout/theme.liquid. Its dark wall shows
+  straight away; assets/jvli-nalvaravu.js then drops in the painted marquee
+  board on two threads and lights its bulbs, about 3.3 seconds in all. (For a
+  photo behind the board, add data-scene="<image url>" to the div below, e.g.
+  assets/jvli-intro-panthal.webp; the board then hangs from its bamboo stick.)
+  Tapping or any key skips it, and it never stays longer than 8 seconds (or
+  9, by this CSS, if the script never runs). Not shown in the theme editor or
+  to visitors who prefer reduced motion. (The earlier kolam version is in the
+  theme's git history.)
+{%- endcomment -%}
+{%- if settings.jvli_intro_enabled and request.design_mode != true -%}
+  <div class="jvli-intro" id="JvliIntro" aria-hidden="true" hidden>
+    <canvas class="jvli-intro__board"></canvas>
+  </div>
+  <style>
+    .jvli-intro {
+      position: fixed;
+      inset: 0;
+      z-index: 2147483000;
+      background: #17160d;
+      cursor: pointer;
+      transition: opacity 0.55s ease, visibility 0.55s ease;
+      animation: jvli-intro-giveup 0.5s ease 9s forwards;
+    }
+    .jvli-intro[hidden] { display: none; }
+    .jvli-intro.is-leaving { opacity: 0; visibility: hidden; }
+    .jvli-intro__board { display: block; }
+    @keyframes jvli-intro-giveup { to { opacity: 0; visibility: hidden; } }
+  </style>
+  <script>
+    (function () {
+      var intro = document.getElementById('JvliIntro');
+      if (!intro) return;
+      try {
+        if (window.sessionStorage.getItem('jvli:intro')) return intro.remove();
+        window.sessionStorage.setItem('jvli:intro', '1');
+      } catch (error) {
+        return intro.remove();
+      }
+      if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return intro.remove();
+      intro.hidden = false;
+    })();
+  </script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+Thambi+2:wght@600&text=%E0%AE%A8%E0%AE%B2%E0%AF%8D%E0%AE%B5%E0%AE%B0%E0%AE%B5%E0%AF%81&display=block">
+  <script src="{{ 'jvli-nalvaravu.js' | asset_url }}" async></script>
+{%- endif -%}
