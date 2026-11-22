@@ -524,7 +524,7 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
 
 .jvli-hero {
   position: relative;
-  height: clamp(560px, 59vw, 940px);
+  height: clamp(500px, 44vw, 720px);
   overflow: hidden;
   background: #332a25;
   color: #fff;
@@ -566,11 +566,12 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   pointer-events: none;
 }
 
+/* Text sits low in the hero, a steady gap above the bottom edge. */
 .jvli-hero__content {
   position: absolute;
   z-index: 1;
   left: var(--jvli-gutter);
-  top: 36.5%;
+  bottom: clamp(56px, 6.2vw, 100px);
   max-width: 44vw;
 }
 
@@ -4019,8 +4020,8 @@ html.jvli-search-open {
   }
 
   .jvli-hero {
-    height: min(88svh, 760px);
-    min-height: 560px;
+    height: min(74svh, 640px);
+    min-height: 500px;
   }
 
   .jvli-hero__slide::after {
@@ -4030,7 +4031,7 @@ html.jvli-search-open {
   .jvli-hero__content {
     top: auto;
     right: var(--jvli-gutter);
-    bottom: 64px;
+    bottom: 48px;
     max-width: none;
   }
 

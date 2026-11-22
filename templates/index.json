@@ -15,7 +15,7 @@
       "settings": {
         "hero_image": "shopify://shop_images/jvli-hero-saree-pallu.jpg",
         "mobile_image": "shopify://shop_images/jvli-hero-saree-pallu.jpg",
-        "image_position": "center center",
+        "image_position": "center 30%",
         "eyebrow": "Clothes for real life",
         "heading": "Made for\neveryday stories.",
         "primary_label": "Shop New In",
