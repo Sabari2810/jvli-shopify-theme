@@ -9,8 +9,8 @@
 {%- capture jvli_logo -%}
   {%- if section.settings.logo_style == 'jvli' -%}
     {%- comment -%} Maroon JVLI; beige on maroon once the page is scrolled (jvli-home.js sets .is-scrolled). {%- endcomment -%}
-    <img class="jvli-header__logo-image jvli-header__logo-image--default" src="{{ 'jvli-logo-maroon.png' | asset_url }}" alt="{{ shop.name | escape }}" width="{{ section.settings.logo_width }}" height="{{ section.settings.logo_width | times: 422 | divided_by: 800 }}" style="--jvli-logo-width: {{ section.settings.logo_width }}px;">
-    <img class="jvli-header__logo-image jvli-header__logo-image--scrolled" src="{{ 'jvli-logo-beige.png' | asset_url }}" alt="" aria-hidden="true" width="{{ section.settings.logo_width }}" height="{{ section.settings.logo_width | times: 422 | divided_by: 800 }}" style="--jvli-logo-width: {{ section.settings.logo_width }}px;">
+    <img class="jvli-header__logo-image jvli-header__logo-image--default" src="{{ 'jvli-logo-maroon.png' | asset_url }}" alt="{{ shop.name | escape }}" width="{{ section.settings.logo_width }}" height="{{ section.settings.logo_width | times: 325 | divided_by: 601 }}" style="--jvli-logo-width: {{ section.settings.logo_width }}px;">
+    <img class="jvli-header__logo-image jvli-header__logo-image--scrolled" src="{{ 'jvli-logo-beige.png' | asset_url }}" alt="" aria-hidden="true" width="{{ section.settings.logo_width }}" height="{{ section.settings.logo_width | times: 325 | divided_by: 601 }}" style="--jvli-logo-width: {{ section.settings.logo_width }}px;">
   {%- elsif section.settings.logo_style == 'image' and section.settings.logo != blank -%}
     <img
       class="jvli-header__logo-image"
