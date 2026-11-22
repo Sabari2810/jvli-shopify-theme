@@ -9,6 +9,7 @@
  */
 {
   "current": {
+    "jvli_thread_enabled": false,
     "logo": "shopify://shop_images/Logo_-_PNG.png",
     "logo_width": 70,
     "favicon": "shopify://shop_images/LOGO_-_INSTA.jpg",
