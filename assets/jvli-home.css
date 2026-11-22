@@ -5503,3 +5503,8 @@ a.jvli-card__choose {
 .jvli .jvli-h2 {
   color: #7a0021;
 }
+
+/* On the burgundy story panel the heading stays light. */
+.jvli .jvli-story .jvli-h2 {
+  color: inherit;
+}
