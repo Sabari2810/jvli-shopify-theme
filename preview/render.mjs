@@ -501,7 +501,7 @@ ${header}
 <main id="MainContent" class="content-for-layout" role="main"${process.env.NO_THREAD ? "" : " data-jvli-thread"}>
 ${main}
 </main>
-<div class="shopify-section shopify-section-group-footer-group"><footer class="footer" style="padding-top:60px;padding-inline:20px;background:#35341f;color:#faf6ee;font:14px sans-serif">Sense footer (colour scheme 2)</footer></div>
+<div class="shopify-section shopify-section-group-footer-group"><footer class="footer" style="padding-top:60px;padding-inline:20px;background:#50121f;color:#faf6ee;font:14px sans-serif">Sense footer (colour scheme 2)</footer></div>
 </body>
 </html>
 `,
