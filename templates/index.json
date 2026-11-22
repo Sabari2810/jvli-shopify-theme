@@ -13,7 +13,8 @@
       "type": "jvli-hero",
       "name": "JVLI Hero",
       "settings": {
-        "hero_image": "shopify://shop_images/d6387326-66f5-4b38-b067-c565fb43026c.png",
+        "hero_image": "shopify://shop_images/jvli-hero-saree-pallu.jpg",
+        "mobile_image": "shopify://shop_images/jvli-hero-saree-pallu.jpg",
         "image_position": "center center",
         "eyebrow": "Clothes for real life",
         "heading": "Made for\neveryday stories.",
