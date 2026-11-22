@@ -6,6 +6,14 @@
    ========================================================================== */
 
 @font-face {
+  font-family: "Mangro";
+  src: url("mangro-regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
   font-family: "Palmore";
   src: url("palmore-regular.woff2") format("woff2");
   font-weight: 400;
@@ -43,9 +51,10 @@
   --jvli-caps: "Jost", "Futura", "Century Gothic", sans-serif;
   --jvli-sans: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
   --jvli-hand: "Nothing You Could Do", "Segoe Script", cursive;
-  /* Palmore (Creative Corner Studio, web licence): retro condensed display,
-     in capitals for the menu and the headings (see the end of this file). */
-  --jvli-display: "Palmore", var(--jvli-serif);
+  /* Mangro (Alfinart, web licence) for large text: the hero, headings and
+     the menu (see the end of this file). Small text keeps the fonts above,
+     which also supply the ₹, × and + signs Mangro lacks. */
+  --jvli-display: "Mangro", var(--jvli-serif);
 
   --jvli-gutter: clamp(20px, 5.4vw, 96px);
   --jvli-h2: clamp(34px, 3.9vw, 62px);
@@ -419,8 +428,7 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   margin-left: clamp(0px, 13vw, 240px);
   font-family: var(--jvli-display);
   font-size: 21px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
 .jvli-header__nav a {
@@ -526,8 +534,7 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   border-bottom: 1px solid var(--jvli-line);
   font-family: var(--jvli-display);
   font-size: 30px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
 }
 
 .jvli-menu__footer {
@@ -602,7 +609,7 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
 }
 
 .jvli-hero__heading {
-  font-family: var(--jvli-serif);
+  font-family: var(--jvli-display);
   font-size: clamp(56px, 6.1vw, 96px);
   font-weight: var(--jvli-display-weight);
   line-height: 0.98;
@@ -5468,8 +5475,7 @@ a.jvli-card__choose {
   display: none;
 }
 
-/* Headings across the site in Palmore capitals (the home hero keeps the
-   serif). Palmore sits small in its line box, hence the tight line height. */
+/* Headings across the site in Mangro. */
 .jvli-h2,
 .jvli-banner__heading,
 .jvli-fabric__heading,
@@ -5487,9 +5493,13 @@ a.jvli-card__choose {
 .jvli-cart .jvli-cart__empty-title {
   font-family: var(--jvli-display);
   font-weight: 400;
-  line-height: 0.9;
-  letter-spacing: 0.01em;
-  word-spacing: -0.04em;
-  text-transform: uppercase;
+  line-height: 1;
+  letter-spacing: 0;
 }
 
+
+/* "Shop by Collections" and "JVLI in real life" in the logo's maroon. */
+.jvli-categories .jvli-h2,
+.jvli-gallery .jvli-h2 {
+  color: #7a0021;
+}
