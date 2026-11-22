@@ -2,17 +2,17 @@
   நல்வரவு loading screen, shown once per visit (the first page opened in a
   browser tab session) and only when Theme settings > Loading screen is on.
   Rendered first thing in <body> by layout/theme.liquid. Its dark wall shows
-  straight away; assets/jvli-nalvaravu.js then shows a coconut-frond panthal
-  (assets/jvli-intro-panthal.webp), drops the painted marquee board from it on
-  two threads and lights its bulbs, about 3.3 seconds in all.
+  straight away; assets/jvli-nalvaravu.js then drops in the painted marquee
+  board on two threads and lights its bulbs, about 3.3 seconds in all. (For a
+  photo behind the board, add data-scene="<image url>" to the div below, e.g.
+  assets/jvli-intro-panthal.webp; the board then hangs from its bamboo stick.)
   Tapping or any key skips it, and it never stays longer than 8 seconds (or
   9, by this CSS, if the script never runs). Not shown in the theme editor or
   to visitors who prefer reduced motion. (The earlier kolam version is in the
   theme's git history.)
 {%- endcomment -%}
 {%- if settings.jvli_intro_enabled and request.design_mode != true -%}
-  <link rel="preload" as="image" href="{{ 'jvli-intro-panthal.webp' | asset_url }}">
-  <div class="jvli-intro" id="JvliIntro" aria-hidden="true" data-scene="{{ 'jvli-intro-panthal.webp' | asset_url }}" hidden>
+  <div class="jvli-intro" id="JvliIntro" aria-hidden="true" hidden>
     <canvas class="jvli-intro__board"></canvas>
   </div>
   <style>
