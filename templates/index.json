@@ -90,6 +90,7 @@
     },
     "jvli_fabric": {
       "type": "jvli-fabric",
+      "disabled": true,
       "settings": {
         "heading": "It starts\nwith the fabric.",
         "text": "<p>Every piece begins with the fabric. The colours, textures and prints influence what the garment becomes.</p>",
