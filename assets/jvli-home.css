@@ -13,22 +13,6 @@
   font-display: swap;
 }
 
-@font-face {
-  font-family: "Palmore";
-  src: url("palmore-regular.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: "Palmore";
-  src: url("palmore-semibold.woff2") format("woff2");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-
 :root {
   /* The JVLI palette: olive green grounds the page (top bar, footer, main
      buttons), burgundy marks actions and accents, cream is the canvas. */
@@ -51,9 +35,10 @@
   --jvli-caps: "Jost", "Futura", "Century Gothic", sans-serif;
   --jvli-sans: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
   --jvli-hand: "Nothing You Could Do", "Segoe Script", cursive;
-  /* Mangro (Alfinart, web licence) for large text: the hero, headings and
-     the menu (see the end of this file). Small text keeps the fonts above,
-     which also supply the ₹, × and + signs Mangro lacks. */
+  /* JVLI's display font, settled: Mangro (Alfinart, web licence) for large
+     text, the hero, headings and the menu (see the end of this file). Small
+     text keeps the fonts above, which also supply the ₹, × and + signs
+     Mangro lacks. */
   --jvli-display: "Mangro", var(--jvli-serif);
 
   --jvli-gutter: clamp(20px, 5.4vw, 96px);
