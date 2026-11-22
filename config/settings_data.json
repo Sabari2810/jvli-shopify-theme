@@ -146,22 +146,22 @@
     "color_schemes": {
       "scheme-1": {
         "settings": {
-          "background": "#fdfbf7",
-          "background_gradient": "linear-gradient(180deg, rgba(240, 244, 236, 1), rgba(241, 235, 226, 1) 100%)",
-          "text": "#2e2a39",
-          "button": "#50121f",
-          "button_label": "#fdfbf7",
-          "secondary_button_label": "#2e2a39",
+          "background": "#f2ebe0",
+          "background_gradient": "",
+          "text": "#24211a",
+          "button": "#5c1d1f",
+          "button_label": "#faf6ee",
+          "secondary_button_label": "#24211a",
           "shadow": "#2e2a39"
         }
       },
       "scheme-2": {
         "settings": {
-          "background": "#50121f",
+          "background": "#35341f",
           "background_gradient": "",
-          "text": "#ffffff",
-          "button": "#800000",
-          "button_label": "#edffa7",
+          "text": "#faf6ee",
+          "button": "#5c1d1f",
+          "button_label": "#faf6ee",
           "secondary_button_label": "#2e2a39",
           "shadow": "#2e2a39"
         }

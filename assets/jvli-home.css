@@ -6,14 +6,22 @@
    ========================================================================== */
 
 :root {
-  --jvli-cream: #f5f1ea;
-  --jvli-cream-deep: #efe9e1;
-  --jvli-ink: #221c18;
-  --jvli-ink-soft: #564b44;
-  --jvli-maroon: #763530;
-  --jvli-dark: #231e1b;
-  --jvli-line: rgba(34, 28, 24, 0.28);
-  --jvli-white: #fbf8f3;
+  /* The JVLI palette: olive green grounds the page (top bar, footer, main
+     buttons), burgundy marks actions and accents, cream is the canvas. */
+  --jvli-olive: #4b4a2e;
+  --jvli-olive-deep: #35341f;
+  --jvli-burgundy: #5c1d1f;
+  --jvli-burgundy-deep: #451517;
+  --jvli-stone: #cdbea8;
+
+  --jvli-cream: #f2ebe0;
+  --jvli-cream-deep: #e7dccb;
+  --jvli-ink: #24211a;
+  --jvli-ink-soft: #59543f;
+  --jvli-maroon: var(--jvli-burgundy);
+  --jvli-dark: var(--jvli-olive);
+  --jvli-line: rgba(36, 33, 26, 0.28);
+  --jvli-white: #faf6ee;
 
   --jvli-serif: "Newsreader", "Iowan Old Style", Georgia, serif;
   --jvli-caps: "Jost", "Futura", "Century Gothic", sans-serif;
@@ -104,7 +112,7 @@
   display: block;
   width: 100%;
   height: 100%;
-  background: #d9cfc3;
+  background: #d8ccb8;
 }
 
 .jvli-placeholder__svg {
@@ -241,7 +249,8 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
 }
 
 .jvli-button--dark:hover {
-  background: #000;
+  background: var(--jvli-olive-deep);
+  border-color: var(--jvli-olive-deep);
 }
 
 .jvli-button--outline-dark {
@@ -251,7 +260,8 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
 }
 
 .jvli-button--outline-dark:hover {
-  background: var(--jvli-ink);
+  border-color: var(--jvli-olive);
+  background: var(--jvli-olive);
   color: var(--jvli-white);
 }
 
@@ -260,8 +270,8 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
    ========================================================================== */
 
 .jvli-announcement {
-  background: var(--jvli-announce-bg, var(--jvli-maroon));
-  color: var(--jvli-announce-fg, #fff);
+  background: var(--jvli-announce-bg, var(--jvli-olive));
+  color: var(--jvli-announce-fg, var(--jvli-white));
 }
 
 .jvli-announcement__inner {
@@ -747,7 +757,7 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   border: 0;
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.85);
-  color: #221c18;
+  color: var(--jvli-ink);
 }
 
 .jvli-fav--sense .jvli-icon {
@@ -880,9 +890,9 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   width: 100%;
   min-height: 40px;
   margin-top: auto;
-  border: 1px solid var(--jvli-ink);
+  border: 1px solid var(--jvli-olive);
   background: transparent;
-  color: var(--jvli-ink);
+  color: var(--jvli-olive);
   font-family: var(--jvli-caps);
   font-size: 11px;
   font-weight: 500;
@@ -893,7 +903,7 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
 }
 
 .jvli-card__add:hover:not(:disabled) {
-  background: var(--jvli-ink);
+  background: var(--jvli-olive);
   color: var(--jvli-white);
 }
 
@@ -934,10 +944,14 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   inset: 0;
 }
 
+/* The story text sits on burgundy, with the same paper grain as the page. */
 .jvli-story__body {
   position: relative;
   display: flex;
   align-items: center;
+  background-color: var(--jvli-burgundy);
+  background-image: inherit;
+  color: var(--jvli-white);
   padding: clamp(36px, 3.6vw, 60px) var(--jvli-gutter) clamp(36px, 3.6vw, 60px) clamp(28px, 4.9vw, 80px);
 }
 
@@ -947,15 +961,25 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
 
 .jvli-story__text .jvli-eyebrow {
   margin-bottom: clamp(16px, 1.6vw, 26px);
+  color: var(--jvli-stone);
 }
 
 .jvli-story__text .jvli-body {
   max-width: 380px;
   margin-top: clamp(18px, 1.9vw, 30px);
+  color: rgba(250, 246, 238, 0.82);
 }
 
 .jvli-story__text .jvli-button {
   margin-top: clamp(24px, 2.4vw, 38px);
+  border-color: var(--jvli-white);
+  background: var(--jvli-white);
+  color: var(--jvli-burgundy);
+}
+
+.jvli-story__text .jvli-button:hover {
+  border-color: var(--jvli-cream-deep);
+  background: var(--jvli-cream-deep);
 }
 
 .jvli-polaroid {
@@ -968,7 +992,7 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
 .jvli-polaroid__photo {
   position: relative;
   overflow: hidden;
-  background: #d9cfc3;
+  background: #d8ccb8;
 }
 
 .jvli-polaroid__tape {
@@ -1041,16 +1065,18 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   min-width: 0;
 }
 
+/* Collection cards: the name panel in olive. */
 .jvli-category {
   display: flex;
   flex-direction: column;
-  background: var(--jvli-cream-deep);
+  background: var(--jvli-olive);
+  color: var(--jvli-white);
 }
 
 .jvli-category__media {
   aspect-ratio: 121 / 107;
   overflow: hidden;
-  background: #d9cfc3;
+  background: #d8ccb8;
 }
 
 .jvli-category__media .jvli-cover {
@@ -1083,7 +1109,7 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   position: relative;
   height: clamp(340px, 27.3vw, 460px);
   overflow: hidden;
-  background: #3a2a22;
+  background: var(--jvli-olive-deep);
   color: #fff;
 }
 
@@ -1099,7 +1125,7 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(20, 12, 8, var(--jvli-overlay, 0.45)) 0%, rgba(20, 12, 8, calc(var(--jvli-overlay, 0.45) * 0.85)) 28%, rgba(20, 12, 8, calc(var(--jvli-overlay, 0.45) * 0.4)) 42%, rgba(20, 12, 8, 0) 58%);
+  background: linear-gradient(90deg, rgba(40, 39, 22, var(--jvli-overlay, 0.45)) 0%, rgba(40, 39, 22, calc(var(--jvli-overlay, 0.45) * 0.85)) 28%, rgba(40, 39, 22, calc(var(--jvli-overlay, 0.45) * 0.4)) 42%, rgba(40, 39, 22, 0) 58%);
   pointer-events: none;
 }
 
@@ -1247,7 +1273,7 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   display: block;
   aspect-ratio: 1 / 0.99;
   overflow: hidden;
-  background: #d9cfc3;
+  background: #d8ccb8;
 }
 
 /* With the reels feed on, empty photo slots are plain loading tiles until
@@ -1639,7 +1665,7 @@ a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
   flex: 1;
   min-height: 50px;
   margin-top: 0;
-  background: var(--jvli-ink);
+  background: var(--jvli-olive);
   color: var(--jvli-white);
   font-size: 12px;
 }
@@ -1703,7 +1729,7 @@ a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
 
 .jvli-product__checkout .shopify-payment-button__button--unbranded:hover:not([disabled]),
 .jvli-product__checkout .shopify-payment-button__button--unbranded:focus-visible:not([disabled]) {
-  background: #652c28 !important;
+  background: var(--jvli-burgundy-deep) !important;
   color: #fff !important;
 }
 
@@ -2275,7 +2301,7 @@ a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
 .jvli-ourstory__photo {
   position: relative;
   overflow: hidden;
-  background: #d9cfc3;
+  background: #d8ccb8;
 }
 
 .jvli-ourstory__photo > .jvli-cover {
@@ -2810,7 +2836,7 @@ a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
   position: relative;
   aspect-ratio: 0.77;
   overflow: hidden;
-  background: #d9cfc3;
+  background: #d8ccb8;
 }
 
 .jvli-fabric-card__media > .jvli-cover {
@@ -2892,7 +2918,7 @@ a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
   width: 36px;
   height: 1px;
   margin: clamp(20px, 2vw, 30px) 0;
-  background: var(--jvli-ink);
+  background: var(--jvli-olive);
 }
 
 @media (max-width: 1100px) and (min-width: 750px) {
@@ -3536,7 +3562,7 @@ html.jvli-search-open {
 
 .jvli-cart__remove:hover,
 .jvli-cart__remove:focus-visible {
-  color: #652c28;
+  color: var(--jvli-burgundy-deep);
 }
 
 .jvli-cart__remove:hover span,
@@ -4117,7 +4143,7 @@ html.jvli-search-open {
   }
 
   .jvli-banner::after {
-    background: linear-gradient(180deg, rgba(20, 12, 8, 0.05) 0%, rgba(20, 12, 8, calc(var(--jvli-overlay, 0.45) + 0.25)) 100%);
+    background: linear-gradient(180deg, rgba(40, 39, 22, 0.05) 0%, rgba(40, 39, 22, calc(var(--jvli-overlay, 0.45) + 0.25)) 100%);
   }
 
   .jvli-banner__content {
@@ -4406,7 +4432,7 @@ main[data-jvli-thread] {
 
 .jvli-thread__line {
   fill: none;
-  stroke: #763530;
+  stroke: var(--jvli-burgundy);
   stroke-width: 1.5;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -4414,7 +4440,7 @@ main[data-jvli-thread] {
 }
 
 .jvli-thread__dot {
-  fill: #763530;
+  fill: var(--jvli-burgundy);
   opacity: 0;
   transform: scale(0.2);
   transform-box: fill-box;
@@ -5062,7 +5088,7 @@ div.jvli-loupe {
   z-index: 60;
   width: 180px;
   height: 180px;
-  border: 3px solid #fbf8f3;
+  border: 3px solid var(--jvli-white);
   border-radius: 50%;
   background-color: var(--jvli-cream-deep, #efe9e1);
   background-repeat: no-repeat;
@@ -5233,7 +5259,7 @@ a.jvli-card__choose {
 }
 
 .jvli-product__arrow:hover {
-  background: #fbf8f3;
+  background: var(--jvli-white);
 }
 
 .jvli-product__arrow[hidden] {
@@ -5319,8 +5345,8 @@ a.jvli-card__choose {
    tinted panel, thick maroon boxes with a small nudge, and a note underneath. */
 .jvli-product__option.is-missing {
   /* A tinted panel around the whole choice, without moving anything. */
-  background: rgba(118, 53, 48, 0.08);
-  box-shadow: 0 0 0 14px rgba(118, 53, 48, 0.08);
+  background: rgba(92, 29, 31, 0.08);
+  box-shadow: 0 0 0 14px rgba(92, 29, 31, 0.08);
   border-radius: 2px;
 }
 
@@ -5333,7 +5359,7 @@ a.jvli-card__choose {
 .jvli-product__option.is-missing .jvli-card__size span {
   border: 2px solid var(--jvli-maroon);
   background: #fff;
-  box-shadow: 0 0 0 3px rgba(118, 53, 48, 0.18);
+  box-shadow: 0 0 0 3px rgba(92, 29, 31, 0.18);
 }
 
 .jvli-product__option.is-missing .jvli-product__values {
