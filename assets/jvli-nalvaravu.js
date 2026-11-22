@@ -17,9 +17,9 @@
   if (!ctx) return;
 
   var WORD = ['ந', 'ல்', 'வ', 'ர', 'வு'];
-  var PAINT = ['#f6c935', '#f6c935', '#f6c935', '#f6c935', '#f6c935'];
-  var FONT = '"Catamaran", "Noto Sans Tamil", "Tamil Sangam MN", "Latha", sans-serif';
-  var WEIGHT = '800 ';
+  var PAINT = ['#ecc33a', '#ecc33a', '#ecc33a', '#ecc33a', '#ecc33a'];
+  var FONT = '"Baloo Thambi 2", "Noto Sans Tamil", "Tamil Sangam MN", "Latha", sans-serif';
+  var WEIGHT = '600 ';
 
   // Timeline, in seconds from the start.
   var FALL = 0.42; // the board drops until the threads catch
@@ -152,38 +152,51 @@
 
   function buildBoard() {
     var W = Math.min(vw * 0.9, 760);
-    var H = W * (vw < 600 ? 0.4 : 0.35);
-    var frame = W * 0.022;
+    var H = W * 0.36;
+    // A chunky raw-wood frame, with a second plank along the bottom.
+    var frame = H * 0.075;
+    var plank = H * 0.1;
     var innerW = W - frame * 2;
-    var innerH = H - frame * 2;
+    var innerH = H - frame * 2 - plank;
 
-    // Letter size: the word fills the panel, as on a painted sign.
+    // Letter size: tall letters filling the panel's height, as on the
+    // painted sign, narrowed sideways if the word would be too wide.
     var m = document.createElement('canvas').getContext('2d');
     var fs = 100;
     m.font = WEIGHT + fs + 'px ' + FONT;
-    var gap = fs * 0.04;
+    var metrics = m.measureText(WORD.join(''));
+    var ink = (metrics.actualBoundingBoxAscent || 70) + (metrics.actualBoundingBoxDescent || 10);
+    var top = metrics.actualBoundingBoxAscent || 70;
+    var scale = (innerH * 0.82) / ink;
+    fs *= scale;
+    var gap = fs * 0.05;
     var widths = WORD.map(function (ch) {
-      return m.measureText(ch).width;
+      return m.measureText(ch).width * scale;
     });
     var total = widths.reduce(function (a, b) {
       return a + b;
     }, 0) + gap * (WORD.length - 1);
-    var scale = Math.min((innerW * 0.9) / total, (innerH * 1.0) / fs);
-    fs *= scale;
-    gap *= scale;
-    widths = widths.map(function (w) {
-      return w * scale;
-    });
-    total *= scale;
+    var squeeze = Math.min(0.9, (innerW * 0.94) / total); // narrowed, like the painted sign
     var font = WEIGHT + fs + 'px ' + FONT;
-    var baseline = frame + innerH / 2 + fs * 0.2;
-    var x0 = frame + (innerW - total) / 2;
+    var baseline = frame + (innerH - ink * scale) / 2 + top * scale;
+    var x0 = frame + (innerW - total * squeeze) / 2;
     var letters = [];
     var x = x0;
     WORD.forEach(function (ch, i) {
-      letters.push({ ch: ch, x: x, w: widths[i], paint: PAINT[i] });
-      x += widths[i] + gap;
+      letters.push({ ch: ch, x: x, w: widths[i] * squeeze, paint: PAINT[i] });
+      x += (widths[i] + gap) * squeeze;
     });
+    gap *= squeeze;
+
+    // Draws a letter, narrowed by `squeeze`, with its left edge at x.
+    function text(g, ch, lx, ly, how) {
+      g.save();
+      g.translate(lx, ly);
+      g.scale(squeeze, 1);
+      if (how === 'stroke') g.strokeText(ch, 0, 0);
+      else g.fillText(ch, 0, 0);
+      g.restore();
+    }
 
     function drawLetters(g, style) {
       g.font = font;
@@ -191,28 +204,29 @@
       letters.forEach(function (L) {
         if (style === 'mask') {
           g.fillStyle = '#fff';
-          g.fillText(L.ch, L.x, baseline);
+          text(g, L.ch, L.x, baseline);
           return;
         }
-        // Hand-painted: a soft shadow on the blue, a thin dark line, then yellow.
+        // Raised, hand-painted letters: a dark edge to the lower right, a
+        // thin dark line, then mustard yellow.
         g.lineJoin = 'round';
-        g.fillStyle = 'rgba(8, 20, 70, 0.55)';
-        g.fillText(L.ch, L.x + fs * 0.025, baseline + fs * 0.03);
-        g.strokeStyle = '#3a2a12';
-        g.lineWidth = fs * 0.045;
-        g.strokeText(L.ch, L.x, baseline);
+        g.fillStyle = 'rgba(10, 16, 52, 0.85)';
+        text(g, L.ch, L.x + fs * 0.03, baseline + fs * 0.035);
+        g.strokeStyle = '#2d220f';
+        g.lineWidth = fs * 0.035;
+        text(g, L.ch, L.x, baseline, 'stroke');
         g.fillStyle = L.paint;
-        g.fillText(L.ch, L.x, baseline);
+        text(g, L.ch, L.x, baseline);
         // Paint dulled where the bulbs are off.
-        g.fillStyle = 'rgba(30, 24, 20, 0.22)';
-        g.fillText(L.ch, L.x, baseline);
+        g.fillStyle = 'rgba(30, 24, 20, 0.16)';
+        text(g, L.ch, L.x, baseline);
       });
     }
 
     // Bulbs follow the middle of each stroke: sample points inside the
     // letters, keep the ones farthest from an edge, spaced evenly.
-    var spacing = fs * 0.19;
-    var bulbR = spacing * 0.24;
+    var spacing = fs * 0.2;
+    var bulbR = spacing * 0.26;
     var mask = layer(W, H);
     drawLetters(mask.ctx, 'mask');
     var mw = mask.canvas.width;
@@ -242,7 +256,7 @@
       for (var cx = frame; cx < W - frame; cx += step) {
         if (!inside(cx, cy)) continue;
         var d = depth(cx, cy);
-        if (d >= bulbR * 1.05) candidates.push({ x: cx, y: cy, d: d });
+        if (d >= bulbR * 0.95) candidates.push({ x: cx, y: cy, d: d });
       }
     }
     candidates.sort(function (a, b) {
@@ -280,10 +294,15 @@
     var g = body.ctx;
     // Plain wooden frame: pale timber with a little grain.
     var frameGrad = g.createLinearGradient(0, 0, 0, H);
-    frameGrad.addColorStop(0, '#d8bd8e');
-    frameGrad.addColorStop(1, '#b8956a');
+    frameGrad.addColorStop(0, '#c9a476');
+    frameGrad.addColorStop(1, '#b38a5c');
     g.fillStyle = frameGrad;
     g.fillRect(0, 0, W, H);
+    var plankGrad = g.createLinearGradient(0, H - plank, 0, H);
+    plankGrad.addColorStop(0, '#e6d4b2');
+    plankGrad.addColorStop(1, '#d2ba92');
+    g.fillStyle = plankGrad;
+    g.fillRect(0, H - plank, W, plank);
     var grain = seeded(19);
     g.lineWidth = 0.7;
     for (var gi = 0; gi < 70; gi++) {
@@ -294,15 +313,24 @@
       g.bezierCurveTo(W * 0.3, gy + (grain() - 0.5) * 3, W * 0.7, gy + (grain() - 0.5) * 3, W, gy + (grain() - 0.5) * 2);
       g.stroke();
     }
-    g.strokeStyle = 'rgba(255, 240, 210, 0.45)';
+    // Plank edges: the frame's mitred corners and the extra bottom plank.
+    g.strokeStyle = 'rgba(96, 70, 38, 0.55)';
     g.lineWidth = 1;
     g.strokeRect(0.5, 0.5, W - 1, H - 1);
-    var panelGrad = g.createLinearGradient(0, frame, 0, H - frame);
-    panelGrad.addColorStop(0, '#2a4fc4');
-    panelGrad.addColorStop(1, '#1d3ea6');
+    g.beginPath();
+    g.moveTo(0, H - plank);
+    g.lineTo(W, H - plank);
+    [[0, 0, frame, frame], [W, 0, W - frame, frame], [0, H - plank, frame, H - plank - frame], [W, H - plank, W - frame, H - plank - frame]].forEach(function (c) {
+      g.moveTo(c[0], c[1]);
+      g.lineTo(c[2], c[3]);
+    });
+    g.stroke();
+    var panelGrad = g.createLinearGradient(0, frame, 0, frame + innerH);
+    panelGrad.addColorStop(0, '#2353d4');
+    panelGrad.addColorStop(1, '#1d48c0');
     g.fillStyle = panelGrad;
     g.fillRect(frame, frame, innerW, innerH);
-    g.strokeStyle = 'rgba(70, 46, 20, 0.55)';
+    g.strokeStyle = 'rgba(60, 40, 18, 0.6)';
     g.lineWidth = 1.5;
     g.strokeRect(frame, frame, innerW, innerH);
     // Weathered paint: a fine grain.
@@ -314,15 +342,15 @@
     drawLetters(g, 'paint');
     // Bulb holders and the bulbs' glass, switched off.
     var glassOff = sprite(bulbR * 1.1, [
-      [0, 'rgba(250, 244, 226, 1)'],
-      [0.55, 'rgba(206, 192, 160, 1)'],
-      [0.8, 'rgba(120, 104, 78, 1)'],
-      [1, 'rgba(60, 48, 32, 0)'],
+      [0, 'rgba(255, 255, 252, 1)'],
+      [0.5, 'rgba(226, 226, 222, 1)'],
+      [0.82, 'rgba(150, 150, 146, 1)'],
+      [1, 'rgba(80, 80, 78, 0)'],
     ]);
     bulbs.forEach(function (b) {
-      g.fillStyle = '#5a4524';
+      g.fillStyle = '#8a8478';
       g.beginPath();
-      g.arc(b.x, b.y, bulbR * 1.2, 0, Math.PI * 2);
+      g.arc(b.x, b.y, bulbR * 1.18, 0, Math.PI * 2);
       g.fill();
       g.strokeStyle = 'rgba(200, 170, 120, 0.45)';
       g.lineWidth = 0.8;
@@ -347,15 +375,15 @@
     var lit = letters.map(function (L) {
       var face = layer(W, H);
       face.ctx.font = font;
-      face.ctx.fillStyle = L.paint;
-      face.ctx.fillText(L.ch, L.x, baseline);
+      face.ctx.fillStyle = '#f6d052';
+      text(face.ctx, L.ch, L.x, baseline);
       var glow = layer(W, H);
       glow.ctx.font = font;
       glow.ctx.fillStyle = L.paint;
       glow.ctx.shadowColor = L.paint;
       glow.ctx.shadowBlur = fs * 0.45 * dpr;
       glow.ctx.globalAlpha = 0.9;
-      glow.ctx.fillText(L.ch, L.x, baseline);
+      text(glow.ctx, L.ch, L.x, baseline);
       return { face: face.canvas, glow: glow.canvas };
     });
 
@@ -519,13 +547,13 @@
     // Letters come alive as their bulbs light.
     B.lit.forEach(function (L, i) {
       if (levels[i] < 0.01) return;
-      ctx.globalAlpha = Math.min(1, levels[i]);
+      ctx.globalAlpha = 0.6 * Math.min(1, levels[i]);
       ctx.drawImage(L.face, 0, 0, B.W, B.H);
     });
     ctx.globalCompositeOperation = 'lighter';
     B.lit.forEach(function (L, i) {
       if (levels[i] < 0.01) return;
-      ctx.globalAlpha = 0.22 * levels[i];
+      ctx.globalAlpha = 0.12 * levels[i];
       ctx.drawImage(L.glow, 0, 0, B.W, B.H);
     });
 
@@ -577,7 +605,7 @@
   setTimeout(leave, 8000); // never keep anyone waiting
 
   // Wait (briefly) for the sign-painter's font before drawing the board.
-  var fontReady = document.fonts && document.fonts.load ? document.fonts.load('800 100px "Catamaran"', 'நல்வரவு') : Promise.resolve();
+  var fontReady = document.fonts && document.fonts.load ? document.fonts.load('600 100px "Baloo Thambi 2"', 'நல்வரவு') : Promise.resolve();
   var photo = new Promise(function (resolve) {
     var src = intro.getAttribute('data-scene');
     if (!src) return resolve();
