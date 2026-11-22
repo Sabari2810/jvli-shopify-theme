@@ -335,7 +335,7 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
 
 .jvli-header--overlay {
   background: transparent;
-  color: #fff;
+  color: var(--jvli-ink);
   box-shadow: none;
 }
 
