@@ -147,7 +147,7 @@
   /* ---------- The board ---------- */
 
   function buildBoard() {
-    var W = Math.min(vw * 0.9, 760);
+    var W = Math.min(vw * (vw < 600 ? 0.78 : 0.5), 600);
     var H = W * 0.36;
     // A chunky raw-wood frame, with a second plank along the bottom.
     var frame = H * 0.075;
