@@ -42,6 +42,7 @@
     },
     "jvli_story": {
       "type": "jvli-story",
+      "disabled": true,
       "settings": {
         "image": "shopify://shop_images/jvli-story-fabric.webp",
         "image_alt": "Printed cotton fabric with jasmine flowers",
