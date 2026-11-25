@@ -6,7 +6,7 @@
 .jvli-about {
   --jvli-about-red: #7a0021;
   --jvli-about-serif: "EB Garamond", var(--jvli-serif);
-  padding-block: clamp(24px, 3.4vw, 56px) clamp(64px, 7vw, 112px);
+  padding-block: clamp(16px, 2vw, 32px) clamp(40px, 4vw, 64px);
   color: var(--jvli-ink);
 }
 
@@ -14,7 +14,7 @@
   max-width: calc(1120px + 2 * var(--jvli-gutter));
   margin-inline: auto;
   display: grid;
-  gap: clamp(40px, 5vw, 72px);
+  gap: clamp(28px, 3vw, 44px);
 }
 
 .jvli-about figure {
@@ -35,7 +35,7 @@
 
 .jvli-about__intro {
   display: grid;
-  gap: 18px;
+  gap: 12px;
   padding-inline: clamp(0px, 1.4vw, 16px);
 }
 
@@ -85,8 +85,8 @@
 .jvli-about__row {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-  align-items: center;
-  gap: clamp(28px, 4vw, 56px);
+  align-items: start;
+  gap: clamp(24px, 3vw, 44px);
   padding-inline: clamp(0px, 1.4vw, 16px);
 }
 
@@ -120,13 +120,17 @@
 }
 
 @media (max-width: 749px) {
+  .jvli-about__inner {
+    gap: 28px;
+  }
+
   .jvli-about__hero {
     aspect-ratio: 4 / 3;
   }
 
   .jvli-about__row {
     grid-template-columns: 1fr;
-    gap: 22px;
+    gap: 16px;
   }
 
   /* On phones the photo always comes first. */
