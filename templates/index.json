@@ -225,6 +225,129 @@
         "padding_top": 0,
         "padding_bottom": 32
       }
+    },
+    "jvli_postcards": {
+      "type": "jvli-postcards",
+      "settings": {
+        "eyebrow": "A little love from our community",
+        "heading": "Postcards from you.",
+        "text": "Little notes, lovely people, and stories from the other side of every order.",
+        "show_flowers": true
+      },
+      "blocks": {
+        "review_1": {
+          "type": "review",
+          "settings": {
+            "quote": "Absolutely loved the fabric and the fit! The Thamarai print is so effortless and so comfortable.",
+            "name": "Priya",
+            "city": "Chennai",
+            "rating": 5,
+            "verified": true
+          }
+        },
+        "review_2": {
+          "type": "review",
+          "settings": {
+            "quote": "The print is even more beautiful in real life. I've already washed it twice and the colour hasn't faded.",
+            "name": "Ananya",
+            "city": "Coimbatore",
+            "rating": 5,
+            "verified": true
+          }
+        },
+        "review_3": {
+          "type": "review",
+          "settings": {
+            "quote": "Simple, elegant and perfect for everyday wear. JVLI never disappoints!",
+            "name": "Kavya",
+            "city": "Madurai",
+            "rating": 5,
+            "verified": true
+          }
+        },
+        "review_4": {
+          "type": "review",
+          "settings": {
+            "quote": "Ordered the Kaavi linen kurti for office. Breathable even in Chennai heat, and the length is just right.",
+            "name": "Divya",
+            "city": "Chennai",
+            "rating": 5,
+            "verified": true
+          }
+        },
+        "review_5": {
+          "type": "review",
+          "settings": {
+            "quote": "My mother loved the Kanchi cotton saree. Light, easy to drape, and the border is lovely.",
+            "name": "Meena",
+            "city": "Tiruchirappalli",
+            "rating": 5,
+            "verified": true
+          }
+        },
+        "review_6": {
+          "type": "review",
+          "settings": {
+            "quote": "The size guide was spot on. Took an M and it fits like it was made for me.",
+            "name": "Shruthi",
+            "city": "Bengaluru",
+            "rating": 4,
+            "verified": true
+          }
+        },
+        "review_7": {
+          "type": "review",
+          "settings": {
+            "quote": "Packed with so much care, with a little handwritten note inside. Felt like a gift to myself.",
+            "name": "Lakshmi",
+            "city": "Salem",
+            "rating": 5,
+            "verified": true
+          }
+        },
+        "review_8": {
+          "type": "review",
+          "settings": {
+            "quote": "The Thinnai co-ord set is my new travel outfit. Pockets in the pants are a big plus!",
+            "name": "Nivetha",
+            "city": "Pondicherry",
+            "rating": 5,
+            "verified": true
+          }
+        },
+        "review_9": {
+          "type": "review",
+          "settings": {
+            "quote": "Soft mul cotton, beautiful buttons, and it arrived in three days. Will be ordering again.",
+            "name": "Harini",
+            "city": "Tirunelveli",
+            "rating": 4,
+            "verified": true
+          }
+        },
+        "review_10": {
+          "type": "review",
+          "settings": {
+            "quote": "Got so many compliments at work for the Kolam print kurti. Everyone asked where it was from.",
+            "name": "Sowmya",
+            "city": "Hyderabad",
+            "rating": 5,
+            "verified": true
+          }
+        }
+      },
+      "block_order": [
+        "review_1",
+        "review_2",
+        "review_3",
+        "review_4",
+        "review_5",
+        "review_6",
+        "review_7",
+        "review_8",
+        "review_9",
+        "review_10"
+      ]
     }
   },
   "order": [
@@ -236,6 +359,7 @@
     "jvli_fabric",
     "jvli_gallery",
     "featured-collection",
-    "collection_list_XfHFAM"
+    "collection_list_XfHFAM",
+    "jvli_postcards"
   ]
 }
