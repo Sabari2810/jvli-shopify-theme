@@ -40,10 +40,12 @@
       {%- endif -%}
       <h1 class="jvli-h2 jvli-about__title">{{ section.settings.heading }}</h1>
       <div class="jvli-about__text">{{ section.settings.intro }}</div>
-      {%- if section.settings.quote != blank -%}
-        <p class="jvli-about__quote">{{ section.settings.quote }}</p>
-      {%- endif -%}
-      <div class="jvli-about__text">{{ section.settings.after_quote }}</div>
+      <p class="jvli-about__text jvli-about__quote-line">
+        {%- if section.settings.quote != blank -%}
+          <span class="jvli-about__quote">{{ section.settings.quote }}</span>{{ ' ' }}
+        {%- endif -%}
+        {{- section.settings.after_quote | remove: '<p>' | remove: '</p>' -}}
+      </p>
     </div>
 
     <div class="jvli-about__row">
