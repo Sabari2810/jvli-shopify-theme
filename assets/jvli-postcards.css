@@ -167,19 +167,6 @@
   padding-bottom: clamp(60px, 7vw, 110px);
 }
 
-.jvli-postcard__stars {
-  display: flex;
-  gap: 4px;
-  color: var(--jvli-pc-red);
-  font-family: var(--jvli-sans);
-  font-size: clamp(18px, 1.7vw, 26px);
-  line-height: 1;
-}
-
-.jvli-postcard__star.is-off {
-  opacity: 0.25;
-}
-
 .jvli-postcard__quote {
   margin: 0;
   padding: 0;
@@ -405,7 +392,6 @@
     gap: 14px;
   }
 
-  .jvli-postcard__stars,
   .jvli-postcard__quote {
     padding-right: 76px;
   }

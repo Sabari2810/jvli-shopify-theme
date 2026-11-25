@@ -42,7 +42,6 @@
       <div class="jvli-postcards__stage">
         <div class="jvli-postcards__track" data-jvli-postcards-track>
           {%- for block in section.blocks -%}
-            {%- assign jvli_stars = block.settings.rating | default: 5 -%}
             <article
               class="jvli-postcard{% if forloop.first %} is-active{% endif %}"
               data-jvli-postcard
@@ -64,11 +63,6 @@
               {%- endif -%}
 
               <div class="jvli-postcard__message">
-                <p class="jvli-postcard__stars" aria-label="{{ jvli_stars }} out of 5 stars">
-                  {%- for i in (1..5) -%}
-                    <span class="jvli-postcard__star{% if i > jvli_stars %} is-off{% endif %}" aria-hidden="true">★</span>
-                  {%- endfor -%}
-                </p>
                 <blockquote class="jvli-postcard__quote">“{{ block.settings.quote | strip | escape | newline_to_br }}”</blockquote>
               </div>
 
@@ -156,7 +150,6 @@
         { "type": "textarea", "id": "quote", "label": "Review" },
         { "type": "text", "id": "name", "label": "Name" },
         { "type": "text", "id": "city", "label": "City" },
-        { "type": "range", "id": "rating", "label": "Stars", "min": 1, "max": 5, "step": 1, "default": 5 },
         { "type": "checkbox", "id": "verified", "label": "Verified customer", "info": "Tick only if this person bought from JVLI.", "default": false }
       ]
     }
