@@ -1,0 +1,94 @@
+{%- comment -%}
+  About page: "Some of us don't really shop. We hunt."
+  A wide photo, the intro with a pull quote, two photo and text rows, and a
+  closing line. Each photo falls back to the theme's own crop until an image
+  is chosen in the theme editor.
+{%- endcomment -%}
+{%- render 'jvli-assets' -%}
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;1,400&display=swap">
+{{ 'jvli-about.css' | asset_url | stylesheet_tag }}
+
+{%- capture jvli_about_hero -%}
+  {%- if section.settings.hero_image != blank -%}
+    {%- render 'jvli-media', image: section.settings.hero_image, alt: section.settings.hero_alt, sizes: '(max-width: 749px) 100vw, 1100px', class: 'jvli-about__img', loading: 'eager' -%}
+  {%- else -%}
+    <img class="jvli-about__img" src="{{ 'jvli-about-hero.webp' | asset_url }}" alt="{{ section.settings.hero_alt | escape }}" width="918" height="326" fetchpriority="high">
+  {%- endif -%}
+{%- endcapture -%}
+{%- capture jvli_about_one -%}
+  {%- if section.settings.image_one != blank -%}
+    {%- render 'jvli-media', image: section.settings.image_one, alt: section.settings.image_one_alt, sizes: '(max-width: 749px) 100vw, 520px', class: 'jvli-about__img' -%}
+  {%- else -%}
+    <img class="jvli-about__img" src="{{ 'jvli-about-sketch.webp' | asset_url }}" alt="{{ section.settings.image_one_alt | escape }}" width="403" height="327" loading="lazy">
+  {%- endif -%}
+{%- endcapture -%}
+{%- capture jvli_about_two -%}
+  {%- if section.settings.image_two != blank -%}
+    {%- render 'jvli-media', image: section.settings.image_two, alt: section.settings.image_two_alt, sizes: '(max-width: 749px) 100vw, 520px', class: 'jvli-about__img' -%}
+  {%- else -%}
+    <img class="jvli-about__img" src="{{ 'jvli-about-hangers.webp' | asset_url }}" alt="{{ section.settings.image_two_alt | escape }}" width="441" height="232" loading="lazy">
+  {%- endif -%}
+{%- endcapture -%}
+
+<section class="jvli jvli-about jvli-section">
+  <div class="jvli-container jvli-about__inner">
+    <figure class="jvli-about__hero">{{ jvli_about_hero }}</figure>
+
+    <div class="jvli-about__intro">
+      {%- if section.settings.eyebrow != blank -%}
+        <p class="jvli-eyebrow jvli-about__eyebrow">{{ section.settings.eyebrow }}</p>
+      {%- endif -%}
+      <h1 class="jvli-h2 jvli-about__title">{{ section.settings.heading }}</h1>
+      <div class="jvli-about__text">{{ section.settings.intro }}</div>
+      {%- if section.settings.quote != blank -%}
+        <p class="jvli-about__quote">{{ section.settings.quote }}</p>
+      {%- endif -%}
+      <div class="jvli-about__text">{{ section.settings.after_quote }}</div>
+    </div>
+
+    <div class="jvli-about__row">
+      <figure class="jvli-about__photo">{{ jvli_about_one }}</figure>
+      <div class="jvli-about__text">{{ section.settings.text_one }}</div>
+    </div>
+
+    <div class="jvli-about__row jvli-about__row--flip">
+      <div class="jvli-about__text">{{ section.settings.text_two }}</div>
+      <figure class="jvli-about__photo">{{ jvli_about_two }}</figure>
+    </div>
+
+    <div class="jvli-about__closing">
+      <h2 class="jvli-h2 jvli-about__closing-title">{{ section.settings.closing_heading }}</h2>
+      {%- if section.settings.closing_line != blank -%}
+        <p class="jvli-about__closing-line">{{ section.settings.closing_line }}</p>
+      {%- endif -%}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "JVLI About",
+  "class": "jvli-section-about",
+  "settings": [
+    { "type": "image_picker", "id": "hero_image", "label": "Top photo", "info": "Wide, about 2800 × 1000. Leave empty to use the built-in photo." },
+    { "type": "text", "id": "hero_alt", "label": "Top photo description", "default": "Block-printed cotton folded on a wooden table in the afternoon light" },
+    { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "A little about us." },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Some of us don’t really shop. We hunt." },
+    { "type": "richtext", "id": "intro", "label": "Intro", "default": "<p>One more scroll. One more website. One more search for that colour, that silhouette, that fit. You know the drill. Until something catches your eye, sits just right and makes you go,</p>" },
+    { "type": "text", "id": "quote", "label": "Quote", "default": "“Okay, this is the one.”" },
+    { "type": "richtext", "id": "after_quote", "label": "Text after the quote", "default": "<p>We’re those people. Always have been.</p>" },
+    { "type": "header", "content": "First row" },
+    { "type": "image_picker", "id": "image_one", "label": "Photo", "info": "Leave empty to use the built-in photo." },
+    { "type": "text", "id": "image_one_alt", "label": "Photo description", "default": "Sketching a kurta design beside block-printed fabric" },
+    { "type": "richtext", "id": "text_one", "label": "Text", "default": "<p>JVLI grew from that little obsession with finding something that feels just right. Our love for textiles, familiar roots and the thrill of discovering something a little different came together in a simple thought: what if we made the kind of clothes we’d love to find ourselves?</p><p>So here we are, still chasing that feeling. Only now, we get to create the find.</p><p>We don’t think getting dressed needs a rulebook. Or that you need to dress like anyone but yourself.</p>" },
+    { "type": "header", "content": "Second row" },
+    { "type": "richtext", "id": "text_two", "label": "Text", "info": "Italic text uses the handwritten-style serif.", "default": "<p>We just love creating clothes that feel right, fit into your everyday and give you that little <em>“glad I found this”</em> feeling.</p><p>Because the best finds aren’t just the ones that look good. They’re the ones that feel like you.</p>" },
+    { "type": "image_picker", "id": "image_two", "label": "Photo", "info": "Leave empty to use the built-in photo." },
+    { "type": "text", "id": "image_two_alt", "label": "Photo description", "default": "Printed kurtas hanging on a wooden rail" },
+    { "type": "header", "content": "Closing" },
+    { "type": "text", "id": "closing_heading", "label": "Heading", "default": "That’s JVLI." },
+    { "type": "text", "id": "closing_line", "label": "Line", "default": "Thoughtfully found. Soulfully made. Entirely yours." }
+  ],
+  "presets": [{ "name": "JVLI About" }]
+}
+{% endschema %}

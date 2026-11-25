@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "about": {
+      "type": "jvli-about",
+      "settings": {}
+    }
+  },
+  "order": ["about"]
+}
