@@ -1,7 +1,7 @@
 {%- comment -%}
   Price for a variant, with the compare-at price struck through when on sale.
   Params: variant; extra (optional, in paise) is added to both, e.g. the
-  dupatta's price when "With dupatta" is chosen.
+  pant and dupatta prices when a set is chosen.
 {%- endcomment -%}
 {%- liquid
   assign jvli_extra = extra | default: 0

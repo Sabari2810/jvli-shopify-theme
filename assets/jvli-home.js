@@ -367,10 +367,11 @@
 
   function renderSearchResults(container, query, data) {
     var results = (data && data.resources && data.resources.results) || {};
-    // Dupatta add-ons (tagged "dupatta") are sold only with their kurti.
+    // Add-on pieces (tagged "dupatta" or "pant") are sold only with their kurti.
     var products = (results.products || []).filter(function (product) {
       return !(product.tags || []).some(function (tag) {
-        return String(tag).toLowerCase() === 'dupatta';
+        var name = String(tag).toLowerCase();
+        return name === 'dupatta' || name === 'pant';
       });
     });
     var collections = results.collections || [];
@@ -596,8 +597,8 @@
   /* ---------- Cart page ----------
      Quantity steppers and Remove update the bag in place through
      /cart/update.js, which also returns this section re-rendered; the new
-     HTML replaces the old. A dupatta add-on moves with the piece it was
-     bought with: up or down by the same amount, and removed with it. The
+     HTML replaces the old. A set's pant and dupatta move with the kurti
+     they were bought with: up or down by the same amount, removed with it. The
      form still works without JavaScript. */
 
   var cartBusy = false;
@@ -624,11 +625,13 @@
     var row = section.querySelector('[data-jvli-cart-line="' + line + '"]');
     var updates = {};
     updates[row.dataset.jvliCartKey] = quantity;
-    var partner = row.dataset.jvliCartPartner && section.querySelector('[data-jvli-cart-line="' + row.dataset.jvliCartPartner + '"]');
-    if (partner) {
-      var change = quantity - Number(row.dataset.jvliCartQuantity);
+    // A set's pant and dupatta move with their kurti.
+    var change = quantity - Number(row.dataset.jvliCartQuantity);
+    (row.dataset.jvliCartPartners || '').split(',').filter(Boolean).forEach(function (n) {
+      var partner = section.querySelector('[data-jvli-cart-line="' + n + '"]');
+      if (!partner) return;
       updates[partner.dataset.jvliCartKey] = quantity === 0 ? 0 : Math.max(0, Number(partner.dataset.jvliCartQuantity) + change);
-    }
+    });
     fetch(root + 'cart/update.js', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
@@ -768,33 +771,51 @@
         qtyInput.value = Math.min(Math.max(parseInt(qtyInput.value, 10) || 1, 1), max);
       }
 
-      /* Dupatta add-on: with "With dupatta" chosen, the price shows the
-         dupatta added, the counter stops at the lower of the two stocks, and
-         our Buy it now (both items) stands in for Shopify's. */
-      var dupatta = section.querySelector('[data-jvli-dupatta]');
-      function syncDupatta() {
-        if (!dupatta) return;
-        var chosen = !!chosenDupatta(form);
+      /* Sets: with a pant and/or dupatta chosen, the price shows the pieces
+         added up, the counter stops at the lowest stock among them, and our
+         Buy it now (every piece) stands in for Shopify's. ?set=full (or
+         pant / dupatta) in the URL picks a set on arrival. */
+      var setBox = section.querySelector('[data-jvli-set]');
+      function syncSet() {
+        if (!setBox) return;
+        var chosen = chosenAddons(form);
+        var checked = setBox.querySelector('input:checked');
         if (qtyInput) {
           var base = parseInt(qtyInput.dataset.jvliBaseMax || qtyInput.max, 10) || 20;
           qtyInput.dataset.jvliBaseMax = base;
-          qtyInput.max = chosen ? Math.min(base, parseInt(dupatta.dataset.max, 10) || base) : base;
+          var max = base;
+          chosen.forEach(function (addon) {
+            max = Math.min(max, parseInt(addon.dataset.max, 10) || base);
+          });
+          qtyInput.max = max;
           clampQty();
         }
-        var label = dupatta.querySelector('[data-jvli-dupatta-value]');
-        if (label) label.textContent = chosen ? 'With' : 'Without';
+        var label = setBox.querySelector('[data-jvli-set-value]');
+        if (label && checked) label.textContent = checked.dataset.label || 'Kurti only';
         var variant = variants.filter(function (v) {
           return idInput && String(v.id) === idInput.value;
         })[0];
-        if (priceEl && variant) priceEl.innerHTML = chosen && variant.priceWithDupatta ? variant.priceWithDupatta : variant.price;
+        var key = checked ? checked.value : '';
+        if (priceEl && variant) priceEl.innerHTML = key && variant.setPrices && variant.setPrices[key] ? variant.setPrices[key] : variant.price;
         var own = section.querySelector('[data-jvli-buy-both-wrap]');
         var shopifyBuy = section.querySelector('.jvli-product__checkout:not([data-jvli-buy-both-wrap])');
-        if (own) own.hidden = !chosen;
-        if (shopifyBuy) shopifyBuy.hidden = chosen;
+        if (own) own.hidden = !chosen.length;
+        if (shopifyBuy) shopifyBuy.hidden = !!chosen.length;
       }
-      if (dupatta) {
-        dupatta.addEventListener('change', syncDupatta);
-        syncDupatta();
+      if (setBox) {
+        var wanted = new URLSearchParams(window.location.search).get('set');
+        if (wanted) {
+          var value = wanted === 'full' ? 'pant,dupatta' : wanted;
+          var pick = setBox.querySelector('input[value="' + value + '"]:not(:disabled)');
+          // A kurti with only one add-on: "full" means that one.
+          if (!pick && wanted === 'full') {
+            var options = setBox.querySelectorAll('input[value]:not([value=""]):not(:disabled)');
+            pick = options[options.length - 1];
+          }
+          if (pick) pick.checked = true;
+        }
+        setBox.addEventListener('change', syncSet);
+        syncSet();
       }
 
       /* Gallery: thumbnails, dots and swiping share one "show" function. */
@@ -898,7 +919,7 @@
           clampQty();
         }
         if (priceEl) priceEl.innerHTML = variant.price;
-        syncDupatta();
+        syncSet();
         if (variant.media) showMedia(variant.media, true);
         // Keep the URL shareable for the chosen variant.
         var url = new URL(window.location.href);
@@ -1332,18 +1353,21 @@
     true
   );
 
-  // The dupatta box when "With dupatta" is chosen, else null.
-  function chosenDupatta(form) {
-    var box = form.querySelector('[data-jvli-dupatta]');
+  // The add-on pieces (pant, dupatta) of the chosen set, in that order.
+  function chosenAddons(form) {
+    var box = form.querySelector('[data-jvli-set]');
     var input = box && box.querySelector('input:checked');
-    return input && input.value ? box : null;
+    if (!input || !input.value) return [];
+    return input.value.split(',').map(function (name) {
+      return box.querySelector('[data-jvli-addon="' + name + '"]');
+    }).filter(Boolean);
   }
 
-  // What the form puts in the bag: the product with its choices, and its
-  // dupatta when chosen. The dupatta line says which piece it goes with,
-  // "For: <product> (<variant>, <choices>)"; jvli-cart.liquid builds the same
-  // text to pair the two lines. Says what's missing and returns null if a
-  // choice isn't made yet.
+  // What the form puts in the bag: the product with its choices, then each
+  // add-on piece of the chosen set. An add-on line says which piece it goes
+  // with, "For: <product> (<variant>, <choices>)"; jvli-cart.liquid builds
+  // the same text to pair the lines. The pant also carries the Size. Says
+  // what's missing and returns null if a choice isn't made yet.
   function cartItems(form) {
     var message = form.querySelector('[data-jvli-add-message]');
     var idField = form.querySelector('input[name="id"]:checked') || form.querySelector('input[type="hidden"][name="id"]');
@@ -1368,8 +1392,8 @@
     var quantity = Math.max(1, parseInt(quantityField && quantityField.value, 10) || 1);
     var items = [{ id: Number(idField.value), quantity: quantity, properties: properties }];
 
-    var dupatta = chosenDupatta(form);
-    if (dupatta) {
+    var addons = chosenAddons(form);
+    if (addons.length) {
       var parts = [];
       var options = Array.prototype.map.call(form.querySelectorAll('[data-jvli-option] input:checked'), function (input) {
         return input.value;
@@ -1378,8 +1402,13 @@
       Object.keys(properties).forEach(function (key) {
         parts.push(properties[key]);
       });
-      var forText = dupatta.dataset.for + (parts.length ? ' (' + parts.join(', ') + ')' : '');
-      items.push({ id: Number(dupatta.dataset.variantId), quantity: quantity, properties: { For: forText } });
+      var setBox = form.querySelector('[data-jvli-set]');
+      var forText = setBox.dataset.for + (parts.length ? ' (' + parts.join(', ') + ')' : '');
+      addons.forEach(function (addon) {
+        var addonProperties = { For: forText };
+        if (addon.hasAttribute('data-takes-size') && properties.Size) addonProperties = { Size: properties.Size, For: forText };
+        items.push({ id: Number(addon.dataset.variantId), quantity: quantity, properties: addonProperties });
+      });
     }
     return items;
   }
@@ -1397,7 +1426,7 @@
     });
   }
 
-  // Buy it now with a dupatta: both go in the bag, then on to checkout.
+  // Buy it now with a set: every piece goes in the bag, then on to checkout.
   document.addEventListener('click', function (event) {
     var button = event.target.closest && event.target.closest('[data-jvli-buy-both]');
     if (!button) return;

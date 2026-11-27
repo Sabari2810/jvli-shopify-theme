@@ -2,16 +2,16 @@
 {%- comment -%}
   JVLI search results page: search box, product results as JVLI cards, other
   results (pages, articles) as a list, and pagination. Reuses the collection
-  page styles. Dupatta add-ons (tagged "dupatta") are left out: they're sold
-  only with their kurti.
+  page styles. Set add-ons (tagged "dupatta" or "pant") are left out:
+  they're sold only with their kurti.
 {%- endcomment -%}
 {%- paginate search.results by section.settings.results_per_page -%}
   {%- liquid
     assign product_results = search.results | where: 'object_type', 'product'
-    # Dupatta add-ons (tagged "dupatta") get no card and aren't counted.
+    # Set add-ons (tagged "dupatta" or "pant") get no card and aren't counted.
     assign shown_count = search.results_count
     for product in product_results
-      if product.tags contains 'dupatta'
+      if product.tags contains 'dupatta' or product.tags contains 'pant'
         assign shown_count = shown_count | minus: 1
       endif
     endfor

@@ -9,9 +9,11 @@
 //   TEMPLATE        template to render, e.g. page.favorites (default: index)
 //   LOGGED_IN       set to render as a signed-in customer
 //   MTO             render a made-to-order product (Size chosen on
-//                   the page, with a dupatta add-on); with TEMPLATE=cart, the
-//                   first line carries them and is paired with a dupatta line
+//                   the page, with a pant and a dupatta add-on); with
+//                   TEMPLATE=cart, the first line carries them and is paired
+//                   with a pant line and a dupatta line (a full set)
 //   DUPATTA_SOLD_OUT with MTO, the dupatta add-on is sold out
+//   PANT_SOLD_OUT    with MTO, the pant add-on is sold out
 import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -140,6 +142,16 @@ function sampleMadeToOrder(page) {
     metafields: {
       custom: {
         made_to_order_sizes: { value: ["XS", "S", "M", "L", "XL"] },
+        // Its own pant: ₹600, 4 in stock (more than the kurti's 3).
+        made_to_order_pant: {
+          value: {
+            id: 902,
+            title: `Pant for ${page.title}`,
+            selected_or_first_available_variant: process.env.PANT_SOLD_OUT
+              ? { id: 9020, price: 60000, available: false, inventory_management: "shopify", inventory_policy: "deny", inventory_quantity: 0 }
+              : { id: 9020, price: 60000, available: true, inventory_management: "shopify", inventory_policy: "deny", inventory_quantity: 4 },
+          },
+        },
         // Its own dupatta: ₹300, 2 in stock (fewer than the kurti's 3).
         made_to_order_dupatta: {
           value: {
@@ -365,8 +377,9 @@ function sampleCart() {
     kurti.properties = { Size: "M", _hidden: "x" };
     kurti.product_id = 900;
     kurti.options_with_values = [];
-    kurti.product = { ...kurti.product, has_only_default_variant: true, metafields: { custom: { made_to_order_dupatta: { value: { id: 901 } } } } };
-    // ...bought with its dupatta, listed last so the bag has to pair them.
+    kurti.product = { ...kurti.product, has_only_default_variant: true, metafields: { custom: { made_to_order_pant: { value: { id: 902 } }, made_to_order_dupatta: { value: { id: 901 } } } } };
+    // ...bought as a full set, its dupatta and pant listed last so the bag
+    // has to pair them.
     const dupatta = line({ ...sampleProducts[2], price: 30000, title: `Dupatta for ${kurti.product.title}` }, "", 1);
     items.push({
       ...dupatta,
@@ -376,6 +389,16 @@ function sampleCart() {
       options_with_values: [],
       properties: { For: `${kurti.product.title} (M)` },
       variant: { inventory_management: "shopify", inventory_policy: "deny", inventory_quantity: 3 },
+    });
+    const pant = line({ ...sampleProducts[2], price: 60000, title: `Pant for ${kurti.product.title}` }, "", 1);
+    items.push({
+      ...pant,
+      key: "902:pant",
+      product_id: 902,
+      product: { title: `Pant for ${kurti.product.title}`, has_only_default_variant: true },
+      options_with_values: [],
+      properties: { Size: "M", For: `${kurti.product.title} (M)` },
+      variant: { inventory_management: "shopify", inventory_policy: "deny", inventory_quantity: 2 },
     });
   }
   const subtotal = items.reduce((sum, item) => sum + item.final_line_price, 0);
@@ -399,8 +422,11 @@ function sampleSearch(terms) {
     { object_type: "page", title: "Our Fabrics", url: "/pages/our-fabrics" },
     { object_type: "article", title: "How we choose our cotton", url: "/blogs/journal/cotton" },
   ];
-  // MTO=1: a dupatta add-on matches too; the page must leave it out.
-  if (process.env.MTO) results.unshift({ ...sampleProducts[2], id: 901, title: "Dupatta for Kaveri Kurti", tags: ["dupatta"], object_type: "product" });
+  // MTO=1: a dupatta and a pant add-on match too; the page must leave them out.
+  if (process.env.MTO) {
+    results.unshift({ ...sampleProducts[2], id: 901, title: "Dupatta for Kaveri Kurti", tags: ["dupatta"], object_type: "product" });
+    results.unshift({ ...sampleProducts[2], id: 902, title: "Pant for Kaveri Kurti", tags: ["pant"], object_type: "product" });
+  }
   return { performed: true, terms, results, results_count: results.length };
 }
 

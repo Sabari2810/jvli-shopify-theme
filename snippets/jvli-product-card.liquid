@@ -7,10 +7,13 @@
   to /cart/add even without JavaScript. Otherwise the first available variant
   is added. The heart is saved by jvli-favorites.js.
 
-  Dupatta add-ons (tagged "dupatta") are sold only with their kurti, so they
-  get no card in any grid.
+  Set add-ons (tagged "dupatta" or "pant") are sold only with their kurti,
+  so they get no card in any grid.
+
+  On the Kurti sets collection (handle kurti-sets) the card shows the full
+  set price ("Set from") and links to the product with the full set chosen.
 {%- endcomment -%}
-{%- unless product.tags contains 'dupatta' -%}
+{%- unless product.tags contains 'dupatta' or product.tags contains 'pant' -%}
 {%- liquid
   assign jvli_size_index = -1
   for option in product.options_with_values
@@ -20,10 +23,26 @@
     endif
   endfor
   assign jvli_second_image = product.media[1].preview_image
+  assign jvli_url = product.url
+  assign jvli_set_price = 0
+  if collection.handle == 'kurti-sets'
+    assign jvli_set_pant = product.metafields.custom.made_to_order_pant.value
+    assign jvli_set_dupatta = product.metafields.custom.made_to_order_dupatta.value
+    if jvli_set_pant != blank or jvli_set_dupatta != blank
+      assign jvli_set_price = product.price
+      if jvli_set_pant != blank
+        assign jvli_set_price = jvli_set_price | plus: jvli_set_pant.price
+      endif
+      if jvli_set_dupatta != blank
+        assign jvli_set_price = jvli_set_price | plus: jvli_set_dupatta.price
+      endif
+      assign jvli_url = product.url | append: '?set=full'
+    endif
+  endif
 -%}
 <article class="jvli-card" data-jvli-card>
   <div class="jvli-card__media">
-    <a href="{{ product.url }}" class="jvli-card__image-link" tabindex="-1" aria-hidden="true">
+    <a href="{{ jvli_url }}" class="jvli-card__image-link" tabindex="-1" aria-hidden="true">
       {%- render 'jvli-media',
         image: product.featured_media.preview_image,
         alt: product.title,
@@ -48,9 +67,11 @@
   </div>
 
   <div class="jvli-card__info">
-    <a href="{{ product.url }}" class="jvli-card__title">{{ product.title }}</a>
+    <a href="{{ jvli_url }}" class="jvli-card__title">{{ product.title }}</a>
     <div class="jvli-card__price">
-      {%- if product.compare_at_price > product.price -%}
+      {%- if jvli_set_price > 0 -%}
+        Set from {{ jvli_set_price | money_without_trailing_zeros }}
+      {%- elsif product.compare_at_price > product.price -%}
         <span class="jvli-card__price-sale">{{ product.price | money_without_trailing_zeros }}</span>
         <s class="jvli-card__price-was">{{ product.compare_at_price | money_without_trailing_zeros }}</s>
       {%- else -%}
@@ -60,7 +81,7 @@
 
     {%- if product.metafields.custom.made_to_order_sizes.value != blank -%}
       {%- comment -%} Made-to-order: the size is picked on the product page. {%- endcomment -%}
-      <a href="{{ product.url }}" class="jvli-card__add jvli-card__choose">
+      <a href="{{ jvli_url }}" class="jvli-card__add jvli-card__choose">
         {%- if product.available -%}Choose size{%- else -%}Sold out{%- endif -%}
       </a>
     {%- else -%}

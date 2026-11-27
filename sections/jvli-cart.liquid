@@ -7,8 +7,8 @@
   Without JavaScript it is a plain form: quantities post as updates[] and
   "Update bag" / "Checkout" submit it. jvli-home.js (initCart) changes
   quantities and removes items in place through /cart/update.js, re-rendering
-  this section from the response. A dupatta add-on is listed under the piece
-  it was bought with and follows its quantity.
+  this section from the response. A set's pant and dupatta are listed under
+  the kurti they were bought with and follow its quantity.
 {%- endcomment -%}
 <section class="jvli jvli-cart" data-jvli-cart data-section-id="{{ section.id }}">
   <div class="jvli-container">
@@ -46,15 +46,17 @@
         <div class="jvli-cart__main">
           <p class="jvli-cart__error" role="alert" data-jvli-cart-error hidden></p>
           {%- liquid
-            # Dupatta add-ons: a dupatta line belongs to the piece it was
+            # Set add-ons: a pant or dupatta line belongs to the kurti it was
             # bought with. Its "For" property is "<title> (<variant>, <choices>)"
             # of that line, built the same way as here in jvli-home.js
-            # (cartItems). jvli_pairs lists ",piece:dupatta," line numbers.
+            # (cartItems). jvli_pairs lists ",piece:addon," line numbers; a
+            # piece can have two (pant and dupatta).
             assign jvli_pairs = ','
             assign jvli_paired = ','
             for item in cart.items
+              assign jvli_pant = item.product.metafields.custom.made_to_order_pant.value
               assign jvli_dupatta = item.product.metafields.custom.made_to_order_dupatta.value
-              if jvli_dupatta == blank
+              if jvli_pant == blank and jvli_dupatta == blank
                 continue
               endif
               assign jvli_parts = ''
@@ -75,19 +77,30 @@
                 assign jvli_for = jvli_for | append: ' (' | append: jvli_parts | append: ')'
               endif
               assign jvli_line = forloop.index
-              for other in cart.items
-                assign jvli_mark = ',' | append: forloop.index | append: ','
-                if other.product_id == jvli_dupatta.id and other.properties.For == jvli_for
-                  unless jvli_paired contains jvli_mark
-                    assign jvli_paired = jvli_paired | append: forloop.index | append: ','
-                    assign jvli_pairs = jvli_pairs | append: jvli_line | append: ':' | append: forloop.index | append: ','
-                    break
-                  endunless
+              for jvli_kind in (1..2)
+                if jvli_kind == 1
+                  assign jvli_addon = jvli_pant
+                else
+                  assign jvli_addon = jvli_dupatta
                 endif
+                if jvli_addon == blank
+                  continue
+                endif
+                for other in cart.items
+                  assign jvli_mark = ',' | append: forloop.index | append: ','
+                  if other.product_id == jvli_addon.id and other.properties.For == jvli_for
+                    unless jvli_paired contains jvli_mark
+                      assign jvli_paired = jvli_paired | append: forloop.index | append: ','
+                      assign jvli_pairs = jvli_pairs | append: jvli_line | append: ':' | append: forloop.index | append: ','
+                      break
+                    endunless
+                  endif
+                endfor
               endfor
             endfor
 
-            # Line order on the page: each piece followed by its dupatta.
+            # Line order on the page: each piece followed by its add-ons.
+            assign jvli_pair_list = jvli_pairs | split: ','
             assign jvli_order = ''
             for item in cart.items
               assign jvli_mark = ',' | append: forloop.index | append: ','
@@ -95,11 +108,16 @@
                 continue
               endif
               assign jvli_order = jvli_order | append: forloop.index | append: ','
-              assign jvli_key = ',' | append: forloop.index | append: ':'
-              if jvli_pairs contains jvli_key
-                assign jvli_partner = jvli_pairs | split: jvli_key | last | split: ',' | first
-                assign jvli_order = jvli_order | append: jvli_partner | append: ','
-              endif
+              assign jvli_key = forloop.index | append: ':'
+              for jvli_pair in jvli_pair_list
+                if jvli_pair contains ':'
+                  assign jvli_pair_piece = jvli_pair | split: ':' | first | append: ':'
+                  if jvli_pair_piece == jvli_key
+                    assign jvli_pair_addon = jvli_pair | split: ':' | last
+                    assign jvli_order = jvli_order | append: jvli_pair_addon | append: ','
+                  endif
+                endif
+              endfor
             endfor
             assign jvli_order = jvli_order | split: ','
           -%}
@@ -109,16 +127,20 @@
                 assign jvli_index = jvli_n | plus: 0
                 assign jvli_i0 = jvli_index | minus: 1
                 assign item = cart.items[jvli_i0]
-                assign jvli_key = ',' | append: jvli_index | append: ':'
-                assign jvli_partner = 0
+                assign jvli_partners = ''
                 assign jvli_piece = 0
-                if jvli_pairs contains jvli_key
-                  assign jvli_partner = jvli_pairs | split: jvli_key | last | split: ',' | first | plus: 0
-                endif
-                assign jvli_mark = ':' | append: jvli_index | append: ','
-                if jvli_pairs contains jvli_mark
-                  assign jvli_piece = jvli_pairs | split: jvli_mark | first | split: ',' | last | plus: 0
-                endif
+                for jvli_pair in jvli_pair_list
+                  if jvli_pair contains ':'
+                    assign jvli_pair_piece = jvli_pair | split: ':' | first
+                    assign jvli_pair_addon = jvli_pair | split: ':' | last
+                    if jvli_pair_piece == jvli_n
+                      assign jvli_partners = jvli_partners | append: jvli_pair_addon | append: ','
+                    endif
+                    if jvli_pair_addon == jvli_n
+                      assign jvli_piece = jvli_pair_piece | plus: 0
+                    endif
+                  endif
+                endfor
                 assign jvli_url = item.url
                 if jvli_piece > 0
                   assign jvli_i0 = jvli_piece | minus: 1
@@ -128,9 +150,10 @@
                 if item.variant.inventory_management == 'shopify' and item.variant.inventory_policy == 'deny'
                   assign jvli_max = item.variant.inventory_quantity
                 endif
-                # A piece can't go past what its dupatta's stock allows either.
-                if jvli_partner > 0
-                  assign jvli_i0 = jvli_partner | minus: 1
+                # A piece can't go past what its add-ons' stock allows either.
+                assign jvli_partner_list = jvli_partners | split: ','
+                for jvli_partner in jvli_partner_list
+                  assign jvli_i0 = jvli_partner | plus: 0 | minus: 1
                   assign jvli_other = cart.items[jvli_i0]
                   if jvli_other.variant.inventory_management == 'shopify' and jvli_other.variant.inventory_policy == 'deny'
                     assign jvli_room = item.quantity | plus: jvli_other.variant.inventory_quantity | minus: jvli_other.quantity
@@ -138,14 +161,15 @@
                       assign jvli_max = jvli_room
                     endif
                   endif
-                endif
+                endfor
+                assign jvli_partners = jvli_partners | remove_last: ','
               -%}
               <li
                 class="jvli-cart__item{% if jvli_piece > 0 %} jvli-cart__item--addon{% endif %}"
                 data-jvli-cart-line="{{ jvli_index }}"
                 data-jvli-cart-key="{{ item.key }}"
                 data-jvli-cart-quantity="{{ item.quantity }}"
-                {% if jvli_partner > 0 %}data-jvli-cart-partner="{{ jvli_partner }}"{% endif %}
+                {% if jvli_partners != blank %}data-jvli-cart-partners="{{ jvli_partners }}"{% endif %}
               >
                 <a href="{{ jvli_url }}" class="jvli-cart__media" tabindex="-1" aria-hidden="true">
                   {%- render 'jvli-media', image: item.image, alt: '', sizes: '(max-width: 749px) 96px, 140px', class: 'jvli-cover', placeholder: 'product-apparel-1' -%}
@@ -185,7 +209,7 @@
 
                   <div class="jvli-cart__controls">
                     {%- if jvli_piece > 0 -%}
-                      {%- comment -%} A paired dupatta follows its piece's quantity. {%- endcomment -%}
+                      {%- comment -%} A paired pant or dupatta follows its kurti's quantity. {%- endcomment -%}
                       <input type="hidden" name="updates[{{ item.key }}]" value="{{ item.quantity }}">
                       <div class="jvli-cart__addon-qty">
                         <p>Qty {{ item.quantity }}</p>
