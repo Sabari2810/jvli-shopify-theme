@@ -12,21 +12,21 @@ Last updated 2026-11-27.
 ## Adding a new kurti with a set (checklist)
 
 1. **Fabric** (only for a new roll): Shopify admin > Content > Metaobjects > **Fabric** > Add entry. Name, and **Metres left** (e.g. 30).
-2. **Pant** product: title like "Pant for Kaavi Kurti", product type **Pant**, tag **`pant`**, price, add to the right GST collection. Under the product's metafields: **Fabric** = the roll, **Fabric per piece (metres)** = e.g. 2. Track quantity on; any starting number (the app sets it).
+2. **Pant** product: title like "Pant for Kaavi Kurti", product type **Pant**, tag **`pant`**, price, add to the right GST collection. Under the product's metafields: **Fabric** = the roll, and either **Fabric per size (metres)** = e.g. `XS 1.8, S 1.9, M 2, L 2.1, XL 2.2` or a single **Fabric per piece (metres)** = e.g. 2 (or both: sizes not listed use the single amount). Track quantity on; any starting number (the app sets it).
 3. **Dupatta** product (if any): as before, tag **`dupatta`**, its own stock count (dupattas are bought as pieces, not cut from the roll).
 4. **Kurti** product: product type **Kurti**, **Made to order: sizes**, and in metafields:
    - **Made to order: pant** = the pant, **Made to order: dupatta** = the dupatta
-   - **Fabric** = the roll, **Fabric per piece (metres)** = e.g. 2.5
-5. Save. Within seconds the app tags the kurti `set` (so it joins Kurti sets) and sets kurti and pant stock from the fabric. If it hasn't after 15 minutes, check the app is deployed and approved (below).
+   - **Fabric** = the roll, **Fabric per size (metres)** = e.g. `XS 2.2, S 2.3, M 2.5, L 2.7, XL 2.9` (and/or **Fabric per piece (metres)** = e.g. 2.5)
+5. Save. Within seconds the app tags the kurti `set` (so it joins Kurti sets) and sets kurti and pant stock from the fabric. If it hasn't after an hour, check the app is deployed and approved (below).
 
 ## Fabric stock (automatic)
 
 The **jvli-favorites** app (repo `Sabari2810/jvli-favorites`, `app/fabric/`, README "Fabric stock and sets") keeps stock right:
 
-- **Order placed:** takes quantity × metres per piece off the fabric, then sets every kurti and pant of that fabric to the whole pieces the metres left allow. Example: 30 m, kurti 2.5 m, pant 2 m → 12 kurtis, 15 pants; a full set order leaves 25.5 m → 10 kurtis, 12 pants.
+- **Order placed:** takes quantity × the metres for the ordered size off the fabric (the size comes from the order line, "Size: M"), then sets every kurti and pant of that fabric to the whole pieces the metres left allow, counted with the **largest** size so no size is oversold. Example: 30 m, kurti 2.5 m, pant 2 m → 12 kurtis, 15 pants; a full set order leaves 25.5 m → 10 kurtis, 12 pants.
 - **Order cancelled:** gives back exactly what that order took.
-- **Every 15 minutes:** recalculates every fabric and the `set` tags.
-- **Bought more fabric?** Edit **Metres left** on the Fabric entry. Stock updates within 15 minutes.
+- **Bought more fabric?** Edit **Metres left** on the Fabric entry. Stock updates within seconds.
+- **Every hour:** a backup recalculation of every fabric and the `set` tags, in case a webhook was missed.
 - **Don't** edit kurti or pant stock by hand: it is recalculated from metres and your number would be overwritten.
 
 ## Test data (delete before launch)
