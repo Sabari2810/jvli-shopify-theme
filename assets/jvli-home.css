@@ -5228,6 +5228,11 @@ div.jvli-loupe {
   transition: opacity 0.4s ease;
 }
 
+/* The hint only shows while a fabric close-up is the photo in view. */
+.jvli-product__gallery:not(:has(.jvli-product__slide.is-active[data-jvli-loupe])) .jvli-loupe-hint {
+  opacity: 0;
+}
+
 .jvli-loupe-hint.is-used {
   opacity: 0;
 }

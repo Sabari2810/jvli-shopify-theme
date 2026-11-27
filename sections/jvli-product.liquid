@@ -37,6 +37,9 @@
             <figure
               class="jvli-product__slide{% if media.id == current.featured_media.id or forloop.first and current.featured_media == blank %} is-active{% endif %}"
               data-media-id="{{ media.id }}"
+              {%- comment -%} The magnifier only works on fabric close-ups: photos whose alt text contains "fabric". {%- endcomment -%}
+              {%- assign slide_alt_lower = media.alt | downcase -%}
+              {% if slide_alt_lower contains 'fabric' %}data-jvli-loupe{% endif %}
             >
               {%- liquid
                 assign slide_loading = 'lazy'

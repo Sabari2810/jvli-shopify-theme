@@ -1947,7 +1947,9 @@
      following the cursor on desktop; on phones a tap brings it up (it sits
      above the finger), dragging moves it and another tap puts it away. Uses the
      largest version of the photo so the weave is sharp. A small hint on the
-     photo says how, until it has been used once. */
+     photo says how, until it has been used once. Only fabric close-ups get
+     it: slides marked data-jvli-loupe (the photo's alt text contains
+     "fabric"); photos of people wearing the clothes are never magnified. */
 
   var LOUPE_ZOOM = 1.8;
 
@@ -1969,7 +1971,7 @@
     scope.querySelectorAll('[data-jvli-slides]').forEach(function (slides) {
       if (slides.dataset.jvliLoupe) return;
       slides.dataset.jvliLoupe = 'true';
-      if (!slides.querySelector('.jvli-product__slide img')) return;
+      if (!slides.querySelector('.jvli-product__slide[data-jvli-loupe] img')) return;
 
       var fine = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
       var gallery = slides.closest('.jvli-product__gallery') || slides;
@@ -2022,7 +2024,7 @@
       }
 
       function photoAt(target) {
-        var slide = target.closest && target.closest('.jvli-product__slide');
+        var slide = target.closest && target.closest('.jvli-product__slide[data-jvli-loupe]');
         return slide ? slide.querySelector('img') : null;
       }
 

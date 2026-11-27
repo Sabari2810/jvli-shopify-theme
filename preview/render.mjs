@@ -104,7 +104,8 @@ const menus = {
 // one sold-out size, as Shopify's product object exposes them.
 function sampleProductPage() {
   const base = sampleProducts[3];
-  const media = [1, 2, 3].map((n, i) => ({ id: 700 + i, media_type: "image", alt: "", preview_image: standin(`product-${((3 + i) % 5) + 1}`) }));
+  // The third photo is a fabric close-up: only it gets the magnifier.
+  const media = [1, 2, 3].map((n, i) => ({ id: 700 + i, media_type: "image", alt: i === 2 ? "Fabric close-up of the block print" : "", preview_image: standin(`product-${((3 + i) % 5) + 1}`) }));
   const variants = base.variants.map((v, i) => ({
     ...v,
     title: v.options[0],
