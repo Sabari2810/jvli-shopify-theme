@@ -442,7 +442,7 @@ const globals = {
     all_products_collection_url: "/collections/all",
     collections_url: "/collections",
   },
-  shop: { name: "JVLI", customer_accounts_enabled: true },
+  shop: { name: "JVLI", customer_accounts_enabled: true, refund_policy: { url: "/policies/refund-policy" } },
   customer: process.env.LOGGED_IN ? { id: 1, first_name: "Test" } : null,
   // /cart: CART=empty for an empty bag; otherwise three sample lines.
   cart: process.env.TEMPLATE === "cart" && process.env.CART !== "empty" ? sampleCart() : { item_count: 0, items: [] },
