@@ -4,14 +4,14 @@
    cell, so the stage is as tall as the longest review and never jumps. */
 
 .jvli-postcards {
-  --jvli-pc-w: min(860px, 70vw);
+  --jvli-pc-w: min(760px, 62vw);
   --jvli-pc-paper: #eedfc6;
   --jvli-pc-ink: #3b2a20;
   --jvli-pc-red: #8a2a35;
   --jvli-pc-script: "EB Garamond", var(--jvli-serif);
   position: relative;
   overflow: hidden;
-  padding-block: clamp(56px, 6vw, 96px) clamp(48px, 5vw, 80px);
+  padding-block: clamp(36px, 3.6vw, 56px) clamp(28px, 3vw, 44px);
 }
 
 .jvli-postcards__corner {
@@ -27,9 +27,9 @@
   position: relative;
   display: grid;
   justify-items: center;
-  gap: 14px;
+  gap: 8px;
   text-align: center;
-  margin-bottom: clamp(28px, 3.4vw, 52px);
+  margin-bottom: clamp(12px, 1.6vw, 24px);
 }
 
 .jvli-postcards__eyebrow {
@@ -71,8 +71,8 @@
   width: var(--jvli-pc-w);
   display: grid;
   grid-template-columns: 1.08fr 1fr;
-  margin-block: 18px 30px;
-  padding: clamp(34px, 3.6vw, 56px) clamp(28px, 3.4vw, 54px);
+  margin-block: 10px 20px;
+  padding: clamp(24px, 2.6vw, 38px) clamp(24px, 2.8vw, 42px);
   color: var(--jvli-pc-ink);
   opacity: 0;
   visibility: hidden;
@@ -153,7 +153,7 @@
   position: absolute;
   left: -1.5%;
   bottom: -4%;
-  width: clamp(100px, 11.5vw, 176px);
+  width: clamp(84px, 9vw, 140px);
   height: auto;
   pointer-events: none;
 }
@@ -161,10 +161,10 @@
 .jvli-postcard__message {
   display: grid;
   align-content: start;
-  gap: clamp(14px, 1.6vw, 24px);
-  padding-right: clamp(20px, 3vw, 48px);
-  padding-left: clamp(0px, 1.6vw, 24px);
-  padding-bottom: clamp(60px, 7vw, 110px);
+  gap: clamp(10px, 1.2vw, 16px);
+  padding-right: clamp(18px, 2.6vw, 40px);
+  padding-left: clamp(0px, 1.4vw, 20px);
+  padding-bottom: clamp(36px, 4.4vw, 70px);
 }
 
 .jvli-postcard__quote {
@@ -174,17 +174,17 @@
   font-weight: 400;
   letter-spacing: 0;
   font-family: var(--jvli-pc-script);
-  font-size: clamp(20px, 2vw, 30px);
+  font-size: clamp(18px, 1.7vw, 25px);
   font-style: italic;
-  line-height: 1.45;
+  line-height: 1.4;
   overflow-wrap: anywhere;
 }
 
 .jvli-postcard__address {
   display: grid;
   grid-template-rows: auto 1fr;
-  gap: clamp(20px, 2.4vw, 36px);
-  padding-left: clamp(22px, 3vw, 48px);
+  gap: clamp(12px, 1.6vw, 24px);
+  padding-left: clamp(20px, 2.6vw, 40px);
   border-left: 1.5px solid rgba(138, 42, 53, 0.55);
 }
 
@@ -210,9 +210,9 @@
   grid-column: 1;
   grid-row: 2;
   justify-self: end;
-  width: clamp(92px, 9vw, 140px);
+  width: clamp(80px, 7.6vw, 116px);
   height: auto;
-  margin-top: 4px;
+  margin-top: 0;
   margin-right: -26px;
   fill: none;
   stroke: rgba(59, 42, 32, 0.75);
@@ -234,7 +234,7 @@
   grid-row: 1 / span 2;
   display: grid;
   place-items: center;
-  width: clamp(70px, 7.4vw, 112px);
+  width: clamp(60px, 6vw, 90px);
   aspect-ratio: 5 / 6;
   padding: 9px;
   background: #f6ecdc;
@@ -268,20 +268,20 @@
 .jvli-postcard__love {
   color: var(--jvli-pc-red);
   font-family: var(--jvli-pc-script);
-  font-size: clamp(18px, 1.6vw, 24px);
+  font-size: clamp(16px, 1.4vw, 21px);
   font-style: italic;
-  line-height: 1.4;
+  line-height: 1.3;
 }
 
 .jvli-postcard__name {
   font-family: var(--jvli-display);
-  font-size: clamp(30px, 3vw, 46px);
+  font-size: clamp(26px, 2.4vw, 38px);
   line-height: 1.1;
   padding-left: 0.6em;
 }
 
 .jvli-postcard__meta {
-  margin-top: clamp(14px, 1.8vw, 26px);
+  margin-top: clamp(8px, 1vw, 14px);
   color: var(--jvli-ink-soft);
   font-family: var(--jvli-caps);
   font-size: clamp(10px, 0.85vw, 12.5px);
@@ -371,12 +371,12 @@
   }
 
   .jvli-postcards__head {
-    padding-top: 24px;
+    padding-top: 12px;
   }
 
   .jvli-postcard {
     grid-template-columns: 1fr;
-    padding: 30px 24px 26px;
+    padding: 22px 20px 20px;
   }
 
   .jvli-postcard.is-prev {
@@ -388,8 +388,8 @@
   }
 
   .jvli-postcard__message {
-    padding: 0 0 24px;
-    gap: 14px;
+    padding: 0 0 16px;
+    gap: 10px;
   }
 
   .jvli-postcard__quote {
@@ -397,7 +397,7 @@
   }
 
   .jvli-postcard__quote {
-    min-height: 6.5em;
+    min-height: 4.5em;
   }
 
   .jvli-postcards__eyebrow::before,
@@ -407,7 +407,7 @@
 
   .jvli-postcard__address {
     display: block;
-    padding: 18px 0 0;
+    padding: 12px 0 0;
     border-left: 0;
     border-top: 1.5px solid rgba(138, 42, 53, 0.45);
   }
@@ -419,19 +419,19 @@
 
   .jvli-postcard__stamp {
     position: absolute;
-    top: 22px;
-    right: 20px;
-    width: 62px;
+    top: 18px;
+    right: 16px;
+    width: 52px;
   }
 
   .jvli-postcard__from {
     position: relative;
     z-index: 1;
-    padding-left: 34%;
+    padding-left: 22%;
   }
 
   .jvli-postcard__sprig {
-    width: 96px;
+    width: 80px;
   }
 
   .jvli-postcards__arrow {
