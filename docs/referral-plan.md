@@ -1,6 +1,6 @@
 # Referrals and discounts plan
 
-Status: **proposal, nothing built.** Confirm each part before it is implemented.
+Status: **Phase 1 is live** (FIRST150 and free shipping, see `docs/discounts.md`). Phase 2 (referrals) is a proposal, nothing built. Confirm each part before it is implemented.
 
 Flowcharts (private, share from the page's Share menu):
 
