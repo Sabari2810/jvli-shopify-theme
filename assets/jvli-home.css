@@ -256,14 +256,14 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
 }
 
 .jvli-button--dark {
-  background: var(--jvli-dark);
-  border-color: var(--jvli-dark);
+  background: var(--jvli-maroon);
+  border-color: var(--jvli-maroon);
   color: var(--jvli-white);
 }
 
 .jvli-button--dark:hover {
-  background: var(--jvli-olive-deep);
-  border-color: var(--jvli-olive-deep);
+  background: var(--jvli-burgundy-deep);
+  border-color: var(--jvli-burgundy-deep);
 }
 
 .jvli-button--outline-dark {
@@ -273,8 +273,8 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
 }
 
 .jvli-button--outline-dark:hover {
-  border-color: var(--jvli-olive);
-  background: var(--jvli-olive);
+  border-color: var(--jvli-maroon);
+  background: var(--jvli-maroon);
   color: var(--jvli-white);
 }
 
@@ -905,9 +905,9 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   width: 100%;
   min-height: 40px;
   margin-top: auto;
-  border: 1px solid var(--jvli-olive);
+  border: 1px solid var(--jvli-maroon);
   background: transparent;
-  color: var(--jvli-olive);
+  color: var(--jvli-maroon);
   font-family: var(--jvli-caps);
   font-size: 11px;
   font-weight: 500;
@@ -918,7 +918,7 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
 }
 
 .jvli-card__add:hover:not(:disabled) {
-  background: var(--jvli-olive);
+  background: var(--jvli-maroon);
   color: var(--jvli-white);
 }
 
@@ -1680,14 +1680,14 @@ a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
   flex: 1;
   min-height: 50px;
   margin-top: 0;
-  background: var(--jvli-olive);
+  background: var(--jvli-maroon);
   color: var(--jvli-white);
   font-size: 12px;
 }
 
 .jvli-product__add:hover:not(:disabled) {
-  background: var(--jvli-maroon);
-  border-color: var(--jvli-maroon);
+  background: var(--jvli-burgundy-deep);
+  border-color: var(--jvli-burgundy-deep);
 }
 
 /* "Added" (briefly) and "Sold out": a muted but readable button. */
