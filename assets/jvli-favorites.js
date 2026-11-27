@@ -156,7 +156,7 @@
       var title = button.dataset.productTitle || 'this product';
       button.setAttribute('aria-label', (on ? 'Remove ' : 'Save ') + title + (on ? ' from favorites' : ' to favorites'));
       var label = button.querySelector('[data-jvli-favorite-label]');
-      if (label) label.textContent = on ? 'Saved to favorites' : 'Save to favorites';
+      if (label && !button.classList.contains('is-telling')) label.textContent = on ? 'Saved to favorites' : 'Save to favorites';
     });
     document.querySelectorAll('[data-jvli-favorites-count]').forEach(function (el) {
       el.textContent = ids.length;
@@ -226,7 +226,22 @@
     event.preventDefault();
     event.stopPropagation();
     toggle(button.dataset.productId, button.dataset.productHandle);
+    tell(button);
   });
+
+  // The heart beside Add to bag has no visible label, so a tap
+  // briefly shows what happened.
+  function tell(button) {
+    var tip = button.classList.contains('jvli-fav--title') && button.querySelector('[data-jvli-favorite-label]');
+    if (!tip) return;
+    tip.textContent = has(button.dataset.productId) ? 'Saved to favorites' : 'Removed from favorites';
+    button.classList.add('is-telling');
+    clearTimeout(button._jvliTell);
+    button._jvliTell = setTimeout(function () {
+      button.classList.remove('is-telling');
+      render();
+    }, 1800);
+  }
 
   // Keep several tabs in step for guests.
   window.addEventListener('storage', function (event) {

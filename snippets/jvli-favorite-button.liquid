@@ -1,11 +1,12 @@
 {%- comment -%}
   Heart button for global favorites. jvli-favorites.js keeps every button for
   the same product in sync and saves the change.
-  Params: product, class (extra classes), style ('icon' or 'text').
+  Params: product, class (extra classes), style ('icon', 'text' or 'title':
+  an icon with a hover and on-tap note, used beside Add to bag).
 {%- endcomment -%}
 <button
   type="button"
-  class="jvli-fav{% if style == 'text' %} jvli-fav--text{% endif %} {{ class }}"
+  class="jvli-fav{% if style == 'text' %} jvli-fav--text{% elsif style == 'title' %} jvli-fav--title{% endif %} {{ class }}"
   data-jvli-favorite
   data-product-id="gid://shopify/Product/{{ product.id }}"
   data-product-handle="{{ product.handle | escape }}"
@@ -16,5 +17,7 @@
   {%- render 'jvli-icon', icon: 'heart' -%}
   {%- if style == 'text' -%}
     <span class="jvli-fav__label" data-jvli-favorite-label>Save to favorites</span>
+  {%- elsif style == 'title' -%}
+    <span class="jvli-fav__tip" data-jvli-favorite-label aria-live="polite">Save to favorites</span>
   {%- endif -%}
 </button>

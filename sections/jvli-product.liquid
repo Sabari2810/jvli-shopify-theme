@@ -223,6 +223,7 @@
           <button type="submit" class="jvli-card__add jvli-product__add" data-jvli-add-button {% unless current.available %}disabled{% endunless %}>
             {%- if current.available -%}Add to bag{%- else -%}Sold out{%- endif -%}
           </button>
+          {%- render 'jvli-favorite-button', product: product, style: 'title', class: 'jvli-product__fav' -%}
         </div>
         <p class="jvli-card__message" role="status" data-jvli-add-message></p>
         <p class="jvli-product__added" data-jvli-added hidden>
@@ -249,8 +250,6 @@
         {%- endif -%}
       {%- endform -%}
       {%- endif -%}
-
-      {%- render 'jvli-favorite-button', product: product, style: 'text' -%}
 
       <div class="jvli-product__panels">
         {%- if product.description != blank -%}

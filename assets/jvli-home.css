@@ -1574,6 +1574,62 @@ a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
   top: calc(var(--jvli-header-height, 76px) + 24px);
 }
 
+/* Heart to the right of Add to bag, with a small note on hover and after
+   a tap (it has no visible label). */
+.jvli-product__fav {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 52px;
+  min-height: 50px;
+  padding: 0;
+  border: 1px solid var(--jvli-ink);
+  background: transparent;
+  color: var(--jvli-ink);
+  transition: border-color 0.2s ease, color 0.2s ease;
+}
+
+.jvli-product__fav:hover,
+.jvli-product__fav[aria-pressed="true"] {
+  border-color: var(--jvli-maroon);
+}
+
+.jvli-product__fav .jvli-icon {
+  width: 21px;
+  height: 21px;
+}
+
+.jvli-fav__tip {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  z-index: 5;
+  padding: 6px 10px;
+  background: var(--jvli-ink);
+  color: var(--jvli-white);
+  font-family: var(--jvli-sans);
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(4px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.jvli-product__fav.is-telling .jvli-fav__tip {
+  opacity: 1;
+  transform: none;
+}
+
+@media (hover: hover) {
+  .jvli-product__fav:hover .jvli-fav__tip {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 .jvli-product__title {
   margin: 0 0 12px;
   font-family: var(--jvli-serif);
