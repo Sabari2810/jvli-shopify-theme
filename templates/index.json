@@ -370,13 +370,6 @@
             "answer": "<p>Many of our pieces are stitched in your size once you order, which is why delivery can take a little longer than ready stock. Small differences from piece to piece are part of being handmade.</p>"
           }
         },
-        "question_5": {
-          "type": "question",
-          "settings": {
-            "question": "Can I buy the kurti as a set?",
-            "answer": "<p>Yes. On kurtis with a set, choose Kurti only, + Pant, + Dupatta or the Full set. The pant is cut in the same size as your kurti.</p>"
-          }
-        },
         "question_6": {
           "type": "question",
           "settings": {
@@ -404,7 +397,6 @@
         "question_2",
         "question_3",
         "question_4",
-        "question_5",
         "question_6",
         "question_7",
         "question_8"
