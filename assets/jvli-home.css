@@ -293,7 +293,7 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   align-items: center;
   justify-content: center;
   min-height: 28px;
-  padding-inline: calc(var(--jvli-gutter) + 28px);
+  padding-inline: var(--jvli-gutter);
 }
 
 .jvli-announcement__text {
@@ -307,40 +307,9 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
 
 .jvli-announcement__side {
   position: absolute;
-  right: calc(var(--jvli-gutter) + 32px);
+  right: var(--jvli-gutter);
   font-size: 11px;
   opacity: 0.9;
-}
-
-.jvli-announcement__close {
-  position: absolute;
-  top: 50%;
-  right: calc(var(--jvli-gutter) - 6px);
-  display: grid;
-  place-items: center;
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: inherit;
-  cursor: pointer;
-  opacity: 0.85;
-  transform: translateY(-50%);
-}
-
-.jvli-announcement__close:hover {
-  opacity: 1;
-}
-
-.jvli-announcement__close:focus-visible {
-  outline: 1px solid currentColor;
-  outline-offset: -3px;
-}
-
-.jvli-announcement__close .jvli-icon {
-  width: 14px;
-  height: 14px;
 }
 
 /* ==========================================================================
@@ -3916,16 +3885,12 @@ html.jvli-search-open {
   }
 
   .jvli-announcement__inner {
-    padding-inline: 12px 40px;
+    padding-inline: 12px;
   }
 
   .jvli-announcement__text {
     font-size: 10px;
     letter-spacing: 0.12em;
-  }
-
-  .jvli-announcement__close {
-    right: 8px;
   }
 
   .jvli-header__inner,
