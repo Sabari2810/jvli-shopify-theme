@@ -292,8 +292,8 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 34px;
-  padding-inline: var(--jvli-gutter);
+  min-height: 28px;
+  padding-inline: calc(var(--jvli-gutter) + 28px);
 }
 
 .jvli-announcement__text {
@@ -307,9 +307,40 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
 
 .jvli-announcement__side {
   position: absolute;
-  right: var(--jvli-gutter);
+  right: calc(var(--jvli-gutter) + 32px);
   font-size: 11px;
   opacity: 0.9;
+}
+
+.jvli-announcement__close {
+  position: absolute;
+  top: 50%;
+  right: calc(var(--jvli-gutter) - 6px);
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0.85;
+  transform: translateY(-50%);
+}
+
+.jvli-announcement__close:hover {
+  opacity: 1;
+}
+
+.jvli-announcement__close:focus-visible {
+  outline: 1px solid currentColor;
+  outline-offset: -3px;
+}
+
+.jvli-announcement__close .jvli-icon {
+  width: 14px;
+  height: 14px;
 }
 
 /* ==========================================================================
@@ -3884,9 +3915,17 @@ html.jvli-search-open {
     display: none;
   }
 
+  .jvli-announcement__inner {
+    padding-inline: 12px 40px;
+  }
+
   .jvli-announcement__text {
     font-size: 10px;
-    letter-spacing: 0.18em;
+    letter-spacing: 0.12em;
+  }
+
+  .jvli-announcement__close {
+    right: 8px;
   }
 
   .jvli-header__inner,

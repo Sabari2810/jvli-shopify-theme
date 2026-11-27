@@ -14,8 +14,34 @@
     {%- if section.settings.side_text != blank -%}
       <p class="jvli-announcement__side">{{ section.settings.side_text }}</p>
     {%- endif -%}
+    <button type="button" class="jvli-announcement__close" data-jvli-announcement-close aria-label="Close announcement">
+      {%- render 'jvli-icon', icon: 'close' -%}
+    </button>
   </div>
 </div>
+{%- comment -%}
+  The cross hides the bar for this shopper. The choice is remembered for
+  this exact text, so a new announcement shows again. Runs inline so a
+  closed bar never flashes on the next page.
+{%- endcomment -%}
+<script>
+  (function () {
+    var bar = document.currentScript.previousElementSibling;
+    var wrap = bar.closest('.shopify-section') || bar;
+    var key = 'jvli:announcement-closed';
+    var id = {{ section.settings.text | append: section.settings.side_text | json }};
+    if (window.Shopify && Shopify.designMode) return;
+    try {
+      if (localStorage.getItem(key) === id) wrap.hidden = true;
+    } catch (e) {}
+    bar.querySelector('[data-jvli-announcement-close]').addEventListener('click', function () {
+      wrap.hidden = true;
+      try {
+        localStorage.setItem(key, id);
+      } catch (e) {}
+    });
+  })();
+</script>
 
 {% schema %}
 {
