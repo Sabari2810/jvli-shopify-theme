@@ -1,0 +1,69 @@
+{%- comment -%}
+  Bag rewards bar: "Add ₹X more to get 10% off" with a progress bar and a
+  marker for each reward. The amounts come from the JVLI Cart section
+  settings and must match the discounts set up in Shopify admin; the
+  discounts themselves are applied by Shopify, not by this bar.
+  Params: settings (the cart section's settings).
+{%- endcomment -%}
+{%- liquid
+  assign jvli_sub = cart.items_subtotal_price
+  assign jvli_names = ''
+  assign jvli_amounts = ''
+  if settings.reward_ship_amount > 0
+    assign jvli_names = jvli_names | append: 'free shipping|'
+    assign jvli_amounts = jvli_amounts | append: settings.reward_ship_amount | append: '|'
+  endif
+  if settings.reward_one_amount > 0 and settings.reward_one_label != blank
+    assign jvli_names = jvli_names | append: settings.reward_one_label | append: '|'
+    assign jvli_amounts = jvli_amounts | append: settings.reward_one_amount | append: '|'
+  endif
+  if settings.reward_two_amount > 0 and settings.reward_two_label != blank
+    assign jvli_names = jvli_names | append: settings.reward_two_label | append: '|'
+    assign jvli_amounts = jvli_amounts | append: settings.reward_two_amount | append: '|'
+  endif
+  assign jvli_names = jvli_names | split: '|'
+  assign jvli_amounts = jvli_amounts | split: '|'
+-%}
+{%- if jvli_amounts.size > 0 -%}
+  {%- liquid
+    assign jvli_top = jvli_amounts.last | times: 100
+    assign jvli_next_index = -1
+    assign jvli_last_done = -1
+    for amount in jvli_amounts
+      assign jvli_cents = amount | times: 100
+      if jvli_sub >= jvli_cents
+        assign jvli_last_done = forloop.index0
+      elsif jvli_next_index == -1
+        assign jvli_next_index = forloop.index0
+      endif
+    endfor
+    assign jvli_fill = jvli_sub | times: 100 | divided_by: jvli_top
+    if jvli_fill > 100
+      assign jvli_fill = 100
+    endif
+  -%}
+  <div class="jvli-rewards">
+    <p class="jvli-rewards__message" role="status">
+      {%- if jvli_next_index == -1 -%}
+        You’ve unlocked <strong>{{ jvli_names.last }}</strong>{% if settings.reward_ship_amount > 0 and jvli_names.size > 1 %} and <strong>free shipping</strong>{% endif %}.
+      {%- else -%}
+        {%- assign jvli_need = jvli_amounts[jvli_next_index] | times: 100 | minus: jvli_sub -%}
+        {%- if jvli_last_done > -1 -%}
+          <span class="jvli-rewards__done">{{ jvli_names[jvli_last_done] | capitalize }} unlocked.</span>{{ ' ' }}
+        {%- endif -%}
+        Add <strong>{{ jvli_need | money_without_trailing_zeros }}</strong> more to get <strong>{{ jvli_names[jvli_next_index] }}</strong>
+      {%- endif -%}
+    </p>
+    <div class="jvli-rewards__track" aria-hidden="true">
+      <div class="jvli-rewards__bar"><span class="jvli-rewards__fill" style="width: {{ jvli_fill }}%;"></span></div>
+      {%- for amount in jvli_amounts -%}
+        {%- assign jvli_cents = amount | times: 100 -%}
+        {%- assign jvli_pos = jvli_cents | times: 100 | divided_by: jvli_top -%}
+        <span class="jvli-rewards__mark{% if jvli_sub >= jvli_cents %} is-done{% endif %}{% if forloop.last %} is-last{% endif %}" style="left: {{ jvli_pos }}%;">
+          <span class="jvli-rewards__dot"></span>
+          <span class="jvli-rewards__label">{{ jvli_names[forloop.index0] }}<small>{{ jvli_cents | money_without_trailing_zeros }}</small></span>
+        </span>
+      {%- endfor -%}
+    </div>
+  </div>
+{%- endif -%}

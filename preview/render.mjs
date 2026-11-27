@@ -381,7 +381,8 @@ function sampleCart() {
   return {
     items,
     item_count: items.reduce((n, item) => n + item.quantity, 0),
-    items_subtotal_price: subtotal,
+    // CART_SUBTOTAL=2500 overrides the subtotal (in rupees) to preview the rewards bar.
+    items_subtotal_price: process.env.CART_SUBTOTAL ? Number(process.env.CART_SUBTOTAL) * 100 : subtotal,
     total_price: subtotal,
     taxes_included: true,
     cart_level_discount_applications: [],

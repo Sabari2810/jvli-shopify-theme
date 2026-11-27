@@ -39,6 +39,9 @@
         </a>
       </div>
     {%- else -%}
+      {%- if section.settings.rewards_enabled -%}
+        {%- render 'jvli-cart-rewards', settings: section.settings -%}
+      {%- endif -%}
       <form action="{{ routes.cart_url }}" method="post" class="jvli-cart__layout" novalidate data-jvli-cart-form>
         <div class="jvli-cart__main">
           <p class="jvli-cart__error" role="alert" data-jvli-cart-error hidden></p>
@@ -281,6 +284,14 @@
     { "type": "url", "id": "continue_link", "label": "Continue shopping link", "info": "Defaults to all products." },
     { "type": "text", "id": "reassurance", "label": "Line under the checkout button", "default": "Secure checkout · Ships across India" },
     { "type": "checkbox", "id": "show_express", "label": "Show express checkout buttons", "default": true, "info": "Buy it now style buttons from your payment providers, when available." },
+    { "type": "header", "content": "Rewards bar" },
+    { "type": "paragraph", "content": "Shows shoppers how much more to add for each reward. The amounts here must match your discounts in Shopify admin > Discounts; the bar only shows them, Shopify applies them." },
+    { "type": "checkbox", "id": "rewards_enabled", "label": "Show rewards bar", "default": true },
+    { "type": "number", "id": "reward_ship_amount", "label": "Free shipping from (₹)", "default": 1999, "info": "0 hides this step." },
+    { "type": "number", "id": "reward_one_amount", "label": "First discount from (₹)", "default": 2999 },
+    { "type": "text", "id": "reward_one_label", "label": "First discount", "default": "10% off" },
+    { "type": "number", "id": "reward_two_amount", "label": "Second discount from (₹)", "default": 3999 },
+    { "type": "text", "id": "reward_two_label", "label": "Second discount", "default": "12% off" },
     { "type": "header", "content": "Empty bag" },
     { "type": "text", "id": "empty_text", "label": "Text", "default": "Find something you'll love wearing every day." },
     { "type": "text", "id": "empty_button", "label": "Button", "default": "Start shopping" }
