@@ -1949,7 +1949,7 @@
      largest version of the photo so the weave is sharp. A small hint on the
      photo says how, until it has been used once. */
 
-  var LOUPE_ZOOM = 2.8;
+  var LOUPE_ZOOM = 1.8;
 
   function largestSource(img) {
     var best = img.currentSrc || img.src;
