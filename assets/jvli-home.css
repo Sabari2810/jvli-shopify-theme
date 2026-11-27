@@ -1110,11 +1110,11 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   min-width: 0;
 }
 
-/* Collection cards: the name panel in olive. */
+/* Collection cards: the name panel in maroon. */
 .jvli-category {
   display: flex;
   flex-direction: column;
-  background: var(--jvli-olive);
+  background: var(--jvli-maroon);
   color: var(--jvli-white);
 }
 
