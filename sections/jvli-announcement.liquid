@@ -1,34 +1,69 @@
 {%- render 'jvli-assets' -%}
-<div
-  class="jvli jvli-announcement"
-  style="--jvli-announce-bg: {{ section.settings.background }}; --jvli-announce-fg: {{ section.settings.text_color }};"
->
-  <div class="jvli-announcement__inner">
-    <p class="jvli-announcement__text">
-      {%- if section.settings.link != blank -%}
-        <a href="{{ section.settings.link }}">{{ section.settings.text }}</a>
-      {%- else -%}
-        {{- section.settings.text -}}
-      {%- endif -%}
-    </p>
-    {%- if section.settings.side_text != blank -%}
-      <p class="jvli-announcement__side">{{ section.settings.side_text }}</p>
+{%- comment -%}
+  Announcement bar: the messages run across the bar in a loop, right to
+  left. Each message is a block. The list is repeated so the loop has no
+  gap, and the second half is a copy hidden from screen readers. Hovering
+  pauses it; with reduced motion the bar stands still.
+{%- endcomment -%}
+{%- capture jvli_announce_items -%}
+  {%- for block in section.blocks -%}
+    {%- if block.settings.text != blank -%}
+      <span class="jvli-announcement__item" {{ block.shopify_attributes }}>
+        {%- if block.settings.link != blank -%}
+          <a href="{{ block.settings.link }}">{{ block.settings.text | escape }}</a>
+        {%- else -%}
+          {{- block.settings.text | escape -}}
+        {%- endif -%}
+      </span>
+      <span class="jvli-announcement__dot" aria-hidden="true">✦</span>
     {%- endif -%}
+  {%- endfor -%}
+{%- endcapture -%}
+
+{%- if jvli_announce_items != blank -%}
+  <div
+    class="jvli jvli-announcement"
+    style="--jvli-announce-bg: {{ section.settings.background }}; --jvli-announce-fg: {{ section.settings.text_color }}; --jvli-announce-duration: {{ section.settings.speed }}s;"
+  >
+    <div class="jvli-announcement__marquee" role="region" aria-label="Announcements">
+      <div class="jvli-announcement__track">
+        <div class="jvli-announcement__group">
+          {{ jvli_announce_items }}{{ jvli_announce_items }}{{ jvli_announce_items }}
+        </div>
+        <div class="jvli-announcement__group" aria-hidden="true">
+          {{ jvli_announce_items }}{{ jvli_announce_items }}{{ jvli_announce_items }}
+        </div>
+      </div>
+    </div>
   </div>
-</div>
+{%- endif -%}
 
 {% schema %}
 {
   "name": "JVLI Announcement",
   "class": "jvli-section-announcement",
+  "max_blocks": 6,
   "settings": [
-    { "type": "text", "id": "text", "label": "Text", "default": "Made in Tamil Nadu, for everyday stories" },
-    { "type": "url", "id": "link", "label": "Link" },
-    { "type": "text", "id": "side_text", "label": "Right-hand text (desktop)", "default": "Free shipping on orders above ₹1,999" },
+    { "type": "range", "id": "speed", "label": "Time for one full loop", "min": 20, "max": 120, "step": 5, "unit": "s", "default": 60, "info": "Higher is slower." },
     { "type": "color", "id": "background", "label": "Background", "default": "#4b4a2e" },
     { "type": "color", "id": "text_color", "label": "Text", "default": "#faf6ee" }
   ],
-  "presets": [{ "name": "JVLI Announcement" }],
+  "blocks": [
+    {
+      "type": "message",
+      "name": "Message",
+      "settings": [
+        { "type": "text", "id": "text", "label": "Text", "default": "Made in Tamil Nadu, for everyday stories" },
+        { "type": "url", "id": "link", "label": "Link" }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "JVLI Announcement",
+      "blocks": [{ "type": "message" }]
+    }
+  ],
   "enabled_on": { "groups": ["header"] }
 }
 {% endschema %}
