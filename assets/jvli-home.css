@@ -625,7 +625,7 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(90deg, rgba(18, 13, 10, var(--jvli-overlay, 0.3)) 0%, rgba(18, 13, 10, calc(var(--jvli-overlay, 0.3) * 0.45)) 45%, rgba(18, 13, 10, 0) 75%);
+  background: linear-gradient(90deg, rgba(18, 13, 10, var(--jvli-overlay, 0.3)) 0%, rgba(18, 13, 10, calc(var(--jvli-overlay, 0.3) * 0.55)) 52%, rgba(18, 13, 10, 0) 82%);
   pointer-events: none;
 }
 
@@ -635,7 +635,8 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   z-index: 1;
   left: var(--jvli-gutter);
   bottom: clamp(56px, 6.2vw, 100px);
-  max-width: 44vw;
+  max-width: min(66vw, 920px);
+  text-shadow: 0 2px 18px rgba(18, 13, 10, 0.34);
 }
 
 .jvli-hero__content .jvli-eyebrow {
@@ -644,9 +645,9 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
 
 .jvli-hero__heading {
   font-family: var(--jvli-display);
-  font-size: clamp(56px, 6.1vw, 96px);
+  font-size: clamp(40px, 4.7vw, 74px);
   font-weight: var(--jvli-display-weight);
-  line-height: 0.98;
+  line-height: 1.04;
   letter-spacing: -0.025em;
 }
 
@@ -4181,7 +4182,7 @@ html.jvli-search-open {
   }
 
   .jvli-hero__heading {
-    font-size: clamp(44px, 12.5vw, 60px);
+    font-size: clamp(26px, 7.2vw, 42px);
   }
 
   .jvli-hero__buttons {
