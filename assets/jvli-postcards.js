@@ -112,9 +112,7 @@
     function open(card, button) {
       var quote = card.querySelector('[data-jvli-postcard-quote]');
       var from = card.querySelector('.jvli-postcard__from');
-      var stamp = card.querySelector('.jvli-postcard__stamp');
       body.innerHTML = '';
-      if (stamp) body.appendChild(stamp.cloneNode(true));
       var full = document.createElement('blockquote');
       full.className = 'jvli-pc-modal__quote';
       full.innerHTML = quote.innerHTML;
