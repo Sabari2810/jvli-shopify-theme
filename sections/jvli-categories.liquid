@@ -14,19 +14,20 @@
       {%- for block in section.blocks -%}
         {%- liquid
           assign jvli_cat = block.settings.collection
-          assign jvli_cat_image = block.settings.image | default: jvli_cat.featured_image
+          assign jvli_cat_image = block.settings.image | default: jvli_cat.image
           assign jvli_cat_title = block.settings.title | default: jvli_cat.title
           assign jvli_cat_url = block.settings.link | default: jvli_cat.url | default: routes.collections_url
         -%}
         <a href="{{ jvli_cat_url }}" class="jvli-category" {{ block.shopify_attributes }}>
           <div class="jvli-category__media">
-            {%- render 'jvli-media',
-              image: jvli_cat_image,
-              alt: jvli_cat_title,
-              sizes: '(max-width: 749px) 50vw, 25vw',
-              class: 'jvli-cover',
-              placeholder: 'collection-apparel-1'
-            -%}
+            {%- if jvli_cat_image != blank -%}
+              {%- render 'jvli-media',
+                image: jvli_cat_image,
+                alt: jvli_cat_title,
+                sizes: '(max-width: 749px) 50vw, 25vw',
+                class: 'jvli-cover'
+              -%}
+            {%- endif -%}
           </div>
           <div class="jvli-category__panel">
             <h3 class="jvli-category__title">{{ jvli_cat_title | default: 'Category' }}</h3>
