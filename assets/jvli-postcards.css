@@ -168,8 +168,12 @@
   filter: drop-shadow(0 12px 20px rgba(24, 12, 8, 0.34));
 }
 
+/* Several photos in one stamp: stacked, the shown one fades in. Using
+   minmax(0, 1fr) keeps tall images from stretching the 210:260 frame. */
 .jvli-postcard__photo-stamp {
   position: relative;
+  display: grid;
+  grid-template: minmax(0, 1fr) / minmax(0, 1fr);
   aspect-ratio: 210 / 260;
   padding: clamp(13px, 1.5vw, 18px);
   background: var(--jvli-pc-red);
@@ -178,21 +182,15 @@
 }
 
 .jvli-postcard__photo-stamp img {
+  grid-area: 1 / 1;
   display: block;
   width: 100%;
   height: 100%;
+  min-width: 0;
+  min-height: 0;
   object-fit: cover;
   object-position: center 20%;
   background: #4e1517;
-}
-
-/* Several photos in one stamp: stacked, the shown one fades in. */
-.jvli-postcard__photo-stamp {
-  display: grid;
-}
-
-.jvli-postcard__photo-stamp img {
-  grid-area: 1 / 1;
 }
 
 .jvli-postcard__photo-stamp img[data-jvli-pc-slide] {
