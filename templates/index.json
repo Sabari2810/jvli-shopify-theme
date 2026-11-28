@@ -86,12 +86,22 @@
             "link": "",
             "link_label": "Shop now"
           }
+        },
+        "cat_sarees": {
+          "type": "category",
+          "settings": {
+            "collection": "sarees",
+            "title": "Sarees",
+            "link": "",
+            "link_label": "Shop now"
+          }
         }
       },
       "block_order": [
         "cat_new",
         "cat_kurtis",
-        "cat_kurti_sets"
+        "cat_kurti_sets",
+        "cat_sarees"
       ],
       "settings": {
         "heading": "Shop by Collections"
