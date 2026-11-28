@@ -390,6 +390,36 @@
   background: var(--jvli-pc-red);
 }
 
+/* ---------- Olive background ----------
+   The section sits on olive (like the collection cards); the heading,
+   text and dots turn cream so they read on it. The postcards keep their
+   paper. */
+section.jvli.jvli-postcards {
+  background: var(--jvli-olive);
+}
+
+.jvli-postcards .jvli-postcards__eyebrow,
+.jvli .jvli-postcards__head .jvli-h2 {
+  color: var(--jvli-cream);
+}
+
+.jvli-postcards .jvli-postcards__text {
+  color: rgba(242, 235, 224, 0.78);
+}
+
+.jvli-postcards .jvli-postcards__dot {
+  border-color: rgba(242, 235, 224, 0.75);
+}
+
+.jvli-postcards .jvli-postcards__dot[aria-current="true"] {
+  border-color: var(--jvli-cream);
+  background: var(--jvli-cream);
+}
+
+.jvli-postcards .jvli-postcards__dot:focus-visible {
+  outline-color: var(--jvli-cream);
+}
+
 /* ---------- The full review (pop-up) ----------
    A single postcard over a dimmed page; it rises and fades in. The review
    scrolls inside the card when it is longer than the screen. */
