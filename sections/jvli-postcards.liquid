@@ -124,6 +124,9 @@
                 </div>
 
                 <div class="jvli-postcard__message">
+                  {%- if block.settings.city != blank -%}
+                    <p class="jvli-postcard__place">{{ block.settings.city | strip | escape }},</p>
+                  {%- endif -%}
                   <blockquote class="jvli-postcard__quote" data-jvli-postcard-quote>“{{ block.settings.quote | strip | escape | newline_to_br }}”</blockquote>
                   <button type="button" class="jvli-postcard__more" data-jvli-postcard-more hidden>Read more</button>
                 </div>
@@ -134,7 +137,7 @@
                     <span class="jvli-postcard__name">{{ block.settings.name | escape }}</span>
                   {%- endif -%}
                   {%- liquid
-                    assign jvli_pc_meta = block.settings.city | strip | escape
+                    assign jvli_pc_meta = ''
                     if block.settings.verified
                       if jvli_pc_meta != blank
                         assign jvli_pc_meta = jvli_pc_meta | append: ' · '

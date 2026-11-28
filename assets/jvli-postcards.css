@@ -233,6 +233,16 @@
   padding: clamp(16px, 2vw, 24px) clamp(18px, 2.2vw, 28px) clamp(16px, 2vw, 24px) clamp(20px, 2.2vw, 30px);
 }
 
+/* The customer's city, written at the top of the note like the place on a
+   letter ("Kovilpatti,"), in the same handwriting, in maroon. */
+.jvli-postcard__place {
+  margin: 0 0 2px;
+  color: var(--jvli-pc-red);
+  font-family: var(--jvli-pc-script);
+  font-size: clamp(16px, 1.35vw, 20px);
+  line-height: 1.2;
+}
+
 .jvli-postcard__top {
   display: flex;
   align-items: center;
