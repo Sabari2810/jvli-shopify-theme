@@ -1168,13 +1168,10 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   text-transform: capitalize;
 }
 
-/* The collection cards' name panel matches the navbar: the cream bar
-   with dark ink text in its font (Mangro), as typed rather than in small
-   caps. */
+/* The collection cards' title and "Shop now": the navbar's font (Mangro),
+   as typed rather than in small caps, in beige on the maroon panel. */
 .jvli-category {
-  background: var(--jvli-cream);
-  color: var(--jvli-ink);
-  box-shadow: inset 0 0 0 1px rgba(34, 28, 24, 0.1);
+  color: var(--jvli-cream);
 }
 
 .jvli .jvli-category__title {
