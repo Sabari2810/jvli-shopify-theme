@@ -135,27 +135,9 @@
   background-image:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .3 0 0 0 0 .24 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='p' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.075' numOctaves='3' seed='3' stitchTiles='stitch'/%3E%3CfeDiffuseLighting lighting-color='%23fff' surfaceScale='2.2'%3E%3CfeDistantLight azimuth='225' elevation='52'/%3E%3C/feDiffuseLighting%3E%3CfeColorMatrix values='0 0 0 0 .38 0 0 0 0 .31 0 0 0 0 .22 -.5 0 0 0 .46'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E"),
-    linear-gradient(#f3eee3, #f3eee3),
-    repeating-linear-gradient(-45deg, #c43a3d 0 12px, #f6efe2 12px 19px, #2f5c9c 19px 31px, #f6efe2 31px 38px);
+    linear-gradient(#f3eee3, #f3eee3);
+  background-size: auto, 300px 300px, auto;
   box-shadow:
-    0 1px 0 rgba(120, 85, 50, 0.14),
-    0 24px 48px -18px rgba(24, 14, 6, 0.42),
-    0 8px 18px -10px rgba(24, 14, 6, 0.28);
-}
-
-/* Airmail border: red and blue diagonal stripes round the edge with a
-   thin cream margin inside, then the coffee-washed paper. The stripes are
-   one more background layer, drawn under the border only (border-box),
-   while the paper layers stay inside it (padding-box). */
-.jvli-postcard .jvli-postcard__paper,
-.jvli-pc-modal__card .jvli-postcard__paper {
-  --jvli-airmail: clamp(7px, 0.8vw, 11px);
-  border: var(--jvli-airmail) solid transparent;
-  background-clip: padding-box, padding-box, padding-box, border-box;
-  background-origin: padding-box, padding-box, padding-box, border-box;
-  background-size: auto, 300px 300px, auto, auto;
-  box-shadow:
-    inset 0 0 0 clamp(3px, 0.4vw, 5px) #f6efe2,
     0 1px 0 rgba(120, 85, 50, 0.14),
     0 24px 48px -18px rgba(24, 14, 6, 0.42),
     0 8px 18px -10px rgba(24, 14, 6, 0.28);
