@@ -4411,6 +4411,14 @@ html.jvli-search-open {
     --jvli-perf-r: 4px;
     --jvli-perf-gap: 12px;
   }
+
+  /* Phones: half a mandala centred along the top edge and another along
+     the bottom (the corner art mirrored into halves). */
+  .shopify-section-group-footer-group .footer::before {
+    background:
+      url("jvli-footer-mandala-top.webp") center top / min(90vw, 460px) auto no-repeat,
+      url("jvli-footer-mandala-bottom.webp") center bottom / min(90vw, 460px) auto no-repeat;
+  }
 }
 
 .shopify-section-group-footer-group .footer__content-bottom {
