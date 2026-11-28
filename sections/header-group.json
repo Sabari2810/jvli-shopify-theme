@@ -5,11 +5,10 @@
     "jvli_announcement": {
       "type": "jvli-announcement",
       "blocks": {
-        "message_tamil_nadu": { "type": "message", "settings": { "text": "Made in Namma ooru, for Namma weather ☀️", "link": "" } },
         "message_first150": { "type": "message", "settings": { "text": "₹150 off your first order with code FIRST150", "link": "" } },
         "message_shipping": { "type": "message", "settings": { "text": "Free shipping on orders above ₹1,999", "link": "" } }
       },
-      "block_order": ["message_tamil_nadu", "message_first150", "message_shipping"],
+      "block_order": ["message_first150", "message_shipping"],
       "settings": {
         "speed": 60,
         "background": "#4b4a2e",
