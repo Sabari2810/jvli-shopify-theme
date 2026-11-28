@@ -11,7 +11,7 @@
   --jvli-pc-script: "EB Garamond", var(--jvli-serif);
   position: relative;
   overflow: hidden;
-  padding-block: clamp(36px, 3.6vw, 56px) clamp(28px, 3vw, 44px);
+  padding-block: clamp(24px, 2.4vw, 40px) clamp(20px, 2vw, 32px);
 }
 
 .jvli-postcards__corner {
@@ -71,8 +71,8 @@
   width: var(--jvli-pc-w);
   display: grid;
   grid-template-columns: 1.08fr 1fr;
-  margin-block: 10px 20px;
-  padding: clamp(24px, 2.6vw, 38px) clamp(24px, 2.8vw, 42px);
+  margin-block: 6px 14px;
+  padding: clamp(18px, 2vw, 28px) clamp(22px, 2.4vw, 36px);
   color: var(--jvli-pc-ink);
   opacity: 0;
   visibility: hidden;
@@ -153,8 +153,8 @@
 .jvli-postcard__sprig {
   position: absolute;
   left: -1.5%;
-  bottom: -4%;
-  width: clamp(84px, 9vw, 140px);
+  bottom: -6%;
+  width: clamp(70px, 7vw, 104px);
   height: auto;
   pointer-events: none;
 }
@@ -165,7 +165,7 @@
   gap: clamp(10px, 1.2vw, 16px);
   padding-right: clamp(18px, 2.6vw, 40px);
   padding-left: clamp(0px, 1.4vw, 20px);
-  padding-bottom: clamp(36px, 4.4vw, 70px);
+  padding-bottom: clamp(14px, 1.8vw, 28px);
 }
 
 .jvli-postcard__quote {
@@ -175,19 +175,21 @@
   font-weight: 400;
   letter-spacing: 0;
   font-family: var(--jvli-pc-script);
-  font-size: clamp(18px, 1.7vw, 25px);
+  font-size: clamp(17px, 1.5vw, 22px);
   font-style: italic;
   line-height: 1.4;
   overflow-wrap: anywhere;
   /* Long reviews stop after a few lines; "Read more" opens the rest. */
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: var(--jvli-pc-lines, 8);
-  line-clamp: var(--jvli-pc-lines, 8);
+  -webkit-line-clamp: var(--jvli-pc-lines, 6);
+  line-clamp: var(--jvli-pc-lines, 6);
   overflow: hidden;
 }
 
 .jvli-postcard__more {
+  position: relative; /* above the flower sprig */
+  z-index: 1;
   justify-self: start;
   padding: 2px 0;
   border: 0;
@@ -584,7 +586,7 @@ html.jvli-pc-modal-open {
 
   .jvli-postcard {
     grid-template-columns: 1fr;
-    padding: 22px 20px 20px;
+    padding: 18px 18px 16px;
   }
 
   .jvli-postcard.is-prev {
@@ -609,7 +611,7 @@ html.jvli-pc-modal-open {
   }
 
   .jvli-postcards {
-    --jvli-pc-lines: 7;
+    --jvli-pc-lines: 5;
   }
 
   .jvli-pc-modal__close {
