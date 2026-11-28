@@ -109,9 +109,10 @@
   background: var(--jvli-cream);
 }
 
-/* A faint gold damask over the cream sections (assets/jvli-damask.png:
-   a seamless tile with the strength baked in, about 3%), centred so it
-   lines up from one section to the next. The banner (a dark photo) has
+/* A faint scrolling-leaf pattern over the cream sections
+   (assets/jvli-damask.png: a seamless 368px tile cut from the user's
+   wallpaper, with the strength baked in, about 5%), centred so it lines
+   up from one section to the next. The banner (a dark photo) has
    none. */
 section.jvli:not(.jvli-banner) {
   background-image: url("jvli-damask.png");
