@@ -31,17 +31,18 @@
       {%- for item in sorted -%}
         {%- if hidden contains item.handle -%}{%- continue -%}{%- endif -%}
         {%- liquid
-          assign item_image = item.featured_image | default: item.products.first.featured_media.preview_image
+          assign item_image = item.featured_image
         -%}
         <a href="{{ item.url }}" class="jvli-category">
           <div class="jvli-category__media">
-            {%- render 'jvli-media',
-              image: item_image,
-              alt: item.title,
-              sizes: '(max-width: 749px) 50vw, 25vw',
-              class: 'jvli-cover',
-              placeholder: 'collection-apparel-1'
-            -%}
+            {%- if item_image != blank -%}
+              {%- render 'jvli-media',
+                image: item_image,
+                alt: item.title,
+                sizes: '(max-width: 749px) 50vw, 25vw',
+                class: 'jvli-cover'
+              -%}
+            {%- endif -%}
           </div>
           <div class="jvli-category__panel">
             <h2 class="jvli-category__title">{{ item.title }}</h2>
