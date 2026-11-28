@@ -4390,6 +4390,22 @@ html.jvli-search-open {
     linear-gradient(#000, #000) 0 var(--jvli-perf-r) / 100% 100% no-repeat;
 }
 
+/* Gold mandala line art (cut out of a watercolour, no paper) in the
+   bottom-right corner at 10%, under the footer's content (the footer
+   isolates its own stacking). */
+.shopify-section-group-footer-group .footer::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  z-index: -1;
+  left: 0;
+  background: url("jvli-footer-mandala.webp") right bottom / min(520px, 60vw) auto no-repeat;
+  opacity: 0.1;
+  pointer-events: none;
+}
+
 @media (max-width: 749px) {
   .shopify-section-group-footer-group .footer {
     --jvli-perf-r: 4px;
