@@ -148,8 +148,8 @@
 .jvli-postcard__left {
   position: relative;
   display: grid;
-  align-items: end;
-  padding: clamp(14px, 1.8vw, 24px) clamp(8px, 1vw, 14px) 0 0;
+  align-items: start;
+  padding: clamp(14px, 1.6vw, 20px) clamp(12px, 1.2vw, 16px) 0 clamp(18px, 2.2vw, 28px);
   border-right: 1px solid rgba(59, 42, 32, 0.2);
 }
 
@@ -233,14 +233,24 @@
   padding: clamp(16px, 2vw, 24px) clamp(18px, 2.2vw, 28px) clamp(16px, 2vw, 24px) clamp(20px, 2.2vw, 30px);
 }
 
-/* The customer's city, written at the top of the note like the place on a
-   letter ("Kovilpatti,"), in the same handwriting, in maroon. */
+/* The customer's city at the top left of the postcard, in maroon script. */
 .jvli-postcard__place {
-  margin: 0 0 2px;
+  position: relative;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 0;
   color: var(--jvli-pc-red);
   font-family: var(--jvli-pc-script);
   font-size: clamp(16px, 1.35vw, 20px);
   line-height: 1.2;
+}
+
+.jvli-postcard__place .jvli-icon {
+  --jvli-icon-size: 14px;
+  stroke-width: 1.6;
+  transform: translateY(-1px);
 }
 
 .jvli-postcard__top {

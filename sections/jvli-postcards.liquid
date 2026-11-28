@@ -60,6 +60,13 @@
               <div class="jvli-postcard__paper" aria-hidden="true"></div>
 
               <div class="jvli-postcard__left">
+                {%- if block.settings.city != blank -%}
+                  <p class="jvli-postcard__place">
+                    {%- render 'jvli-icon', icon: 'location' -%}
+                    <span>{{ block.settings.city | strip | escape }}</span>
+                  </p>
+                {%- endif -%}
+
                 <div class="jvli-postcard__photo-wrap">
                   <div class="jvli-postcard__photo-stamp">
                     {%- if block.settings.image != blank -%}
@@ -124,9 +131,6 @@
                 </div>
 
                 <div class="jvli-postcard__message">
-                  {%- if block.settings.city != blank -%}
-                    <p class="jvli-postcard__place">{{ block.settings.city | strip | escape }},</p>
-                  {%- endif -%}
                   <blockquote class="jvli-postcard__quote" data-jvli-postcard-quote>“{{ block.settings.quote | strip | escape | newline_to_br }}”</blockquote>
                   <button type="button" class="jvli-postcard__more" data-jvli-postcard-more hidden>Read more</button>
                 </div>
