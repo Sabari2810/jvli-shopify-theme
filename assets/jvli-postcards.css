@@ -359,7 +359,7 @@
 }
 
 .jvli-postcard__name {
-  font-family: var(--jvli-display);
+  font-family: var(--jvli-pc-script);
   font-size: clamp(20px, 1.8vw, 26px);
   line-height: 1.1;
 }
