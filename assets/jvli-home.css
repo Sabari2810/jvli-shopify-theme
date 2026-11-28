@@ -1110,16 +1110,19 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   min-width: 0;
 }
 
-/* Collection cards: the name panel in maroon. */
+/* Collection cards: an arched top (a half circle, like a temple doorway)
+   over the name panel in maroon. */
 .jvli-category {
   display: flex;
   flex-direction: column;
+  overflow: hidden;
+  border-radius: 999px 999px 0 0;
   background: var(--jvli-maroon);
   color: var(--jvli-white);
 }
 
 .jvli-category__media {
-  aspect-ratio: 121 / 107;
+  aspect-ratio: 4 / 5;
   overflow: hidden;
   background: #d8ccb8;
 }
@@ -4226,12 +4229,27 @@ html.jvli-search-open {
     display: none;
   }
 
+  /* Phones: a swipeable row. Cards snap into place and the next one
+     peeks in from the right; the row runs to the screen edges. */
   .jvli-categories__grid {
     --jvli-cat-gap: 12px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--jvli-gutter);
+    margin-inline: calc(-1 * var(--jvli-gutter));
+    padding-inline: var(--jvli-gutter);
+    scrollbar-width: none;
+  }
+
+  .jvli-categories__grid::-webkit-scrollbar {
+    display: none;
   }
 
   .jvli-categories__grid > * {
-    flex-basis: calc((100% - var(--jvli-cat-gap)) / 2);
+    flex: 0 0 66%;
+    scroll-snap-align: start;
   }
 
   .jvli-category__panel {

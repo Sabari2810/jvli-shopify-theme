@@ -68,10 +68,30 @@
             "link": "",
             "link_label": "Shop now"
           }
+        },
+        "cat_kurtis": {
+          "type": "category",
+          "settings": {
+            "collection": "kurtis",
+            "title": "Kurtis",
+            "link": "",
+            "link_label": "Shop now"
+          }
+        },
+        "cat_kurti_sets": {
+          "type": "category",
+          "settings": {
+            "collection": "kurti-sets",
+            "title": "Kurti sets",
+            "link": "",
+            "link_label": "Shop now"
+          }
         }
       },
       "block_order": [
-        "cat_new"
+        "cat_new",
+        "cat_kurtis",
+        "cat_kurti_sets"
       ],
       "settings": {
         "heading": "Shop by Collections"
