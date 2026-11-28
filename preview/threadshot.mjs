@@ -1,3 +1,4 @@
+// Run render.mjs with THREAD=1 first (the live theme has the thread off).
 // Screenshots the home page with the kolam thread fully drawn (scrolled to
 // the bottom) at desktop and phone widths, plus one mid-scroll frame.
 import { existsSync, readFileSync } from "node:fs";

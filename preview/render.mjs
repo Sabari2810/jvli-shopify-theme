@@ -14,6 +14,9 @@
 //                   with a pant line and a dupatta line (a full set)
 //   DUPATTA_SOLD_OUT with MTO, the dupatta add-on is sold out
 //   PANT_SOLD_OUT    with MTO, the pant add-on is sold out
+//   THREAD           force the kolam thread on (or NO_THREAD off); otherwise
+//                   it follows the live theme setting, like NO_WRITE/WRITE
+//                   for the handwriting
 //   STORE            "sample" to use the made-up products and menu instead of
 //                   store-snapshot.json (the live store's menus, collections,
 //                   New In products and photos)
@@ -51,6 +54,21 @@ function standin(key) {
   }
   return null;
 }
+
+/* ---------- Theme settings ---------- */
+
+// Theme settings as the live theme has them: config/settings_data.json's
+// current values over settings_schema.json's defaults.
+const themeSettings = (() => {
+  const schema = JSON.parse(readFileSync(join(theme, "config", "settings_schema.json"), "utf8"));
+  const values = {};
+  for (const group of schema) for (const def of group.settings ?? []) if (def.id && "default" in def) values[def.id] = def.default;
+  const current = readJson("config/settings_data.json").current;
+  return { ...values, ...(typeof current === "object" ? current : {}) };
+})();
+const flag = (on, off, setting) => (process.env[on] ? true : process.env[off] ? false : !!themeSettings[setting]);
+const showThread = flag("THREAD", "NO_THREAD", "jvli_thread_enabled");
+const showWrite = flag("WRITE", "NO_WRITE", "jvli_handwriting_enabled");
 
 /* ---------- Live store snapshot ---------- */
 
@@ -523,7 +541,7 @@ const globals = {
   customer: process.env.LOGGED_IN ? { id: 1, first_name: "Test" } : null,
   // /cart: CART=empty for an empty bag; otherwise three sample lines.
   cart: process.env.TEMPLATE === "cart" && process.env.CART !== "empty" ? sampleCart() : { item_count: 0, items: [] },
-  settings: { show_cart_note: true },
+  settings: themeSettings,
   request: { page_type: (process.env.TEMPLATE || "index").split(".")[0] },
   product: process.env.MTO ? sampleMadeToOrder(sampleProductPage()) : sampleProductPage(),
   collection: sampleCollectionPage(),
@@ -604,9 +622,9 @@ writeFileSync(
 </style>
 ${senseCss}
 </head>
-<body class="gradient"${process.env.NO_WRITE ? "" : " data-jvli-write"}>
+<body class="gradient"${showWrite ? " data-jvli-write" : ""}>
 ${header}
-<main id="MainContent" class="content-for-layout" role="main"${process.env.NO_THREAD ? "" : " data-jvli-thread"}>
+<main id="MainContent" class="content-for-layout" role="main"${showThread ? " data-jvli-thread" : ""}>
 ${main}
 </main>
 <div class="shopify-section shopify-section-group-footer-group"><footer class="footer" style="padding-top:60px;padding-inline:20px;background:#50121f;color:#faf6ee;font:14px sans-serif">Sense footer (colour scheme 2)</footer></div>
