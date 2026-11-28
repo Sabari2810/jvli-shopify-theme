@@ -4408,6 +4408,12 @@ html.jvli-search-open {
   }
 }
 
+/* Built-in Shopify policy pages (/policies/*): match the breathing room
+   above the scalloped footer on the home page's FAQ section. */
+main[data-template="policy"] {
+  padding-bottom: clamp(40px, 4.4vw, 72px);
+}
+
 /* ==========================================================================
    Footer
    (The gold sunflower drawing that sat behind the footer is switched off;
