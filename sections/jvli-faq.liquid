@@ -16,14 +16,65 @@
           <p class="jvli-eyebrow jvli-faq__eyebrow">{{ section.settings.eyebrow }}</p>
         {%- endif -%}
         <h2 class="jvli-faq__heading" id="JvliFaq-{{ section.id }}">{{ section.settings.heading }}</h2>
+        {%- if section.settings.text != blank -%}
+          <p class="jvli-faq__text">{{ section.settings.text }}</p>
+        {%- endif -%}
       </div>
 
-      <div class="jvli-faq__list">
-        {%- for block in section.blocks -%}
+      {%- assign jvli_faq_group_open = false -%}
+      {%- assign jvli_faq_list_open = false -%}
+      {%- assign jvli_faq_first_group = true -%}
+      {%- assign jvli_faq_first_q = true -%}
+      {%- for block in section.blocks -%}
+        {%- if block.type == 'category' -%}
+          {%- if jvli_faq_list_open -%}
+            </div>
+            {%- assign jvli_faq_list_open = false -%}
+          {%- endif -%}
+          {%- if jvli_faq_group_open -%}
+            </details>
+            {%- assign jvli_faq_group_open = false -%}
+          {%- endif -%}
+          <details
+            class="jvli-faq__group"
+            name="jvli-faq-group-{{ section.id }}"
+            {% if jvli_faq_first_group and section.settings.open_first %}open{% endif %}
+            {{ block.shopify_attributes }}
+          >
+            <summary class="jvli-faq__group-head">
+              <span class="jvli-faq__group-label">
+                {%- if block.settings.number != blank -%}
+                  <span class="jvli-faq__num">{{ block.settings.number | escape }}</span>
+                {%- endif -%}
+                {%- if block.settings.title != blank -%}
+                  <span class="jvli-faq__group-title">{{ block.settings.title | escape }}</span>
+                {%- endif -%}
+              </span>
+              <span class="jvli-faq__sign" aria-hidden="true"></span>
+            </summary>
+            <div class="jvli-faq__list">
+          {%- assign jvli_faq_group_open = true -%}
+          {%- assign jvli_faq_list_open = true -%}
+          {%- assign jvli_faq_first_group = false -%}
+        {%- else -%}
+          {%- if block.settings.standalone -%}
+            {%- if jvli_faq_list_open -%}
+              </div>
+              {%- assign jvli_faq_list_open = false -%}
+            {%- endif -%}
+            {%- if jvli_faq_group_open -%}
+              </details>
+              {%- assign jvli_faq_group_open = false -%}
+            {%- endif -%}
+          {%- endif -%}
+          {%- unless jvli_faq_list_open -%}
+            <div class="jvli-faq__list{% if block.settings.standalone %} jvli-faq__list--standalone{% endif %}">
+            {%- assign jvli_faq_list_open = true -%}
+          {%- endunless -%}
           <details
             class="jvli-faq__item"
             name="jvli-faq-{{ section.id }}"
-            {% if forloop.first and section.settings.open_first %}open{% endif %}
+            {% if jvli_faq_first_q and section.settings.open_first %}open{% endif %}
             {{ block.shopify_attributes }}
           >
             <summary class="jvli-faq__question">
@@ -32,8 +83,15 @@
             </summary>
             <div class="jvli-faq__answer">{{ block.settings.answer }}</div>
           </details>
-        {%- endfor -%}
-      </div>
+          {%- assign jvli_faq_first_q = false -%}
+        {%- endif -%}
+      {%- endfor -%}
+      {%- if jvli_faq_list_open -%}
+        </div>
+      {%- endif -%}
+      {%- if jvli_faq_group_open -%}
+        </details>
+      {%- endif -%}
 
       {%- if section.settings.policies_text != blank and shop.refund_policy.url != blank -%}
         <p class="jvli-faq__more">
@@ -48,21 +106,31 @@
 {
   "name": "JVLI FAQs",
   "class": "jvli-section-faq",
-  "max_blocks": 20,
+  "max_blocks": 30,
   "settings": [
     { "type": "text", "id": "eyebrow", "label": "Small heading", "default": "Good to know" },
-    { "type": "text", "id": "heading", "label": "Heading", "default": "Questions, answered" },
+    { "type": "text", "id": "heading", "label": "Heading", "default": "We thought you'd ask" },
+    { "type": "text", "id": "text", "label": "Text", "default": "A few things you might want to know before making it yours." },
     { "type": "checkbox", "id": "open_first", "label": "Open the first question", "default": false },
     { "type": "text", "id": "policies_text", "label": "Policies link text", "info": "Links to your refund policy. Leave empty to hide.", "default": "Read our full policies" }
   ],
   "blocks": [
+    {
+      "type": "category",
+      "name": "Category heading",
+      "settings": [
+        { "type": "text", "id": "number", "label": "Number", "placeholder": "01" },
+        { "type": "text", "id": "title", "label": "Title" }
+      ]
+    },
     {
       "type": "question",
       "name": "Question",
       "settings": [
         { "type": "paragraph", "content": "Keep answers in line with your store policies." },
         { "type": "text", "id": "question", "label": "Question" },
-        { "type": "richtext", "id": "answer", "label": "Answer" }
+        { "type": "richtext", "id": "answer", "label": "Answer" },
+        { "type": "checkbox", "id": "standalone", "label": "Separate from previous category", "default": false }
       ]
     }
   ],

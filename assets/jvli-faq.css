@@ -37,12 +37,91 @@
   line-height: 1.1;
 }
 
+.jvli-faq__text {
+  max-width: 48ch;
+  margin: 0;
+  color: var(--jvli-ink-soft);
+  font-size: clamp(15px, 1.2vw, 18px);
+  line-height: 1.6;
+}
+
+.jvli-faq__group {
+  border-bottom: 1px solid var(--jvli-faq-line);
+}
+
+.jvli-faq__group:first-of-type {
+  border-top: 1px solid var(--jvli-faq-line);
+}
+
+.jvli-faq__group-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 18px 2px;
+  cursor: pointer;
+  list-style: none;
+  color: var(--jvli-faq-ink);
+}
+
+.jvli-faq__group-head::-webkit-details-marker {
+  display: none;
+}
+
+.jvli-faq__group-label {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+
+.jvli-faq__num {
+  color: var(--jvli-faq-red);
+  font-family: var(--jvli-caps);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+}
+
+.jvli-faq__group-title {
+  font-family: "EB Garamond", var(--jvli-serif);
+  font-size: clamp(20px, 1.85vw, 25px);
+  line-height: 1.25;
+}
+
+.jvli-faq__group-head:hover,
+.jvli-faq__group[open] > .jvli-faq__group-head {
+  color: var(--jvli-faq-red);
+}
+
+.jvli-faq__group-head:focus-visible {
+  outline: 2px solid var(--jvli-faq-red);
+  outline-offset: 2px;
+}
+
 .jvli-faq__list {
   border-top: 1px solid var(--jvli-faq-line);
 }
 
+.jvli-faq__group > .jvli-faq__list {
+  border-top: 1px solid rgba(92, 29, 31, 0.14);
+  padding-left: clamp(26px, 3.2vw, 44px);
+  padding-bottom: 8px;
+}
+
+.jvli-faq__group .jvli-faq__item:last-child {
+  border-bottom: 0;
+}
+
+.jvli-faq__list--standalone {
+  margin-top: clamp(20px, 2.4vw, 32px);
+}
+
 .jvli-faq__item {
   border-bottom: 1px solid var(--jvli-faq-line);
+}
+
+.jvli-faq__group .jvli-faq__item {
+  border-bottom-color: rgba(92, 29, 31, 0.14);
 }
 
 .jvli-faq__question {
@@ -50,12 +129,12 @@
   align-items: center;
   justify-content: space-between;
   gap: 20px;
-  padding: 16px 2px;
+  padding: 15px 2px;
   cursor: pointer;
   list-style: none;
   color: var(--jvli-faq-ink);
   font-family: "EB Garamond", var(--jvli-serif);
-  font-size: clamp(18px, 1.6vw, 22px);
+  font-size: clamp(17px, 1.45vw, 20px);
   line-height: 1.3;
 }
 
@@ -64,7 +143,7 @@
 }
 
 .jvli-faq__question:hover,
-.jvli-faq__item[open] .jvli-faq__question {
+.jvli-faq__item[open] > .jvli-faq__question {
   color: var(--jvli-faq-red);
 }
 
@@ -96,7 +175,8 @@
   transform: rotate(90deg);
 }
 
-.jvli-faq__item[open] .jvli-faq__sign::after {
+.jvli-faq__group[open] > .jvli-faq__group-head .jvli-faq__sign::after,
+.jvli-faq__item[open] > .jvli-faq__question .jvli-faq__sign::after {
   transform: rotate(0deg);
 }
 

@@ -313,68 +313,173 @@
     "jvli_faq": {
       "type": "jvli-faq",
       "blocks": {
-        "question_1": {
-          "type": "question",
+        "cat_1": {
+          "type": "category",
           "settings": {
-            "question": "How long does delivery take?",
-            "answer": "<p>Orders are delivered within 7 to 10 business days of confirmation, anywhere in India. We don't ship outside India yet.</p>"
+            "number": "01",
+            "title": "Product, Sizing & Customization"
           }
         },
-        "question_2": {
+        "q_1_1": {
           "type": "question",
           "settings": {
-            "question": "How much is shipping?",
-            "answer": "<p>Shipping is free on orders above ₹1,999. Below that, a flat ₹100 applies.</p>"
+            "question": "How do I find my size?",
+            "answer": "<p>Your best fit starts with the size chart! We've included measurements on every product page to help you choose. Still caught between two sizes? Drop us a message. We're happy to help you figure it out.</p>"
           }
         },
-        "question_3": {
+        "q_1_2": {
           "type": "question",
           "settings": {
-            "question": "Do you offer Cash on Delivery?",
-            "answer": "<p>No. We accept online payments only (UPI, cards and netbanking).</p>"
+            "question": "Can I customise an outfit?",
+            "answer": "<p>We're open to possibilities! Customisations depend on the outfit and what you have in mind. Have an idea? Tell us what you're thinking before placing your order. We'd love to see if we can make it happen!</p>"
           }
         },
-        "question_4": {
+        "q_1_3": {
           "type": "question",
           "settings": {
-            "question": "What does made to order mean?",
-            "answer": "<p>Many of our pieces are stitched in your size once you order, which is why delivery can take a little longer than ready stock. Small differences from piece to piece are part of being handmade.</p>"
+            "question": "Will the outfit look exactly as it does in the pictures?",
+            "answer": "<p>We know pictures can only tell you so much! We make every effort to capture the colours, textures and details as they are. Slight variations may occur due to lighting and screen settings, but we always want you to know what you're choosing.</p>"
           }
         },
-        "question_6": {
-          "type": "question",
+        "cat_2": {
+          "type": "category",
           "settings": {
-            "question": "Can I cancel my order?",
-            "answer": "<p>Orders can't be cancelled once placed, because we start working on them right away. Please check your size and address before checkout.</p>"
+            "number": "02",
+            "title": "Orders & Payments"
           }
         },
-        "question_7": {
+        "q_2_1": {
           "type": "question",
           "settings": {
-            "question": "Can I return or exchange?",
-            "answer": "<p>Yes, within 7 days of delivery, if the item is unused, unwashed and has its tags. For size issues we're happy to exchange, subject to availability. Damaged or wrong items are replaced or refunded at no cost. Please send photos, and an unboxing video helps.</p>"
+            "question": "How do I place an order?",
+            "answer": "<p>Found your favourite? Pick your size, add it to your bag and head to checkout. Fill in your details, complete the payment, and leave the rest to us.</p>"
           }
         },
-        "question_8": {
+        "q_2_2": {
           "type": "question",
           "settings": {
-            "question": "How do I reach you?",
-            "answer": "<p>WhatsApp <a href=\"https://wa.me/918939012321\">+91 89390 12321</a>, email <a href=\"mailto:thejvlistore@gmail.com\">thejvlistore@gmail.com</a>, or Instagram <a href=\"https://www.instagram.com/jvli.store\">@jvli.store</a>.</p>"
+            "question": "What payment methods do you accept?",
+            "answer": "<p>We accept UPI, credit and debit cards, and net banking. Simply choose your preferred method at checkout!</p>"
+          }
+        },
+        "q_2_3": {
+          "type": "question",
+          "settings": {
+            "question": "Can I modify or cancel my order after placing it?",
+            "answer": "<p>Once your order is confirmed, we get started on making it especially for you. So, we'd recommend double-checking your size, details and selections before placing your order. Need to make a change? Reach out to us within the first 12 hours, and we'll do our best to accommodate it before your outfit gets into the making process.</p>"
+          }
+        },
+        "q_2_4": {
+          "type": "question",
+          "settings": {
+            "question": "How will I know my order has been placed successfully?",
+            "answer": "<p>Once your payment is successful, we'll send an order confirmation to your registered email or phone number. If you don't hear from us, don't hesitate to reach out. We're just a message away!</p>"
+          }
+        },
+        "cat_3": {
+          "type": "category",
+          "settings": {
+            "number": "03",
+            "title": "Shipping & Delivery"
+          }
+        },
+        "q_3_1": {
+          "type": "question",
+          "settings": {
+            "question": "Do you deliver across India?",
+            "answer": "<p>Absolutely! No matter which part of India you're shopping from, we'd be happy to have a little JVLI make its way to you.</p>"
+          }
+        },
+        "q_3_2": {
+          "type": "question",
+          "settings": {
+            "question": "How long will my order take to arrive?",
+            "answer": "<p>Since every piece is made to order, we take a little time to get it ready just for you. Your order should reach you within 7–10 working days from confirmation. If there's any unexpected delay, we'll personally keep you informed. We'd never leave you wondering where your order is!</p>"
+          }
+        },
+        "q_3_3": {
+          "type": "question",
+          "settings": {
+            "question": "Do you offer international shipping?",
+            "answer": "<p>Shopping with us from outside India? We'd love that! Drop us a message with your location, and we'll help you explore the available shipping options.</p>"
+          }
+        },
+        "q_3_4": {
+          "type": "question",
+          "settings": {
+            "question": "Can I track my order?",
+            "answer": "<p>Of course! Once your order is shipped, we'll share the tracking details with you so you can follow its journey right to your doorstep. We'll keep you in the loop!</p>"
+          }
+        },
+        "cat_4": {
+          "type": "category",
+          "settings": {
+            "number": "04",
+            "title": "Returns & Exchanges"
+          }
+        },
+        "q_4_1": {
+          "type": "question",
+          "settings": {
+            "question": "Can I return or exchange an outfit if I change my mind?",
+            "answer": "<p>Since every JVLI piece is made especially for your order, we encourage you to check our size chart and product details before making your pick. We don't accept returns or exchanges for change of mind, size preferences or personal styling choices. Not quite sure about something? Talk to us before ordering. We'd be happy to help you make a choice you feel good about!</p>"
+          }
+        },
+        "q_4_2": {
+          "type": "question",
+          "settings": {
+            "question": "What if my order arrives damaged or incorrect?",
+            "answer": "<p>Oh, we'd hate for that to happen! If your order arrives damaged, defective or different from what you ordered, please get in touch with us within 24 hours of delivery. Share your order details and a few clear pictures, making sure the garment tags are still intact and haven't been removed. We'll personally look into it and do our best to make things right.</p>"
+          }
+        },
+        "q_4_3": {
+          "type": "question",
+          "settings": {
+            "question": "What should I do if I haven't received my order within the expected timeframe?",
+            "answer": "<p>If your order hasn't reached you within the expected 7–10 working days, get in touch with us with your order details. We'll check its status and personally update you on what's happening.</p>"
+          }
+        },
+        "cat_5": {
+          "type": "category",
+          "settings": {
+            "number": "05",
+            "title": "Contact"
+          }
+        },
+        "q_reach": {
+          "type": "question",
+          "settings": {
+            "question": "How can I reach you?",
+            "answer": "<p>Already in our hearts. But here you go!</p><p><a href=\"https://www.instagram.com/jvli.store\" target=\"_blank\" rel=\"noopener\">Instagram</a> | <a href=\"https://wa.me/918939012321\" target=\"_blank\" rel=\"noopener\">WhatsApp</a> | <a href=\"mailto:thejvlistore@gmail.com\">Email</a></p><p>Whether it's a question about sizing, a customisation idea or something you'd simply like to know before ordering, we'd love to hear from you.</p>"
           }
         }
       },
       "block_order": [
-        "question_1",
-        "question_2",
-        "question_3",
-        "question_4",
-        "question_6",
-        "question_7",
-        "question_8"
+        "cat_1",
+        "q_1_1",
+        "q_1_2",
+        "q_1_3",
+        "cat_2",
+        "q_2_1",
+        "q_2_2",
+        "q_2_3",
+        "q_2_4",
+        "cat_3",
+        "q_3_1",
+        "q_3_2",
+        "q_3_3",
+        "q_3_4",
+        "cat_4",
+        "q_4_1",
+        "q_4_2",
+        "q_4_3",
+        "cat_5",
+        "q_reach"
       ],
       "settings": {
-        "eyebrow": "Good to know",
-        "heading": "Questions, answered",
+        "eyebrow": "",
+        "heading": "We thought you'd ask",
+        "text": "A few things you might want to know before making it yours.",
         "open_first": false,
         "policies_text": ""
       }
