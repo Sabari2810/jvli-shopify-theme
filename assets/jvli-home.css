@@ -1130,13 +1130,13 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
 }
 
 /* Collection cards: rounded rectangles, the photo over the name panel in
-   maroon. */
+   olive. */
 .jvli-category {
   display: flex;
   flex-direction: column;
   overflow: hidden;
   border-radius: clamp(14px, 1.4vw, 22px);
-  background: var(--jvli-maroon);
+  background: var(--jvli-olive);
   color: var(--jvli-white);
 }
 
