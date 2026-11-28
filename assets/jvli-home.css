@@ -4373,8 +4373,8 @@ html.jvli-search-open {
    ========================================================================== */
 
 .shopify-section-group-footer-group .footer {
-  --jvli-perf-r: 7px; /* notch radius */
-  --jvli-perf-gap: 22px; /* notch spacing */
+  --jvli-perf-r: 5px; /* notch radius */
+  --jvli-perf-gap: 16px; /* notch spacing */
   position: relative;
   isolation: isolate;
   padding-bottom: clamp(30px, 4vw, 64px);
@@ -4392,8 +4392,8 @@ html.jvli-search-open {
 
 @media (max-width: 749px) {
   .shopify-section-group-footer-group .footer {
-    --jvli-perf-r: 5px;
-    --jvli-perf-gap: 16px;
+    --jvli-perf-r: 4px;
+    --jvli-perf-gap: 12px;
   }
 }
 
