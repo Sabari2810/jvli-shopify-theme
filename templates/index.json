@@ -303,7 +303,7 @@
             "name": "Banu",
             "city": "Bangalore",
             "verified": false,
-            "photo_file": "jvli-review-pinkkurti.jpg, jvli-review-banu-2.jpg, jvli-review-banu-3.jpg"
+            "photo_file": "jvli-review-pinkkurti.jpg, jvli-review-banu-3.jpg"
           }
         },
         "review_sudharshana": {
@@ -318,11 +318,11 @@
         }
       },
       "block_order": [
-        "review_saree",
         "review_blockprint",
         "review_shirt",
         "review_banu",
-        "review_sudharshana"
+        "review_sudharshana",
+        "review_saree"
       ]
     },
     "jvli_faq": {
