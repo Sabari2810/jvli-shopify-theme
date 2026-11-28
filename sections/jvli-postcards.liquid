@@ -8,7 +8,7 @@
 {%- endcomment -%}
 {%- if section.blocks.size > 0 -%}
   {%- render 'jvli-assets' -%}
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@1,400&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@1,400&family=Marck+Script&display=swap">
   {{ 'jvli-postcards.css' | asset_url | stylesheet_tag }}
   <script src="{{ 'jvli-postcards.js' | asset_url }}" defer></script>
 
@@ -42,7 +42,10 @@
 
       <div class="jvli-postcards__stage">
         <div class="jvli-postcards__track" data-jvli-postcards-track>
+          {%- assign jvli_pc_fallbacks = 'jvli-about-hangers.webp,jvli-about-hero.webp,jvli-about-sketch.webp,jvli-intro-panthal.webp' | split: ',' -%}
           {%- for block in section.blocks -%}
+            {%- assign jvli_pc_fb_idx = forloop.index0 | modulo: jvli_pc_fallbacks.size -%}
+            {%- assign jvli_pc_fb = jvli_pc_fallbacks[jvli_pc_fb_idx] -%}
             <article
               class="jvli-postcard{% if forloop.first %} is-active{% endif %}"
               data-jvli-postcard
@@ -52,42 +55,79 @@
               {{ block.shopify_attributes }}
             >
               <div class="jvli-postcard__paper" aria-hidden="true"></div>
-              {%- if section.settings.show_flowers -%}
-                <img
-                  class="jvli-postcard__sprig"
-                  src="{{ 'jvli-sprig-card.webp' | asset_url }}"
-                  alt=""
-                  width="204"
-                  height="246"
-                  loading="lazy"
-                >
-              {%- endif -%}
 
-              <div class="jvli-postcard__message">
-                <blockquote class="jvli-postcard__quote" data-jvli-postcard-quote>“{{ block.settings.quote | strip | escape | newline_to_br }}”</blockquote>
-                <button type="button" class="jvli-postcard__more" data-jvli-postcard-more hidden>Read more</button>
+              <div class="jvli-postcard__left">
+                <div class="jvli-postcard__photo-wrap">
+                  <div class="jvli-postcard__photo-stamp">
+                    {%- if block.settings.image != blank -%}
+                      <img
+                        src="{{ block.settings.image | image_url: width: 800 }}"
+                        alt="{{ block.settings.image.alt | default: block.settings.name | default: 'JVLI customer photo' | escape }}"
+                        width="400"
+                        height="500"
+                        loading="lazy"
+                      >
+                    {%- else -%}
+                      <img
+                        src="{{ jvli_pc_fb | asset_url }}"
+                        alt="JVLI everyday wear"
+                        width="400"
+                        height="500"
+                        loading="lazy"
+                      >
+                    {%- endif -%}
+                  </div>
+
+                  <img
+                    class="jvli-postcard__wax"
+                    src="{{ 'jvli-wax-seal.png' | asset_url }}"
+                    alt=""
+                    width="1024"
+                    height="1009"
+                    loading="lazy"
+                  >
+                </div>
               </div>
 
-              <div class="jvli-postcard__address">
+              <div class="jvli-postcard__right">
                 <div class="jvli-postcard__top" aria-hidden="true">
-                  <span class="jvli-postcard__label">Post card</span>
-                  <svg class="jvli-postcard__postmark" viewBox="0 0 120 64" focusable="false">
-                    <path d="M2 18c8-5 14 5 22 0s14-5 22 0M2 28c8-5 14 5 22 0s14-5 22 0M2 38c8-5 14 5 22 0s14-5 22 0M2 48c8-5 14 5 22 0s14-5 22 0" />
-                    <circle cx="86" cy="33" r="29" />
-                    <circle cx="86" cy="33" r="23" stroke-dasharray="2 3" />
-                    <text x="86" y="38" text-anchor="middle">JVLI</text>
-                  </svg>
+                  <img
+                    class="jvli-postcard__postmark"
+                    src="{{ 'jvli-postmark.png' | asset_url }}"
+                    alt=""
+                    width="797"
+                    height="410"
+                    loading="lazy"
+                  >
+
                   <span class="jvli-postcard__stamp">
-                    <svg viewBox="0 0 40 48" focusable="false">
-                      <path d="M20 46V20M20 34c-5-1-9-4-10-9 5 0 9 3 10 9Zm0-7c5-1 9-4 10-9-5 0-9 3-10 9Z" />
-                      <path d="M20 20c-4-2-6-6-5-11 4 1 6 4 5 11Zm0 0c4-2 6-6 5-11-4 1-6 4-5 11Zm0 0c-1-5 0-9 0-14 1 5 1 9 0 14Z" />
+                    <svg viewBox="0 0 88 104" focusable="false">
+                      <rect x="0" y="0" width="88" height="104" fill="#1e1915"/>
+                      <path
+                        d="M 2 2 L 6.6 2 A 2.4 2.4 0 0 0 11.4 2 L 14.4 2 A 2.4 2.4 0 0 0 19.2 2 L 22.2 2 A 2.4 2.4 0 0 0 27.0 2 L 29.9 2 A 2.4 2.4 0 0 0 34.7 2 L 37.7 2 A 2.4 2.4 0 0 0 42.5 2 L 45.5 2 A 2.4 2.4 0 0 0 50.3 2 L 53.3 2 A 2.4 2.4 0 0 0 58.1 2 L 61.0 2 A 2.4 2.4 0 0 0 65.8 2 L 68.8 2 A 2.4 2.4 0 0 0 73.6 2 L 76.6 2 A 2.4 2.4 0 0 0 81.4 2 L 86 2 L 86 6.6 A 2.4 2.4 0 0 0 86 11.4 L 86 14.4 A 2.4 2.4 0 0 0 86 19.2 L 86 22.2 A 2.4 2.4 0 0 0 86 27.0 L 86 30.1 A 2.4 2.4 0 0 0 86 34.9 L 86 37.9 A 2.4 2.4 0 0 0 86 42.7 L 86 45.7 A 2.4 2.4 0 0 0 86 50.5 L 86 53.5 A 2.4 2.4 0 0 0 86 58.3 L 86 61.3 A 2.4 2.4 0 0 0 86 66.1 L 86 69.1 A 2.4 2.4 0 0 0 86 73.9 L 86 77.0 A 2.4 2.4 0 0 0 86 81.8 L 86 84.8 A 2.4 2.4 0 0 0 86 89.6 L 86 92.6 A 2.4 2.4 0 0 0 86 97.4 L 86 102 L 81.4 102 A 2.4 2.4 0 0 0 76.6 102 L 73.6 102 A 2.4 2.4 0 0 0 68.8 102 L 65.8 102 A 2.4 2.4 0 0 0 61.0 102 L 58.1 102 A 2.4 2.4 0 0 0 53.3 102 L 50.3 102 A 2.4 2.4 0 0 0 45.5 102 L 42.5 102 A 2.4 2.4 0 0 0 37.7 102 L 34.7 102 A 2.4 2.4 0 0 0 29.9 102 L 27.0 102 A 2.4 2.4 0 0 0 22.2 102 L 19.2 102 A 2.4 2.4 0 0 0 14.4 102 L 11.4 102 A 2.4 2.4 0 0 0 6.6 102 L 2 102 L 2 97.4 A 2.4 2.4 0 0 0 2 92.6 L 2 89.6 A 2.4 2.4 0 0 0 2 84.8 L 2 81.8 A 2.4 2.4 0 0 0 2 77.0 L 2 73.9 A 2.4 2.4 0 0 0 2 69.1 L 2 66.1 A 2.4 2.4 0 0 0 2 61.3 L 2 58.3 A 2.4 2.4 0 0 0 2 53.5 L 2 50.5 A 2.4 2.4 0 0 0 2 45.7 L 2 42.7 A 2.4 2.4 0 0 0 2 37.9 L 2 34.9 A 2.4 2.4 0 0 0 2 30.1 L 2 27.0 A 2.4 2.4 0 0 0 2 22.2 L 2 19.2 A 2.4 2.4 0 0 0 2 14.4 L 2 11.4 A 2.4 2.4 0 0 0 2 6.6 Z"
+                        fill="#f8f2e6"
+                      />
+                      <rect x="8.5" y="8.5" width="71" height="87" fill="none" stroke="#1e1915" stroke-width="1"/>
+                      <text x="44" y="18.5" text-anchor="middle" fill="#1e1915" font-size="6.8" font-weight="600" letter-spacing="1.1">JVLI · INDIA</text>
+                      <rect x="14.5" y="22.5" width="59" height="60" fill="#c76432"/>
+                      <!-- Terracotta sunset & temple/botanical stamp illustration -->
+                      <circle cx="44" cy="45" r="15.5" fill="#e6a96c"/>
+                      <path d="M28 77c0-12 7-21 16-27 9 6 16 15 16 27Z" fill="#7c281c"/>
+                      <path d="M44 50v27M36 61c3-2 6-1 8 2m0-2c2-3 5-4 8-2" stroke="#f7e3c8" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+                      <text x="44" y="91.5" text-anchor="middle" fill="#1e1915" font-size="6.2" font-weight="600" letter-spacing="1.1">POSTAGE · 2026</text>
                     </svg>
                   </span>
                 </div>
+
+                <div class="jvli-postcard__message">
+                  <blockquote class="jvli-postcard__quote" data-jvli-postcard-quote>“{{ block.settings.quote | strip | escape | newline_to_br }}”</blockquote>
+                  <button type="button" class="jvli-postcard__more" data-jvli-postcard-more hidden>Read more</button>
+                </div>
+
                 <div class="jvli-postcard__from">
-                  <p class="jvli-postcard__love">With love,</p>
+                  <span class="jvli-postcard__love">With love,</span>
                   {%- if block.settings.name != blank -%}
-                    <p class="jvli-postcard__name">{{ block.settings.name | escape }}</p>
+                    <span class="jvli-postcard__name">{{ block.settings.name | escape }}</span>
                   {%- endif -%}
                   {%- liquid
                     assign jvli_pc_meta = block.settings.city | strip | escape
@@ -99,7 +139,7 @@
                     endif
                   -%}
                   {%- if jvli_pc_meta != blank -%}
-                    <p class="jvli-postcard__meta">{{ jvli_pc_meta }}</p>
+                    <span class="jvli-postcard__meta">{{ jvli_pc_meta }}</span>
                   {%- endif -%}
                 </div>
               </div>
@@ -169,6 +209,7 @@
       "name": "Review",
       "settings": [
         { "type": "paragraph", "content": "Use real reviews only, in the customer's own words, with their permission." },
+        { "type": "image_picker", "id": "image", "label": "Photo" },
         { "type": "textarea", "id": "quote", "label": "Review" },
         { "type": "text", "id": "name", "label": "Name" },
         { "type": "text", "id": "city", "label": "City" },
