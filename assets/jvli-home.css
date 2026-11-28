@@ -1169,9 +1169,10 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
 }
 
 /* The collection cards' title and "Shop now": the navbar's font (Mangro),
-   as typed rather than in small caps, in beige on the maroon panel. */
+   as typed rather than in small caps, in the beige of the maroon navbar
+   (#e5d3b0) on the maroon panel. */
 .jvli-category {
-  color: var(--jvli-cream);
+  color: #e5d3b0;
 }
 
 .jvli .jvli-category__title {
