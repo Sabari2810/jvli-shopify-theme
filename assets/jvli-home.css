@@ -110,7 +110,7 @@
 }
 
 /* A faint gold damask over the cream sections (assets/jvli-damask.png:
-   a seamless tile with the strength baked in, about 10%), centred so it
+   a seamless tile with the strength baked in, about 6%), centred so it
    lines up from one section to the next. The banner (a dark photo) has
    none. */
 section.jvli:not(.jvli-banner) {
