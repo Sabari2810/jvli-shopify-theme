@@ -4391,7 +4391,7 @@ html.jvli-search-open {
 }
 
 /* Gold mandala line art (cut out of the reference, no paper) in the top
-   right and bottom left corners at 45%, under the footer's content (the
+   right and bottom left corners at 25%, under the footer's content (the
    footer isolates its own stacking). */
 .shopify-section-group-footer-group .footer::before {
   content: "";
@@ -4401,9 +4401,9 @@ html.jvli-search-open {
   background:
     url("jvli-footer-mandala-tr.webp") right top / var(--jvli-mandala-size) auto no-repeat,
     url("jvli-footer-mandala-bl.webp") left bottom / var(--jvli-mandala-size) auto no-repeat;
-  opacity: 0.45;
+  opacity: 0.25;
   pointer-events: none;
-  --jvli-mandala-size: min(420px, 50vw);
+  --jvli-mandala-size: min(280px, 42vw);
 }
 
 @media (max-width: 749px) {
