@@ -266,108 +266,48 @@
         "show_flowers": true
       },
       "blocks": {
-        "review_1": {
+        "review_saree": {
           "type": "review",
           "settings": {
-            "quote": "Absolutely loved the fabric and the fit! The Thamarai print is so effortless and so comfortable.",
-            "name": "Priya",
-            "city": "Chennai",
+            "quote": "Heyyyyiii,\nHonestly, indha fit summerku romba comfy ah irukku!! I wasn't very sure about the fit & comfort before ordering, but now I absolutely love it. The fabric is super breathable and perfect for this adikra veyil. Service kuda sema, just 4 days la deliver panniteenga! Really impressed with how quick it was.\nUnmayave happy with this purchase 💛",
+            "name": "",
+            "city": "",
             "verified": true
           }
         },
-        "review_2": {
+        "review_blockprint": {
           "type": "review",
           "settings": {
-            "quote": "The print is even more beautiful in real life. I've already washed it twice and the colour hasn't faded.",
-            "name": "Ananya",
-            "city": "Coimbatore",
+            "quote": "Heyyy got the package... loved the fit and was sooo comfortable.. not even a tiny alteration required 🤩🙌",
+            "name": "",
+            "city": "",
             "verified": true
           }
         },
-        "review_3": {
+        "review_shirt": {
           "type": "review",
           "settings": {
-            "quote": "Simple, elegant and perfect for everyday wear. JVLI never disappoints!",
-            "name": "Kavya",
-            "city": "Madurai",
+            "quote": "Helloo!\nI received the shirt!! First things first, right from opening the package the experience you guys have curated for your customers is 👌 who doesn't love themselves some goood smelling clothes! I was already feeling 🥰 about my shirt! The fit and the finish is perfect! Your size chart and delivery are spot on! Also, thank you for the personal note! ^.^ Over all, it shows how you guys have really been so thoughtful about every detail and experience you can put in together for us! Love that!\nCan't wait to wear them! Thank you team JVLI!! 🤍",
+            "name": "",
+            "city": "",
             "verified": true
           }
         },
-        "review_4": {
+        "review_banu": {
           "type": "review",
           "settings": {
-            "quote": "Ordered the Kaavi linen kurti for office. Breathable even in Chennai heat, and the length is just right.",
-            "name": "Divya",
-            "city": "Chennai",
-            "verified": true
-          }
-        },
-        "review_5": {
-          "type": "review",
-          "settings": {
-            "quote": "My mother loved the Kanchi cotton saree. Light, easy to drape, and the border is lovely.",
-            "name": "Meena",
-            "city": "Tiruchirappalli",
-            "verified": true
-          }
-        },
-        "review_6": {
-          "type": "review",
-          "settings": {
-            "quote": "The size guide was spot on. Took an M and it fits like it was made for me.",
-            "name": "Shruthi",
-            "city": "Bengaluru",
-            "verified": true
-          }
-        },
-        "review_7": {
-          "type": "review",
-          "settings": {
-            "quote": "Packed with so much care, with a little handwritten note inside. Felt like a gift to myself.",
-            "name": "Lakshmi",
-            "city": "Salem",
-            "verified": true
-          }
-        },
-        "review_8": {
-          "type": "review",
-          "settings": {
-            "quote": "The Thinnai co-ord set is my new travel outfit. Pockets in the pants are a big plus!",
-            "name": "Nivetha",
-            "city": "Pondicherry",
-            "verified": true
-          }
-        },
-        "review_9": {
-          "type": "review",
-          "settings": {
-            "quote": "Soft mul cotton, beautiful buttons, and it arrived in three days. Will be ordering again.",
-            "name": "Harini",
-            "city": "Tirunelveli",
-            "verified": true
-          }
-        },
-        "review_10": {
-          "type": "review",
-          "settings": {
-            "quote": "Got so many compliments at work for the Kolam print kurti. Everyone asked where it was from.",
-            "name": "Sowmya",
-            "city": "Hyderabad",
+            "quote": "I couldn't take a proper picture. But wore it for one of the special days. Really loved the stitch, especially the joint from body to the sleeve area of the top. Loved the color too <333\nAnd it's something so special as I got from my first salary :)))\nAmma loved it on me. Perfect stitch ❤️",
+            "name": "",
+            "city": "",
             "verified": true
           }
         }
       },
       "block_order": [
-        "review_1",
-        "review_2",
-        "review_3",
-        "review_4",
-        "review_5",
-        "review_6",
-        "review_7",
-        "review_8",
-        "review_9",
-        "review_10"
+        "review_saree",
+        "review_blockprint",
+        "review_shirt",
+        "review_banu"
       ]
     },
     "jvli_faq": {
