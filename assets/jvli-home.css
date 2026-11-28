@@ -2368,7 +2368,8 @@ a.jvli-igpost:hover .jvli-igpost__media .jvli-cover {
 
 .jvli-collections-list__count {
   margin: -8px 0 14px;
-  color: var(--jvli-ink-soft);
+  color: #e5d3b0;
+  opacity: 0.85;
   font-size: 13px;
 }
 
