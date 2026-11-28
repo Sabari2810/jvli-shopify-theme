@@ -714,13 +714,6 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   margin-bottom: clamp(20px, 2.2vw, 34px);
 }
 
-.jvli-section-sub {
-  margin-top: 6px;
-  color: var(--jvli-ink-soft);
-  font-size: clamp(15px, 1.2vw, 18px);
-  line-height: 1.6;
-}
-
 /* ==========================================================================
    New In + product card
    ========================================================================== */
