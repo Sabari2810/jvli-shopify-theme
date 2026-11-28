@@ -46,6 +46,9 @@
           {%- for block in section.blocks -%}
             {%- assign jvli_pc_fb_idx = forloop.index0 | modulo: jvli_pc_fallbacks.size -%}
             {%- assign jvli_pc_fb = jvli_pc_fallbacks[jvli_pc_fb_idx] -%}
+            {%- if block.settings.photo_file != blank -%}
+              {%- assign jvli_pc_fb = block.settings.photo_file | strip -%}
+            {%- endif -%}
             <article
               class="jvli-postcard{% if forloop.first %} is-active{% endif %}"
               data-jvli-postcard
@@ -70,7 +73,7 @@
                     {%- else -%}
                       <img
                         src="{{ jvli_pc_fb | asset_url }}"
-                        alt="JVLI everyday wear"
+                        alt="{% if block.settings.photo_file != blank %}JVLI customer photo{% else %}JVLI everyday wear{% endif %}"
                         width="400"
                         height="500"
                         loading="lazy"
@@ -202,6 +205,7 @@
       "settings": [
         { "type": "paragraph", "content": "Use real reviews only, in the customer's own words, with their permission." },
         { "type": "image_picker", "id": "image", "label": "Photo" },
+        { "type": "text", "id": "photo_file", "label": "Photo file in the theme", "info": "Used when no photo is picked above, e.g. jvli-review-saree.jpg." },
         { "type": "textarea", "id": "quote", "label": "Review" },
         { "type": "text", "id": "name", "label": "Name" },
         { "type": "text", "id": "city", "label": "City" },
