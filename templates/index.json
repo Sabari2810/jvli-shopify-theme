@@ -104,7 +104,8 @@
         "cat_sarees"
       ],
       "settings": {
-        "heading": "Shop by Collections"
+        "heading": "Shop by Collections",
+        "view_all_text": "View all"
       }
     },
     "jvli_banner": {

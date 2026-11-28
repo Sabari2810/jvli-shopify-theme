@@ -3,6 +3,12 @@
   <div class="jvli-container">
     <div class="jvli-section-head">
       <h2 class="jvli-h2">{{ section.settings.heading }}</h2>
+      {%- if section.settings.view_all_text != blank -%}
+        <a href="{{ section.settings.view_all_link | default: routes.collections_url }}" class="jvli-link-caps">
+          {{- section.settings.view_all_text -}}
+          {%- render 'jvli-icon', icon: 'arrow' -%}
+        </a>
+      {%- endif -%}
     </div>
     <div class="jvli-categories__grid">
       {%- for block in section.blocks -%}
@@ -41,7 +47,9 @@
   "class": "jvli-section-categories",
   "max_blocks": 6,
   "settings": [
-    { "type": "text", "id": "heading", "label": "Heading", "default": "Shop by Collections" }
+    { "type": "text", "id": "heading", "label": "Heading", "default": "Shop by Collections" },
+    { "type": "text", "id": "view_all_text", "label": "View all text", "info": "Leave empty to hide.", "default": "View all" },
+    { "type": "url", "id": "view_all_link", "label": "View all link", "info": "Defaults to the page listing all collections." }
   ],
   "blocks": [
     {
