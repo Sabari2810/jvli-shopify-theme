@@ -32,7 +32,7 @@
       "settings": {
         "collection": "new-in",
         "products_to_show": 5,
-        "heading": "New In",
+        "heading": "The Newest of Ours",
         "view_all_text": "View all",
         "add_to_bag_text": "Add to bag",
         "padding_top": 56,
@@ -183,7 +183,7 @@
         "photo_5"
       ],
       "settings": {
-        "heading": "JVLI in real life",
+        "heading": "The JVLI Diaries",
         "follow_text": "Follow us @jvli.store",
         "follow_link": "https://www.instagram.com/jvli.store/",
         "instagram_feed_url": "https://jvli-shopify-instagram.thejvlistore.workers.dev/reels",
