@@ -89,7 +89,7 @@
 }
 
 .jvli-faq__group-head:hover,
-.jvli-faq__group[open] > .jvli-faq__group-head {
+.jvli-faq__group[open]:not(.is-closing) > .jvli-faq__group-head {
   color: var(--jvli-faq-red);
 }
 
@@ -143,7 +143,7 @@
 }
 
 .jvli-faq__question:hover,
-.jvli-faq__item[open] > .jvli-faq__question {
+.jvli-faq__item[open]:not(.is-closing) > .jvli-faq__question {
   color: var(--jvli-faq-red);
 }
 
@@ -168,16 +168,22 @@
   inset: 6px 0 auto;
   height: 1.5px;
   background: currentColor;
-  transition: transform 0.2s ease;
+  transition: transform 0.24s cubic-bezier(0.22, 0.8, 0.24, 1);
 }
 
 .jvli-faq__sign::after {
   transform: rotate(90deg);
 }
 
-.jvli-faq__group[open] > .jvli-faq__group-head .jvli-faq__sign::after,
-.jvli-faq__item[open] > .jvli-faq__question .jvli-faq__sign::after {
+.jvli-faq__group[open]:not(.is-closing) > .jvli-faq__group-head .jvli-faq__sign::after,
+.jvli-faq__item[open]:not(.is-closing) > .jvli-faq__question .jvli-faq__sign::after {
   transform: rotate(0deg);
+}
+
+.jvli-faq__group.is-animating > .jvli-faq__list,
+.jvli-faq__item.is-animating > .jvli-faq__answer {
+  overflow: hidden;
+  will-change: height, opacity;
 }
 
 .jvli-faq__answer {
