@@ -186,6 +186,30 @@
   background: #4e1517;
 }
 
+/* Several photos in one stamp: stacked, the shown one fades in. */
+.jvli-postcard__photo-stamp {
+  display: grid;
+}
+
+.jvli-postcard__photo-stamp img {
+  grid-area: 1 / 1;
+}
+
+.jvli-postcard__photo-stamp img[data-jvli-pc-slide] {
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+
+.jvli-postcard__photo-stamp img[data-jvli-pc-slide].is-shown {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .jvli-postcard__photo-stamp img[data-jvli-pc-slide] {
+    transition: none;
+  }
+}
+
 .jvli-postcard__wax {
   position: absolute;
   top: clamp(-42px, -3.4vw, -30px);

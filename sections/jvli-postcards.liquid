@@ -71,13 +71,22 @@
                         loading="lazy"
                       >
                     {%- else -%}
-                      <img
-                        src="{{ jvli_pc_fb | asset_url }}"
-                        alt="{% if block.settings.photo_file != blank %}JVLI customer photo{% else %}JVLI everyday wear{% endif %}"
-                        width="400"
-                        height="500"
-                        loading="lazy"
-                      >
+                      {%- comment -%}
+                        Photo file(s): several names separated by commas show
+                        one after another (jvli-postcards.js fades them).
+                      {%- endcomment -%}
+                      {%- assign jvli_pc_files = jvli_pc_fb | split: ',' -%}
+                      {%- for jvli_pc_file in jvli_pc_files -%}
+                        <img
+                          class="{% if forloop.first %}is-shown{% endif %}"
+                          src="{{ jvli_pc_file | strip | asset_url }}"
+                          alt="{% if block.settings.photo_file != blank %}{{ block.settings.name | default: 'JVLI customer' | escape }} in JVLI{% else %}JVLI everyday wear{% endif %}"
+                          width="400"
+                          height="500"
+                          loading="lazy"
+                          {% if jvli_pc_files.size > 1 %}data-jvli-pc-slide{% endif %}
+                        >
+                      {%- endfor -%}
                     {%- endif -%}
                   </div>
 
@@ -205,7 +214,7 @@
       "settings": [
         { "type": "paragraph", "content": "Use real reviews only, in the customer's own words, with their permission." },
         { "type": "image_picker", "id": "image", "label": "Photo" },
-        { "type": "text", "id": "photo_file", "label": "Photo file in the theme", "info": "Used when no photo is picked above, e.g. jvli-review-saree.jpg." },
+        { "type": "text", "id": "photo_file", "label": "Photo file in the theme", "info": "Used when no photo is picked above, e.g. jvli-review-saree.jpg. Several, separated by commas, change every 2 seconds." },
         { "type": "textarea", "id": "quote", "label": "Review" },
         { "type": "text", "id": "name", "label": "Name" },
         { "type": "text", "id": "city", "label": "City" },

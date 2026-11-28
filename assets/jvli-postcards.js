@@ -194,8 +194,39 @@
     });
   }
 
+  /* ---------- Photo slideshow ----------
+     A stamp with several photos shows the next one every 2 seconds, only
+     while its card is at the front and the section is on screen. */
+
+  var SLIDE_MS = 2000;
+
+  function initSlides(scope) {
+    scope.querySelectorAll('.jvli-postcard__photo-stamp').forEach(function (stamp) {
+      var slides = stamp.querySelectorAll('[data-jvli-pc-slide]');
+      if (slides.length < 2 || stamp.dataset.jvliSlides) return;
+      stamp.dataset.jvliSlides = 'true';
+      var card = stamp.closest('[data-jvli-postcard]');
+      var section = stamp.closest('[data-jvli-postcards]');
+      var current = 0;
+      var visible = true;
+      if ('IntersectionObserver' in window && section) {
+        new IntersectionObserver(function (entries) {
+          visible = entries[0].isIntersecting;
+        }).observe(section);
+      }
+      setInterval(function () {
+        if (document.hidden || !visible) return;
+        if (card && !card.classList.contains('is-active')) return;
+        slides[current].classList.remove('is-shown');
+        current = (current + 1) % slides.length;
+        slides[current].classList.add('is-shown');
+      }, SLIDE_MS);
+    });
+  }
+
   function start() {
     initPostcards(document);
+    initSlides(document);
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
@@ -203,5 +234,6 @@
 
   document.addEventListener('shopify:section:load', function (event) {
     initPostcards(event.target);
+    initSlides(event.target);
   });
 })();
