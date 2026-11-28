@@ -14,6 +14,11 @@
 //                   with a pant line and a dupatta line (a full set)
 //   DUPATTA_SOLD_OUT with MTO, the dupatta add-on is sold out
 //   PANT_SOLD_OUT    with MTO, the pant add-on is sold out
+//   STORE            "sample" to use the made-up products and menu instead of
+//                   store-snapshot.json (the live store's menus, collections,
+//                   New In products and photos)
+import { createHash } from "node:crypto";
+import { execFileSync } from "node:child_process";
 import { cpSync, existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { basename, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -45,6 +50,36 @@ function standin(key) {
     if (existsSync(file)) return imageFromFile(file);
   }
   return null;
+}
+
+/* ---------- Live store snapshot ---------- */
+
+const snapshotFile = join(here, "store-snapshot.json");
+const snapshot = process.env.STORE !== "sample" && existsSync(snapshotFile) ? JSON.parse(readFileSync(snapshotFile, "utf8")) : null;
+const imageCache = join(here, "out", "image-cache");
+mkdirSync(imageCache, { recursive: true });
+
+// A Shopify CDN photo, downloaded once (at most 1200 px wide) and served
+// from out/images. Null when the CDN can't be reached.
+function remoteImage(url, { width = 1200, height = 1440, alt = "" } = {}) {
+  const sized = url + (url.includes("?") ? "&" : "?") + "width=1200";
+  const name = createHash("sha1").update(sized).digest("hex").slice(0, 16) + (url.match(/\.(jpe?g|png|webp)/i)?.[0] ?? ".jpg");
+  const cached = join(imageCache, name);
+  if (!existsSync(cached)) {
+    try {
+      execFileSync("curl", ["-sSf", "--retry", "2", "-o", cached, sized], { stdio: "ignore" });
+    } catch {
+      return null;
+    }
+  }
+  cpSync(cached, join(out, "images", name));
+  return { src: `images/${name}`, width, height, aspect_ratio: width / height, alt };
+}
+
+// shopify://shop_images/<file> (an image picked in the theme editor).
+function shopImage(value) {
+  const name = typeof value === "string" && value.startsWith("shopify://shop_images/") ? value.slice(22) : null;
+  return snapshot && name ? remoteImage(snapshot.files_base + encodeURIComponent(name)) : null;
 }
 
 /* ---------- Sample store data ---------- */
@@ -101,6 +136,48 @@ const menus = {
     ],
   },
 };
+
+// With the snapshot: the live New In products, collections and menus.
+const liveProducts = (snapshot?.new_in ?? []).map((p, i) => {
+  const images = p.images.map((img) => remoteImage(img.url, img)).filter(Boolean);
+  const fallback = standin(`product-${(i % 5) + 1}`);
+  const media = (images.length ? images : [fallback]).map((image) => ({ preview_image: image }));
+  const variants = p.variants.map((v) => ({ id: v.id, options: ["Default Title"], available: v.available }));
+  return {
+    id: p.id,
+    title: p.title,
+    handle: p.handle,
+    url: `/products/${p.handle}`,
+    tags: p.tags ?? [],
+    price: p.price,
+    compare_at_price: p.compare_at_price,
+    available: variants.some((v) => v.available),
+    featured_media: media[0],
+    media,
+    options_with_values: [{ name: "Title", values: ["Default Title"] }],
+    variants,
+    selected_or_first_available_variant: variants.find((v) => v.available) ?? variants[0],
+    metafields: { custom: { made_to_order_sizes: { value: p.made_to_order_sizes } } },
+  };
+});
+
+if (snapshot) {
+  for (const c of snapshot.collections) {
+    collections[c.handle] = {
+      title: c.title,
+      handle: c.handle,
+      url: `/collections/${c.handle}`,
+      products: c.handle === "new-in" ? liveProducts : [],
+      products_count: c.count,
+      all_products_count: c.count,
+      published: c.published,
+      featured_image: null,
+    };
+  }
+  for (const [handle, links] of Object.entries(snapshot.menus)) {
+    menus[handle] = { links: links.map(([title, url]) => ({ title, url })) };
+  }
+}
 
 // The product page's product: the first sample, with a gallery, options and
 // one sold-out size, as Shopify's product object exposes them.
@@ -219,7 +296,7 @@ function resolveSettings(defs, values, standinKey) {
   for (const def of defs.filter((d) => d.id)) {
     let value = values[def.id] ?? def.default ?? null;
     if (def.type === "image_picker") {
-      value = standin(`${standinKey}.${def.id}`);
+      value = shopImage(value) ?? standin(`${standinKey}.${def.id}`);
     } else if (def.type === "collection") {
       value = value ? collections[value] ?? { title: value, url: `/collections/${value}`, products: [], products_count: 0 } : null;
     } else if (def.type === "link_list") {
@@ -454,13 +531,16 @@ const globals = {
   // results, or "none" for the page before searching.
   search: sampleSearch(process.env.SEARCH_TERMS || "cotton"),
   linklists: menus,
-  // /collections: a few collections, including a tax one that should be hidden.
-  collections: [
-    { title: "New In", handle: "new-in", url: "/collections/new-in", all_products_count: 5, featured_image: standin("jvli_categories.cat_new.image"), products: sampleProducts, published_at: "2026-09-01" },
-    { title: "Sarees", handle: "sarees", url: "/collections/sarees", all_products_count: 1, featured_image: null, products: [sampleProducts[2]], published_at: "2026-08-01" },
-    { title: "gst-5", handle: "gst-5", url: "/collections/gst-5", all_products_count: 9, featured_image: null, products: [], published_at: "2026-01-01" },
-    { title: "Short Kurtis", handle: "short-kurtis", url: "/collections/short-kurtis", all_products_count: 3, featured_image: standin("jvli_categories.cat_short.image"), products: sampleProducts, published_at: "2026-07-01" },
-  ],
+  // /collections: the live published collections with the snapshot, else
+  // a few samples, including a tax one that should be hidden.
+  collections: snapshot
+    ? Object.values(collections).filter((c) => c.published)
+    : [
+      { title: "New In", handle: "new-in", url: "/collections/new-in", all_products_count: 5, featured_image: standin("jvli_categories.cat_new.image"), products: sampleProducts, published_at: "2026-09-01" },
+      { title: "Sarees", handle: "sarees", url: "/collections/sarees", all_products_count: 1, featured_image: null, products: [sampleProducts[2]], published_at: "2026-08-01" },
+      { title: "gst-5", handle: "gst-5", url: "/collections/gst-5", all_products_count: 9, featured_image: null, products: [], published_at: "2026-01-01" },
+      { title: "Short Kurtis", handle: "short-kurtis", url: "/collections/short-kurtis", all_products_count: 3, featured_image: standin("jvli_categories.cat_short.image"), products: sampleProducts, published_at: "2026-07-01" },
+      ],
   recommendations: { performed: false },
 };
 

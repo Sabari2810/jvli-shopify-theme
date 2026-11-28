@@ -1,0 +1,81 @@
+{
+  "_comment": "Snapshot of the live store for the local preview: menus, collections and the New In products, as Shopify's Admin API returned them. Prices are in paise. Images load from cdn.shopify.com where the network allows it, otherwise stand-ins or placeholders are used. Set STORE=sample to render the old made-up products instead.",
+  "taken": "2026-11-28",
+  "files_base": "https://cdn.shopify.com/s/files/1/0711/2812/1494/files/",
+  "menus": {
+    "main-menu": [["Shop", "/collections/all"], ["Collections", "/collections"], ["Our Story", "/pages/our-story"], ["About us", "/pages/about-us"]],
+    "footer": [["Search", "/search"], ["Collections", "/collections"]]
+  },
+  "collections": [
+    { "handle": "gst-5", "title": "GST 5%", "count": 21, "published": false },
+    { "handle": "gst-18", "title": "GST 18%", "count": 3, "published": false },
+    { "handle": "new-in", "title": "New In", "count": 9, "published": true },
+    { "handle": "kurtis", "title": "Kurtis", "count": 15, "published": true },
+    { "handle": "kurti-sets", "title": "Kurti sets", "count": 1, "published": true },
+    { "handle": "sarees", "title": "Sarees", "count": 4, "published": true }
+  ],
+  "new_in": [
+    {
+      "id": 8698953302166, "title": "Chanderi Cotton Saree", "handle": "chanderi-saree", "price": 349900, "compare_at_price": null,
+      "variants": [{ "id": 46569722937494, "available": true }], "made_to_order_sizes": null,
+      "images": [
+        { "url": "https://cdn.shopify.com/s/files/1/0711/2812/1494/files/chanderi_1.jpg?v=1790002296", "width": 1080, "height": 1440, "alt": "" },
+        { "url": "https://cdn.shopify.com/s/files/1/0711/2812/1494/files/chanderi_2.jpg?v=1790002296", "width": 1080, "height": 1440, "alt": "" }
+      ]
+    },
+    {
+      "id": 15408640852118, "title": "Malli Cotton Print Kurti", "handle": "malli-cotton-print-kurti", "price": 119900, "compare_at_price": null,
+      "variants": [{ "id": 67706986463382, "available": true }], "made_to_order_sizes": ["XS", "S", "M", "L", "XL"],
+      "images": [
+        { "url": "https://cdn.shopify.com/s/files/1/0711/2812/1494/files/jvli-fabric-cotton-print.webp?v=1790143947", "width": 1145, "height": 1374, "alt": "Printed cotton fabric with cotton bolls" }
+      ]
+    },
+    {
+      "id": 15408640950422, "title": "Kolam Print Kurti", "handle": "kolam-print-kurti", "price": 159900, "compare_at_price": null,
+      "variants": [{ "id": 67706986561686, "available": true }], "made_to_order_sizes": ["XS", "S", "M", "L", "XL"],
+      "images": [
+        { "url": "https://cdn.shopify.com/s/files/1/0711/2812/1494/files/jvli-story-clothesline.webp?v=1790141596", "width": 1145, "height": 1374, "alt": "Block-printed cotton drying on a line" },
+        { "url": "https://cdn.shopify.com/s/files/1/0711/2812/1494/files/jvli-fabric-cotton-print.webp?v=1790143947", "width": 1145, "height": 1374, "alt": "Printed cotton fabric with cotton bolls" }
+      ]
+    },
+    {
+      "id": 15408640917654, "title": "Ponni A-line Kurti", "handle": "ponni-a-line-kurti", "price": 139900, "compare_at_price": null,
+      "variants": [{ "id": 67706986528918, "available": true }], "made_to_order_sizes": ["XS", "S", "M", "L", "XL"],
+      "images": [
+        { "url": "https://cdn.shopify.com/s/files/1/0711/2812/1494/files/IMG_8504_JPG.jpg?v=1792915487", "width": 3705, "height": 6720, "alt": "Short" },
+        { "url": "https://cdn.shopify.com/s/files/1/0711/2812/1494/files/IMG_8505.jpg?v=1792915026", "width": 4205, "height": 5675, "alt": "Short" }
+      ]
+    },
+    {
+      "id": 15408640884886, "title": "Aadi Long Kurti", "handle": "aadi-long-kurti", "price": 179900, "compare_at_price": null,
+      "variants": [{ "id": 67706986496150, "available": true }], "made_to_order_sizes": ["XS", "S", "M", "L", "XL"],
+      "images": [
+        { "url": "https://cdn.shopify.com/s/files/1/0711/2812/1494/files/IMG_8505.jpg?v=1792915026", "width": 4205, "height": 5675, "alt": "Short" },
+        { "url": "https://cdn.shopify.com/s/files/1/0711/2812/1494/files/IMG_8504_JPG.jpg?v=1792915487", "width": 3705, "height": 6720, "alt": "Short" }
+      ]
+    },
+    {
+      "id": 15408640819350, "title": "Neelam Handloom Kurti", "handle": "neelam-handloom-kurti", "price": 169900, "compare_at_price": null,
+      "variants": [{ "id": 67706986430614, "available": true }], "made_to_order_sizes": ["XS", "S", "M", "L", "XL"],
+      "images": [
+        { "url": "https://cdn.shopify.com/s/files/1/0711/2812/1494/files/jvli-fabric-handloom-cotton.webp?v=1790145428", "width": 1145, "height": 1374, "alt": "Full" },
+        { "url": "https://cdn.shopify.com/s/files/1/0711/2812/1494/files/jvli-fabric-mul-cotton.webp?v=1790144512", "width": 1145, "height": 1374, "alt": "Soft rose mul cotton fabric" }
+      ]
+    },
+    {
+      "id": 15408640786582, "title": "Kaavi Linen Kurti", "handle": "kaavi-linen-kurti", "price": 189900, "compare_at_price": null,
+      "variants": [{ "id": 67706986397846, "available": true }], "made_to_order_sizes": ["XS", "S", "M", "L", "XL"],
+      "images": [
+        { "url": "https://cdn.shopify.com/s/files/1/0711/2812/1494/files/jvli-fabric-linen.webp?v=1790144818", "width": 1145, "height": 1374, "alt": "Natural linen fabric" }
+      ]
+    },
+    {
+      "id": 15408640753814, "title": "Thamarai Block Print Kurti", "handle": "thamarai-block-print-kurti", "price": 149900, "compare_at_price": 179900,
+      "variants": [{ "id": 67706986365078, "available": true }], "made_to_order_sizes": ["XS", "S", "M", "L", "XL"],
+      "images": [
+        { "url": "https://cdn.shopify.com/s/files/1/0711/2812/1494/files/jvli-fabric-hand-block-print.webp?v=1790145015", "width": 1145, "height": 1374, "alt": "Full" },
+        { "url": "https://cdn.shopify.com/s/files/1/0711/2812/1494/files/jvli-fabric-cotton-print.webp?v=1790143947", "width": 1145, "height": 1374, "alt": "Printed cotton fabric with cotton bolls" }
+      ]
+    }
+  ]
+}
