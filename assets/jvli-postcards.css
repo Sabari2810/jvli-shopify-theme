@@ -120,7 +120,8 @@
 
 /* Aged paper: warm base, darker toward the edges, fine grain, and a
    slightly ragged (deckled) outline from a jittered clip-path. */
-.jvli-postcard .jvli-postcard__paper {
+.jvli-postcard .jvli-postcard__paper,
+.jvli-pc-modal__card .jvli-postcard__paper {
   display: block; /* Sense hides empty divs */
   position: absolute;
   inset: 0;
@@ -178,6 +179,35 @@
   font-style: italic;
   line-height: 1.4;
   overflow-wrap: anywhere;
+  /* Long reviews stop after a few lines; "Read more" opens the rest. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--jvli-pc-lines, 8);
+  line-clamp: var(--jvli-pc-lines, 8);
+  overflow: hidden;
+}
+
+.jvli-postcard__more {
+  justify-self: start;
+  padding: 2px 0;
+  border: 0;
+  border-bottom: 1px solid currentColor;
+  background: none;
+  color: var(--jvli-pc-red);
+  font-family: var(--jvli-caps);
+  font-size: clamp(11px, 0.9vw, 13px);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.jvli-postcard__more[hidden] {
+  display: none;
+}
+
+.jvli-postcard__more:focus-visible {
+  outline: 2px solid var(--jvli-pc-red);
+  outline-offset: 3px;
 }
 
 .jvli-postcard__address {
@@ -360,6 +390,154 @@
   background: var(--jvli-pc-red);
 }
 
+/* ---------- The full review (pop-up) ----------
+   A single postcard over a dimmed page; it rises and fades in. The review
+   scrolls inside the card when it is longer than the screen. */
+
+html.jvli-pc-modal-open {
+  overflow: hidden;
+}
+
+.jvli-pc-modal {
+  --jvli-pc-paper: #eedfc6;
+  --jvli-pc-ink: #3b2a20;
+  --jvli-pc-red: #8a2a35;
+  --jvli-pc-script: "EB Garamond", var(--jvli-serif);
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 24px 16px;
+}
+
+.jvli-pc-modal[hidden] {
+  display: none;
+}
+
+.jvli-pc-modal .jvli-pc-modal__backdrop {
+  display: block; /* Sense hides empty divs (div:empty) */
+  position: absolute;
+  inset: 0;
+  background: rgba(36, 22, 14, 0.55);
+  backdrop-filter: blur(3px);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+.jvli-pc-modal__card {
+  position: relative;
+  width: min(620px, 100%);
+  max-height: min(82vh, 760px);
+  display: grid;
+  color: var(--jvli-pc-ink);
+  opacity: 0;
+  transform: translateY(18px) rotate(-0.8deg) scale(0.97);
+  transition:
+    opacity 0.25s ease,
+    transform 0.35s cubic-bezier(0.22, 0.8, 0.24, 1);
+}
+
+.jvli-pc-modal.is-open .jvli-pc-modal__backdrop {
+  opacity: 1;
+}
+
+.jvli-pc-modal.is-open .jvli-pc-modal__card {
+  opacity: 1;
+  transform: rotate(-0.8deg);
+}
+
+/* The same aged paper as the cards (styled with them above), with the
+   soft shadow underneath that the clip-path would otherwise cut off. */
+.jvli-pc-modal__card .jvli-postcard__paper {
+  z-index: 0;
+}
+
+.jvli-pc-modal__card::before {
+  content: "";
+  position: absolute;
+  inset: 12px 16px 0;
+  border-radius: 8px;
+  box-shadow: 0 30px 60px -18px rgba(20, 10, 5, 0.55);
+}
+
+.jvli-pc-modal__body {
+  position: relative;
+  z-index: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: clamp(30px, 4vw, 48px) clamp(26px, 4vw, 52px) clamp(56px, 6vw, 76px);
+  outline: none;
+}
+
+.jvli-pc-modal__body .jvli-postcard__stamp {
+  position: static; /* the phone cards pin it to the corner */
+  float: right;
+  width: clamp(54px, 6vw, 74px);
+  margin: 0 0 10px 18px;
+}
+
+.jvli-pc-modal__quote {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-family: var(--jvli-pc-script);
+  font-size: clamp(19px, 1.8vw, 24px);
+  font-style: italic;
+  font-weight: 400;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.jvli-pc-modal__body .jvli-postcard__from {
+  clear: both;
+  margin-top: 22px;
+  padding-top: 14px;
+  padding-left: 0;
+  border-top: 1.5px solid rgba(138, 42, 53, 0.45);
+}
+
+.jvli-pc-modal__close {
+  position: absolute;
+  top: -16px;
+  right: -12px;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: #faf4ea;
+  color: var(--jvli-pc-red);
+  box-shadow: 0 6px 18px rgba(70, 45, 20, 0.22);
+  cursor: pointer;
+}
+
+.jvli-pc-modal__close svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+
+.jvli-pc-modal__close:focus-visible {
+  outline: 2px solid var(--jvli-pc-red);
+  outline-offset: 3px;
+}
+
+.jvli-pc-modal__card .jvli-postcard__sprig {
+  position: absolute;
+  z-index: 1;
+  left: -14px;
+  bottom: -18px;
+  width: clamp(80px, 9vw, 120px);
+  height: auto;
+  pointer-events: none;
+}
+
 @media (max-width: 749px) {
   .jvli-postcards {
     --jvli-pc-w: calc(100vw - 2 * var(--jvli-gutter) - 24px);
@@ -398,6 +576,15 @@
 
   .jvli-postcard__quote {
     min-height: 4.5em;
+  }
+
+  .jvli-postcards {
+    --jvli-pc-lines: 7;
+  }
+
+  .jvli-pc-modal__close {
+    top: -14px;
+    right: -6px;
   }
 
   .jvli-postcards__eyebrow::before,
@@ -440,6 +627,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .jvli-pc-modal__backdrop,
+  .jvli-pc-modal__card,
   .jvli-postcard,
   .jvli-postcard.is-active,
   .jvli-postcard.is-prev,

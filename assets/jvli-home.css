@@ -1110,13 +1110,13 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
   min-width: 0;
 }
 
-/* Collection cards: an arched top (a half circle, like a temple doorway)
-   over the name panel in maroon. */
+/* Collection cards: rounded rectangles, the photo over the name panel in
+   maroon. */
 .jvli-category {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border-radius: 999px 999px 0 0;
+  border-radius: clamp(14px, 1.4vw, 22px);
   background: var(--jvli-maroon);
   color: var(--jvli-white);
 }

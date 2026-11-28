@@ -3,7 +3,8 @@
   Each review is a block typed in the theme editor. Only add real reviews,
   and tick "Verified customer" only for people who bought from JVLI.
   The section renders nothing until it has at least one review.
-  jvli-postcards.js runs the arrows, dots and swipe.
+  jvli-postcards.js runs the arrows, dots and swipe, and the "Read more"
+  pop-up for long reviews.
 {%- endcomment -%}
 {%- if section.blocks.size > 0 -%}
   {%- render 'jvli-assets' -%}
@@ -63,7 +64,8 @@
               {%- endif -%}
 
               <div class="jvli-postcard__message">
-                <blockquote class="jvli-postcard__quote">“{{ block.settings.quote | strip | escape | newline_to_br }}”</blockquote>
+                <blockquote class="jvli-postcard__quote" data-jvli-postcard-quote>“{{ block.settings.quote | strip | escape | newline_to_br }}”</blockquote>
+                <button type="button" class="jvli-postcard__more" data-jvli-postcard-more hidden>Read more</button>
               </div>
 
               <div class="jvli-postcard__address">
@@ -84,7 +86,9 @@
                 </div>
                 <div class="jvli-postcard__from">
                   <p class="jvli-postcard__love">With love,</p>
-                  <p class="jvli-postcard__name">{{ block.settings.name | escape }}</p>
+                  {%- if block.settings.name != blank -%}
+                    <p class="jvli-postcard__name">{{ block.settings.name | escape }}</p>
+                  {%- endif -%}
                   {%- liquid
                     assign jvli_pc_meta = block.settings.city | strip | escape
                     if block.settings.verified
@@ -111,6 +115,24 @@
             {%- render 'jvli-icon', icon: 'chevron' -%}
           </button>
         {%- endif -%}
+      </div>
+
+      {%- comment -%}
+        The full review, opened by "Read more" on a long one. jvli-postcards.js
+        moves it to the end of <body> and fills it from the card.
+      {%- endcomment -%}
+      <div class="jvli jvli-pc-modal" data-jvli-postcards-modal hidden>
+        <div class="jvli-pc-modal__backdrop" data-jvli-postcards-close></div>
+        <div class="jvli-pc-modal__card" role="dialog" aria-modal="true" aria-label="Full review">
+          <div class="jvli-postcard__paper" aria-hidden="true"></div>
+          <button type="button" class="jvli-pc-modal__close" data-jvli-postcards-close aria-label="Close">
+            <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M6 6l12 12M18 6 6 18"/></svg>
+          </button>
+          <div class="jvli-pc-modal__body" data-jvli-postcards-modal-body tabindex="0"></div>
+          {%- if section.settings.show_flowers -%}
+            <img class="jvli-postcard__sprig" src="{{ 'jvli-sprig-card.webp' | asset_url }}" alt="" width="204" height="246" loading="lazy">
+          {%- endif -%}
+        </div>
       </div>
 
       {%- if section.blocks.size > 1 -%}

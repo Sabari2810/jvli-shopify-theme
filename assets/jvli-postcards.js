@@ -1,6 +1,8 @@
 /* JVLI Postcards from you (sections/jvli-postcards).
    One active postcard with its neighbours peeking out either side. Arrows,
-   dots, swipe, the arrow keys, or a tap on a side card change it. */
+   dots, swipe, the arrow keys, or a tap on a side card change it.
+   Long reviews are trimmed (CSS line clamp); "Read more" shows only on the
+   ones actually cut off and opens the whole review in a postcard pop-up. */
 (function () {
   if (window.JvliPostcards) return;
   window.JvliPostcards = true;
@@ -15,6 +17,7 @@
       var stage = section.querySelector('.jvli-postcards__stage');
       var count = cards.length;
       var index = 0;
+      initReadMore(section, cards);
       if (count < 2) return;
 
       function show(next) {
@@ -82,6 +85,112 @@
       });
 
       show(0);
+    });
+  }
+
+  /* ---------- Read more ---------- */
+
+  function initReadMore(section, cards) {
+    var modal = section.querySelector('[data-jvli-postcards-modal]');
+    if (!modal) return;
+    // Out of the section (which clips its overflow) so it covers the page.
+    document.body.appendChild(modal);
+    var body = modal.querySelector('[data-jvli-postcards-modal-body]');
+    var closeButton = modal.querySelector('.jvli-pc-modal__close');
+    var opener = null;
+    var pushed = false;
+
+    // Show "Read more" only where the clamp actually hides text.
+    function measure() {
+      cards.forEach(function (card) {
+        var quote = card.querySelector('[data-jvli-postcard-quote]');
+        var more = card.querySelector('[data-jvli-postcard-more]');
+        if (quote && more) more.hidden = quote.scrollHeight <= quote.clientHeight + 2;
+      });
+    }
+
+    function open(card, button) {
+      var quote = card.querySelector('[data-jvli-postcard-quote]');
+      var from = card.querySelector('.jvli-postcard__from');
+      var stamp = card.querySelector('.jvli-postcard__stamp');
+      body.innerHTML = '';
+      if (stamp) body.appendChild(stamp.cloneNode(true));
+      var full = document.createElement('blockquote');
+      full.className = 'jvli-pc-modal__quote';
+      full.innerHTML = quote.innerHTML;
+      body.appendChild(full);
+      if (from) body.appendChild(from.cloneNode(true));
+      opener = button;
+      modal.hidden = false;
+      document.documentElement.classList.add('jvli-pc-modal-open');
+      // Next frame, so the opening transition runs.
+      requestAnimationFrame(function () {
+        modal.classList.add('is-open');
+      });
+      body.scrollTop = 0;
+      closeButton.focus({ preventScroll: true });
+      // The phone's back gesture closes the review instead of leaving the page.
+      try {
+        history.pushState({ jvliReview: true }, '');
+        pushed = true;
+      } catch (error) {
+        pushed = false;
+      }
+    }
+
+    function close(fromHistory) {
+      if (modal.hidden) return;
+      modal.classList.remove('is-open');
+      document.documentElement.classList.remove('jvli-pc-modal-open');
+      setTimeout(function () {
+        if (!modal.classList.contains('is-open')) modal.hidden = true;
+      }, 250);
+      if (pushed && !fromHistory) history.back();
+      pushed = false;
+      if (opener) opener.focus({ preventScroll: true });
+    }
+
+    cards.forEach(function (card) {
+      var more = card.querySelector('[data-jvli-postcard-more]');
+      if (!more) return;
+      more.addEventListener('click', function (event) {
+        // On a side card the tap only brings that card to the front.
+        if (!card.classList.contains('is-active')) return;
+        event.stopPropagation();
+        open(card, more);
+      });
+    });
+
+    modal.querySelectorAll('[data-jvli-postcards-close]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        close(false);
+      });
+    });
+
+    modal.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        close(false);
+      } else if (event.key === 'Tab') {
+        // Keep focus inside: the close button and the scrolling review.
+        event.preventDefault();
+        (document.activeElement === closeButton ? body : closeButton).focus();
+      }
+    });
+
+    window.addEventListener('popstate', function () {
+      if (pushed) {
+        pushed = false;
+        close(true);
+      }
+    });
+
+    measure();
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(measure);
+    var timer;
+    window.addEventListener('resize', function () {
+      clearTimeout(timer);
+      timer = setTimeout(measure, 150);
     });
   }
 
