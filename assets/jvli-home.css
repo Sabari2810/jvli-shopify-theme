@@ -109,6 +109,24 @@
   background: var(--jvli-cream);
 }
 
+/* A faint gold damask over the cream sections (assets/jvli-damask.png:
+   a seamless tile with the strength baked in, about 10%), centred so it
+   lines up from one section to the next. The banner (a dark photo) has
+   none. */
+section.jvli:not(.jvli-banner) {
+  background-image: url("jvli-damask.png");
+  background-size: 368px auto;
+  background-position: center top;
+}
+
+section.jvli.jvli-paper {
+  background-image:
+    url("jvli-damask.png"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .28 0 0 0 0 .2 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 368px auto, auto;
+  background-position: center top, 0 0;
+}
+
 /* Faint paper grain on the story and fabric sections. */
 .jvli-paper {
   background-color: var(--jvli-cream);
