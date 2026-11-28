@@ -60,15 +60,6 @@
     "jvli_categories": {
       "type": "jvli-categories",
       "blocks": {
-        "cat_new": {
-          "type": "category",
-          "settings": {
-            "collection": "new-in",
-            "title": "New In",
-            "link": "",
-            "link_label": "Shop now"
-          }
-        },
         "cat_kurtis": {
           "type": "category",
           "settings": {
@@ -95,13 +86,22 @@
             "link": "",
             "link_label": "Shop now"
           }
+        },
+        "cat_tops": {
+          "type": "category",
+          "settings": {
+            "collection": "tops-and-tunics",
+            "title": "Tops & Tunics",
+            "link": "",
+            "link_label": "Shop now"
+          }
         }
       },
       "block_order": [
-        "cat_new",
         "cat_kurtis",
         "cat_kurti_sets",
-        "cat_sarees"
+        "cat_sarees",
+        "cat_tops"
       ],
       "settings": {
         "heading": "Shop by Collections",
