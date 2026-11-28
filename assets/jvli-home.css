@@ -4373,9 +4373,28 @@ html.jvli-search-open {
    ========================================================================== */
 
 .shopify-section-group-footer-group .footer {
+  --jvli-perf-r: 7px; /* notch radius */
+  --jvli-perf-gap: 22px; /* notch spacing */
   position: relative;
   isolation: isolate;
   padding-bottom: clamp(30px, 4vw, 64px);
+  /* A postage-stamp edge along the top: a row of half-circle notches cut
+     out of the maroon. The footer tucks up by one notch so the section
+     above (not the page background) shows through them. */
+  margin-top: calc(-1 * var(--jvli-perf-r));
+  -webkit-mask:
+    radial-gradient(circle var(--jvli-perf-r) at 50% 0, transparent 96%, #000 100%) top left / var(--jvli-perf-gap) calc(var(--jvli-perf-r) + 1px) repeat-x,
+    linear-gradient(#000, #000) 0 var(--jvli-perf-r) / 100% 100% no-repeat;
+  mask:
+    radial-gradient(circle var(--jvli-perf-r) at 50% 0, transparent 96%, #000 100%) top left / var(--jvli-perf-gap) calc(var(--jvli-perf-r) + 1px) repeat-x,
+    linear-gradient(#000, #000) 0 var(--jvli-perf-r) / 100% 100% no-repeat;
+}
+
+@media (max-width: 749px) {
+  .shopify-section-group-footer-group .footer {
+    --jvli-perf-r: 5px;
+    --jvli-perf-gap: 16px;
+  }
 }
 
 .shopify-section-group-footer-group .footer__content-bottom {
