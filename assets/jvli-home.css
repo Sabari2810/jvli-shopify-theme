@@ -4408,9 +4408,11 @@ html.jvli-search-open {
   }
 }
 
-/* Built-in Shopify policy pages (/policies/*): match the breathing room
-   above the scalloped footer on the home page's FAQ section. */
-main[data-template="policy"] {
+/* Built-in Shopify policy pages (/policies/*): give the policy content the
+   same breathing room above the scalloped footer as the home page's FAQ.
+   (Shopify policy routes have an empty template.name, so target
+   .shopify-policy__container directly.) */
+main#MainContent .shopify-policy__container {
   padding-bottom: clamp(40px, 4.4vw, 72px);
 }
 
