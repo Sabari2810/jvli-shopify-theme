@@ -4335,6 +4335,7 @@ html.jvli-search-open {
     position: relative;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--jvli-gutter);
     scrollbar-width: none;
   }
 
@@ -4346,10 +4347,15 @@ html.jvli-search-open {
     scroll-snap-align: start;
   }
 
-  /* Reels and posts swipe too, a little wider than photos so a post's
-     caption and icons stay readable at full size. */
+  /* Reels and posts swipe too, as wide as the collection and New In cards.
+     Square media keeps the section about as tall as those two. */
   .jvli-gallery__row--reels {
-    grid-auto-columns: 78%;
+    grid-auto-columns: 66%;
+  }
+
+  .jvli-gallery__row--reels .jvli-gallery__item--reel:not(.jvli-igpost),
+  .jvli-igpost__media {
+    aspect-ratio: 1 / 1;
   }
 
   .jvli-gallery__play {
