@@ -31,7 +31,7 @@
       {%- for item in sorted -%}
         {%- if hidden contains item.handle -%}{%- continue -%}{%- endif -%}
         {%- liquid
-          assign item_image = item.featured_image
+          assign item_image = item.image
         -%}
         <a href="{{ item.url }}" class="jvli-category">
           <div class="jvli-category__media">

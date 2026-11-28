@@ -1142,6 +1142,7 @@ a:hover > .jvli-category__panel .jvli-icon--arrow {
 }
 
 .jvli-category__media {
+  display: block;
   aspect-ratio: 4 / 5;
   overflow: hidden;
   background: #d8ccb8;
