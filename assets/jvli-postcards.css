@@ -9,7 +9,7 @@
   --jvli-pc-ink: #2a231c;
   --jvli-pc-red: #862022;
   --jvli-pc-blue: #2c4b85;
-  --jvli-pc-script: "Marck Script", "EB Garamond", var(--jvli-serif);
+  --jvli-pc-script: "La Belle Aurore", "EB Garamond", var(--jvli-serif);
   --jvli-pc-lh: clamp(27px, 2.4vw, 33px);
   position: relative;
   overflow: hidden;
@@ -121,9 +121,9 @@
   filter: brightness(0.95);
 }
 
-/* Coffee-washed paper: a warm tan base, blotchy uneven wash (low-frequency
-   noise in coffee brown), darker
-   stained edges, and fine paper grain on top. */
+/* Cotton paper, matched to the user's reference: a warm off-white with a
+   pebbly cold-press texture (noise lit from the top left, kept as soft
+   shading) and fine fibre grain. */
 .jvli-postcard .jvli-postcard__paper,
 .jvli-pc-modal__card .jvli-postcard__paper {
   display: block; /* Sense hides empty divs */
@@ -131,16 +131,12 @@
   inset: 0;
   z-index: -1;
   border-radius: 2px;
-  background-color: #e8d6b6;
+  background-color: #f3eee3;
   background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .24 0 0 0 0 .13 0 0 0 .16 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='400' preserveAspectRatio='none'%3E%3Cfilter id='w'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.006 .009' numOctaves='4' seed='7'/%3E%3CfeColorMatrix values='0 0 0 0 .42 0 0 0 0 .26 0 0 0 0 .11 0 0 1.5 0 -.62'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23w)'/%3E%3C/svg%3E"),
-    radial-gradient(40% 35% at 18% 82%, rgba(140, 90, 45, 0.18), rgba(140, 90, 45, 0) 70%),
-    radial-gradient(120% 95% at 50% 45%, rgba(255, 246, 228, 0.42), rgba(255, 246, 228, 0) 62%),
-    radial-gradient(135% 120% at 50% 50%, rgba(120, 76, 36, 0) 52%, rgba(112, 70, 32, 0.38) 100%),
-    linear-gradient(#e8d6b6, #e8d6b6),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .35 0 0 0 0 .3 0 0 0 0 .24 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='p' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.075' numOctaves='3' seed='3' stitchTiles='stitch'/%3E%3CfeDiffuseLighting lighting-color='%23fff' surfaceScale='2.2'%3E%3CfeDistantLight azimuth='225' elevation='52'/%3E%3C/feDiffuseLighting%3E%3CfeColorMatrix values='0 0 0 0 .38 0 0 0 0 .31 0 0 0 0 .22 -.5 0 0 0 .46'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23p)'/%3E%3C/svg%3E"),
+    linear-gradient(#f3eee3, #f3eee3),
     repeating-linear-gradient(-45deg, #c43a3d 0 12px, #f6efe2 12px 19px, #2f5c9c 19px 31px, #f6efe2 31px 38px);
-  background-size: auto, 100% 100%, auto, auto, auto;
   box-shadow:
     0 1px 0 rgba(120, 85, 50, 0.14),
     0 24px 48px -18px rgba(24, 14, 6, 0.42),
@@ -155,9 +151,9 @@
 .jvli-pc-modal__card .jvli-postcard__paper {
   --jvli-airmail: clamp(7px, 0.8vw, 11px);
   border: var(--jvli-airmail) solid transparent;
-  background-clip: padding-box, padding-box, padding-box, padding-box, padding-box, padding-box, border-box;
-  background-origin: padding-box, padding-box, padding-box, padding-box, padding-box, padding-box, border-box;
-  background-size: auto, 100% 100%, auto, auto, auto, auto, auto;
+  background-clip: padding-box, padding-box, padding-box, border-box;
+  background-origin: padding-box, padding-box, padding-box, border-box;
+  background-size: auto, 300px 300px, auto, auto;
   box-shadow:
     inset 0 0 0 clamp(3px, 0.4vw, 5px) #f6efe2,
     0 1px 0 rgba(120, 85, 50, 0.14),
@@ -175,12 +171,18 @@
   border-right: 1px solid rgba(59, 42, 32, 0.2);
 }
 
+/* Placed like the user's reference: a large, upright photo stamp that
+   fills the left half, hanging about a third of its width off the card's
+   left edge, starting a little below the top and running past the bottom. */
 .jvli-postcard__photo-wrap {
-  position: relative;
+  --jvli-pc-photo: clamp(200px, 20vw, 290px);
+  position: absolute;
+  top: 24%;
+  left: calc(var(--jvli-pc-photo) * -0.34);
   z-index: 2;
-  width: clamp(168px, 16vw, 216px);
-  margin: clamp(48px, 4.8vw, 70px) 0 clamp(-22px, -1.8vw, -12px) clamp(-30px, -2.4vw, -18px);
-  transform: rotate(-5.2deg);
+  width: var(--jvli-pc-photo);
+  margin: 0;
+  transform: rotate(-1deg);
   filter: drop-shadow(0 12px 20px rgba(24, 12, 8, 0.34));
 }
 
@@ -468,7 +470,7 @@ html.jvli-pc-modal-open {
   --jvli-pc-paper: #f3ede1;
   --jvli-pc-ink: #2a231c;
   --jvli-pc-red: #862022;
-  --jvli-pc-script: "Marck Script", "EB Garamond", var(--jvli-serif);
+  --jvli-pc-script: "La Belle Aurore", "EB Garamond", var(--jvli-serif);
   --jvli-pc-lh: clamp(30px, 2.8vw, 36px);
   position: fixed;
   inset: 0;
@@ -651,9 +653,13 @@ html.jvli-pc-modal-open {
   }
 
   .jvli-postcard__photo-wrap {
+    position: relative;
+    top: auto;
+    left: auto;
     width: 44%;
     max-width: 168px;
     margin: 18px 0 6px -14px;
+    transform: rotate(-1deg);
   }
 
   .jvli-postcard__photo-stamp {
